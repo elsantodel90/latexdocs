@@ -1,0 +1,829 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Estructuras] % (optional, use only with long paper titles)
+{Estructuras de datos útiles (AKA piolas)}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[TC 2011] % (optional, should be abbreviation of conference name)
+{Training Camp 2011}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}
+
+``Estructuras piolas. Yeah, mi tipo favorito de estructuras.''
+
+ \hfill Javier Corti
+
+``For the fashion of Minas Tirith was such that it was built on seven levels,
+each delved into a hill, and about each was set a wall, and in each wall
+was a gate.''
+
+\hfill		J.R.R. Tolkien, ``The Return of the King''
+
+\end{frame}
+
+\begin{frame} 
+\footnotesize
+\frametitle{Contenidos} 
+\begin{multicols}{2} 
+\tableofcontents 
+\end{multicols} 
+\end{frame}
+
+\section{Introducción} % 10 min
+
+\subsection{Estructuras útiles}
+
+\begin{frame}{¿Qué es una estructura de datos útil?}
+  \begin{block}{Estructura: Visión del usuario.}
+    Una estructura de datos adecuada es un tipo abstracto de datos que nos sirve para responder ``queries'' sobre un conjunto de datos, posiblemente sujetos a modificaciones durante el proceso de query.
+  \end{block}
+  %%\pause
+  \begin{itemize}
+  \item Se le llama ``queries'' simplemente a preguntas que nos interesa hacerle a la estructura. Notar que esta forma de ver lo que es una estructura es extremadamente general y virtualmente cualquier cosa se puede pensar como una estructura. No obstante, esta forma de pensar resulta útil.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Ejemplos de visión del usuario de las estructuras}
+   \begin{block}{Ejemplo 1}
+      Si tenemos un arreglo de enteros, nos puede interesar una estructura que sea capaz de dar la suma de cualquier intervalo del arreglo rápidamente. Además, puede interesarnos o no según el problema modificar el arreglo
+      entre medio de las queries.
+  \end{block}
+  %%\pause
+  %\invisible<1>{
+  \begin{block}{Ejemplo 2}
+      En otro ejemplo, podríamos tener un conjunto de enteros al cual agregamos y quitamos números, y nos interesa ser capaces de saber en todo momento cuál es el más chico del conjunto. O quizá cuál es la mediana del conjunto.
+  \end{block}%}
+\end{frame}
+
+\begin{frame}{¿Qué es una estructura de datos útil? (Continuado)}
+  \begin{block}{Estructura: Visión de la implementación interna.}
+    Una estructura de datos adecuada es una forma concreta de organizar los datos en la memoria, junto a los algoritmos necesarios para manipular dichos datos organizados.
+  \end{block}
+  %\pause
+  \begin{itemize}
+  \item Al igual que antes, la definición es extremadamente general y casi cualquier porción de software con una función específica puede llegar a verse como una estructura... Pero de vuelta es una forma de pensar que resulta útil.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Ejemplos de visión de la implementación de las estructuras}
+   \begin{block}{Ejemplo 1 (Continuado)}
+      Mantenemos un arreglo con todos los valores. Para modificar un valor, simplemente lo modificamos en el arreglo. Cuando nos piden la suma de un intervalo, iteramos sobre todo el intervalo acumulando la suma.
+  \end{block}
+  %\pause
+  %\invisible<1>{
+  \begin{block}{Ejemplo 2 (Continuado)}
+      Mantenemos una lista ordenada con todos los números de nuestro conjunto. Cuando nos piden quitar o agregar uno, lo quitamos o agregamos y luego reordenamos toda la lista resultante. El menor elemento siempre lo obtenemos como el primero de la lista, y la mediana como el elemento en la posición del medio de la misma.
+  \end{block}%}
+\end{frame}
+
+\begin{frame}{¡Falta la nitro!}
+\begin{itemize}
+\item Ya vimos dos ejemplos de estructuras, pero las implementaciones que propusimos son muy ineficientes (Aunque pueden resultar más que suficiente en muchos contextos, dando una solución fácil y efectiva).
+%\pause
+\item En lo que resta de la presentación mostraremos varias estructuras eficientes para utilizar en diversas situaciones.
+    \begin{figure}
+   \includegraphics[scale=1.0]{autitoMadera.png}
+    \end{figure}
+\end{itemize}
+\end{frame}
+
+\section{Tablas aditivas} % 20 min
+\subsection{Visión del usuario}
+
+\begin{frame}{Visión del usuario de una tabla aditiva}
+   \begin{block}{Tabla aditiva}
+      Dado un arreglo de $r$ dimensiones, digamos de $n_1 \times n_2 \times \cdots \times n_r$, una tabla aditiva es una estructura
+      que permite averiguar rápidamente la suma de los elementos de cualquier subarreglo contiguo (intervalo, rectángulo, paralelepípedo, etc).
+      En este caso \textbf{NO} nos interesará realizar modificaciones a la matriz durante el proceso de consultas.
+  \end{block}
+  La estructura consta de dos fases de uso:
+  %\pause
+  \begin{itemize}
+    \item  Primero la estructura es inicializada con los datos del arreglo.
+    %\pause
+    \item Y luego se realizan una serie de consultas a la misma, sin modificar el arreglo.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Complejidad pretendida}
+   La implementación que propondremos tendrá una complejidad:
+  %\pause
+  \begin{itemize}
+    \item \textit{Lineal} para la inicialización o preproceso (es decir, proporcional a la \textbf{cantidad de elementos} del arreglo).
+    %\pause
+    \item \textit{Constante} para las queries (Es decir, responderemos cada consulta en $\mathbf{O(1)}$).
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso unidimensional}
+
+\begin{frame}{Arreglo acumulado}
+   \begin{block}{Definición}
+      Dado un arreglo unidimensional $v$ de $n$ elementos $v_0, v_1, \cdots, v_{n-1}$, definimos el \textbf{arreglo acumulado} de $v$ como
+      el arreglo unidimensional $V$ de $n+1$ elementos $V_0, \cdots, V_n$ y tal que:
+      $$V_i = \sum_{j=0}^{i-1}{v_j}$$
+  \end{block}
+  %\pause
+  Notar que $V$ es muy fácil de calcular en tiempo lineal utilizando programación dinámica:
+  %\pause
+  \begin{itemize}
+    \item $V_0 = 0$
+    %\pause
+    \item $V_{i+1} = v_i + V_i, \forall \ 0 \leq i < n$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries a la tabla aditiva vendrán dadas por intervalos $[i,j)$ con $0 \leq i \leq j \leq n$.
+  %\pause
+  \item La respuesta al query $[i,j)$ sera $Q(i,j) = \sum \limits _{k=i}^{j-1}{v_k}$
+  %\pause
+    \item Pero:
+    $$Q(i,j) = \sum_{k=i}^{j-1}{v_k} = \sum_{k=0}^{j-1}{v_k} - \sum_{k=0}^{i-1}{v_k} = V_j - V_i$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando una sola resta entre dos valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso bidimensional}
+
+\begin{frame}{Arreglo acumulado}
+   \begin{block}{Definición}
+      Dado un arreglo bidimensional $v$ de $n \times m$ elementos $v_{i,j}$ con $0 \leq i < n, 0\leq j < m$, 
+      definimos el \textbf{arreglo acumulado} de $v$ como el arreglo bidimensional $V$ de $(n+1) \times (m+1)$ elementos
+      tal que:
+      $$V_{i,j} = \sum_{a=0}^{i-1}\sum_{b=0}^{j-1}{v_{a,b}}$$
+  \end{block}
+  %\pause
+  ¿Podremos calcular fácilmente $V$ en tiempo lineal como en el caso unidimensional?
+  %\pause
+  %\invisible<1-2>
+  {
+      \textbf{¡Sí!} Utilizando programación dinámica.
+      %\pause
+      \begin{itemize}
+        \item $V_{0,j} = V_{i,0} = 0 \ \ \forall \ 0 \leq i \leq n, 0 \leq j \leq m$
+        %\pause
+        \item $V_{i+1,j+1} = v_{i,j} + V_{i,j+1} + V_{i+1,j} - V_{i,j} \ \ \forall \ 0 \leq i < n, 0 \leq j < m$
+      \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries a la tabla aditiva vendrán dadas por rectángulos $[i_1,i_2) \times [j_1,j_2)$ con $0 \leq i_1 \leq i_2 \leq n, 0 \leq j_1 \leq j_2 \leq m$.
+  %\pause
+  \item La respuesta al query $[i_1,i_2) \times [j_1,j_2)$ sera $Q(i_1,i_2,j_1,j_2) = \sum \limits _{a=i_1}^{i_2-1}\sum \limits _{b=j_1}^{j_2-1}{v_{a,b}}$
+  %\pause
+    \item Pero de manera similar a como hicimos para calcular el arreglo acumulado, resulta que:
+    $$Q(i_1,i_2,j_1,j_2) = V_{i_2,j_2} - V_{i_1,j_2} - V_{i_2,j_1} + V_{i_1,j_1}$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando sumas y restas de cuatro valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso general}
+
+\begin{frame}{Arreglo acumulado}
+    El caso general es completamente análogo... Dejamos las cuentas escritas rápidamente.
+   \begin{block}{Definición}
+      Dado un arreglo $v$ de $n_1 \times \cdots \times n_r$ elementos $v_{i_1,\cdots,i_r}$ con $0 \leq i_k < n_k, 1\leq k \leq r$, 
+      definimos el \textbf{arreglo acumulado} de $v$ como el arreglo $V$ de $(n_1+1) \times \cdots \times (n_r+1)$ elementos
+      tal que:
+      $$V_{i_1,\cdots,i_r} = \sum_{k_1=0}^{i_1-1} \cdots \sum_{k_r=0}^{i_r-1}{v_{k_1,\cdots,k_r}}$$
+  \end{block}
+\end{frame}
+\begin{frame}{Arreglo acumulado (Cálculo usando programación dinámica)}
+   El cálculo de $V$ mediante programación dinámica viene dado por:
+      \begin{itemize}
+        \item $$V_{i_1, \cdots, i_r} = 0\ \ \ \mbox{si para algún $k$ resulta $i_k = 0$}$$
+        %\pause
+        \item $$V_{i_1+1,\cdots,i_r+1} = v_{i_1,\cdots,i_r} + \sum_{d_1=0}^1 \cdots \sum_{d_r=0}^1 {(-1)^{r+1 + \sum\limits_{k=1}^r{d_k}}V_{i_1+d_1,\cdots,i_r+d_r}}$$
+                Donde en las sumatorias anidadas se excluye el caso en que $d_k = 1 \ \forall\ k$
+      \end{itemize}
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries a la tabla aditiva vendrán dadas por subarreglos $[{i_1}_0,{i_1}_1) \times \cdots \times [{i_r}_0,{i_r}_1)$
+  %\pause
+  \item La respuesta al query $[{i_1}_0,{i_1}_1) \times \cdots \times [{i_r}_0,{i_r}_1)$ será:
+  %\pause
+    \item
+    $$Q({i_1}_0,{i_1}_1, \cdots ,{i_r}_0,{i_r}_1) = \sum_{d_1=0}^1 \cdots \sum_{d_r=0}^1 {(-1)^{r + \sum\limits_{k=1}^r{d_k}}V_{{i_1}_{d_1},\cdots,{i_r}_{d_r}}}$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando sumas y restas de $2^r$ valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Tarea}
+\begin{frame}{Tarea}
+  \begin{itemize}
+     \item http://www.spoj.pl/problems/KPMATRIX/
+     \item http://www.spoj.pl/problems/TEM/
+     \item http://www.spoj.pl/problems/MATRIX/
+  \end{itemize}
+\end{frame}
+
+\section{Union Find} % 15 min
+
+\subsection{Visión del usuario}
+\begin{frame}{Visión del usuario del union find}
+   \begin{block}{Union find}
+      Dado un conjunto de $n$ elementos que identificaremos con enteros de $0$ a $n-1$, que inicialmente se hallan separados en $n$ ``bolsas'' ,
+      ``clases'' o ``componentes'' distintas con un elemento cada una; una estructura de union find permite averiguar rápidamente la componente
+      de cualquier elemento (\textbf{find}) y también permite unir las componentes de dos elementos dados en una sola (\textbf{union} o
+      \textbf{join}).
+  \end{block}
+\end{frame}
+
+\subsection{Arreglo de componentes}
+
+\begin{frame}{Estructura}
+    Utilizaremos dos arreglos para la estructura:
+    \begin{itemize}
+        \item Mantenemos un arreglo \texttt{P} de $n$ elementos con la componente del elemento $i$ en la posición $i$.
+        %\pause
+        \item Mantenemos un arreglo \texttt{C} de $n$ conjuntos, donde el $i$-ésimo conjunto contiene todos los elementos de la $i$-ésima componente.
+        %\pause
+        \item La forma habitual de representar estos conjuntos es con listas (Por ejemplo se puede usar simplemente un \texttt{vector<int>} en C++).
+        %\pause
+        \item Inicialmente, \texttt{P[i] = i} , \texttt{C[i] = \{i\}}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Implementando las operaciones}
+    \begin{itemize}
+        \item \textbf{find(i)}: Simplemente devolvemos \texttt{P[i]}. Es $O(1)$
+        %\pause
+        \item \textbf{join(i,j)}: Elegimos \textbf{el más chico} (menor cantidad de elementos) entre \texttt{C[i]} y \texttt{C[j]} (supongamos que sea \texttt{C[i]}), y volcamos todos sus elementos en el otro.
+
+                    Ademas para cada uno de los elementos \texttt{x} en \texttt{C[i]}, actualizamos su valor en \texttt{P} de forma tal que sea \texttt{P[x] = j}.
+                    Esta operación toma $O(size(\mathtt{C[i]}))$
+        %\pause
+        \item El costo promedio por operación es $O(\lg n)$
+        %\pause
+        \item Una ventaja de esta implementación es que es muy fácil iterar una componente particular, ya que tenemos sus elementos en \texttt{C[i]}.
+             Esta posibilidad es muy práctica y a veces puede resultar necesaria si se necesita mantener información adicional además de la dada por el union find.
+    \end{itemize}
+\end{frame}
+
+\subsection{Bosque de componentes}
+
+\begin{frame}{Estructura}
+      Mantendremos un bosque (conjunto de árboles), en el que cada árbol representará una componente particular, identificada por su raíz.
+      Utilizaremos un solo arreglo para la estructura:
+    \begin{itemize}
+        \item Mantenemos un arreglo \texttt{P} de $n$ elementos con el padre del elemento $i$ en la posición $i$ (si es la raíz de una componente, lo marcaremos con $-1$).
+        %\pause
+        \item Inicialmente, \texttt{P[i] = -1} para todos los \texttt{i}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Implementando las operaciones}
+    \begin{itemize}
+        \item \textbf{find(i)}: Si \texttt{P[i] == -1}, \texttt{find(i) = i}, sino 
+        
+        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \texttt{find(i) = find(P[i])}
+        
+        %\pause
+        \item \textbf{join(i,j)}: Si \texttt{find(i) != find(j)}, hacemos 
+        
+        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \texttt{P[find(i)] = find(j)}
+        
+        %\pause
+        %\invisible<1-2>
+        {
+            \item Esta implementación tiene un problema: El find es muy lento si el árbol es profundo.
+            %\pause
+            \item Solución: ``Aplanar'' el árbol durante los find.
+            \item \textbf{find(i)}: Si \texttt{P[i] == -1}, \texttt{find(i) = i}, sino hacemos 
+            
+            \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \texttt{find(i) = P[i] = find(P[i])}
+            
+            %\pause
+            \item La complejidad promedio por operación termina siendo $O(\lg n)$
+            %\pause
+            \item Una desventaja de la representación con árboles es que no hay una forma fácil de iterar los elementos de una componente determinada.
+        }
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Codigo fuente C++}
+\begin{lstlisting}
+int P[MAXN];
+int find(int i) { return (P[i] == -1 ? i : P[i] = find(P[i])); }
+void join(int i, int j) { if(find(i)!=find(j)) P[find(i)] = find(j); }
+void init(int n) {fill(P,P+n,-1);}
+\end{lstlisting}
+\end{frame}
+
+\subsection{Tarea} % Islands (Polaca MI)
+
+\begin{frame}{Tarea}
+  \begin{itemize}
+   \small
+     \item http://livearchive.onlinejudge.org/index.php?option=com\_onlinejudge
+     
+     \&Itemid=8\&category=360\&page=show\_problem\&problem=2628
+     
+            (``Monkey Island'', regional Polaca 2009)
+            
+     \item http://www.topcoder.com/stat?c=problem\_statement\&pm=2932
+     \item http://www.topcoder.com/stat?c=problem\_statement\&pm=7921
+  \end{itemize}
+\end{frame}
+
+\section{Range Minimum Query} % 35 min
+
+\subsection{Visión del usuario}
+\begin{frame}{Visión del usuario de RMQ}
+   \begin{block}{RMQ}
+      Dado un arreglo $v$ de $n$ elementos $v_0, \cdots, v_{n-1}$, una estructura de RMQ permite responder rápidamente
+      consultas por el valor $$RMQ(i,j) = \mimin_{k=i}^{j-1}{v_k}, 0 \leq i < j \leq n$$.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Visión del usuario (Continuada)}
+\begin{itemize}
+      \item Hablamos del mínimo pero según el problema puede interesar el máximo. Todo lo que hagamos para mínimo vale igual para máximo,
+             intercambiando las nociones de máximo/mínimo.
+      %\pause
+      \item Opcionalmente, la estructura puede soportar modificaciones al arreglo $v$ o no. Veremos una estructura que lo soporta y una que no.
+      %\pause
+      \item Hemos dicho que las queries de RMQ devuelven el mínimo valor en el intervalo, pero a veces puede ser útil devolver el \textbf{índice}
+      de un mínimo valor. Todo lo que hagamos sirve igual para este caso, con sólo tener cuidado de guardar en la estructura índices en lugar de valores.
+  \end{itemize}
+\end{frame}
+
+\subsection{Sparse Table}
+
+\begin{frame}{Estructura : Inicialización}
+\begin{itemize}
+    \small
+      \item Utilizaremos programación dinámica para llenar el arreglo $M$, definido como:
+      $$M(i,k) = RMQ(i,i+2^k), 0 \leq i \leq n - 2^k$$
+      %\pause
+      \item Para esto basta notar:
+      \item $$M(i,0) = RMQ(i,i+1) = v_i$$
+      \item $$M(i,k+1) = RMQ(i,i + 2^{k+1}) = $$
+      $$= \mimin(RMQ(i,i+2^k),RMQ(i+2^k,i+2^{k+1})) = \mimin(M(i,k),M(i+2^k,k))$$
+      %\pause
+      \item La tabla $M$ contiene $\Theta(n \lg n)$ elementos, luego la inicialización requiere $\Theta(n \lg n)$ tiempo y memoria.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Queries}
+\begin{itemize}
+      \item Una vez computado el arreglo $M$, para responder un query basta notar que:
+      $$RMQ(i,j) = \mimin(RMQ(i,i+2^k),RMQ(j-2^k,j)) = $$
+      $$= \mimin(M(i,k), M(j-2^k, k)), 2^k \leq j-i < 2^{k+1}$$
+      %\pause
+      \item Luego podemos responder queries en $O(1)$, siempre y cuando podamos computar $k$ en $O(1)$.
+      %\pause
+      %\invisible<1-2>
+      {
+        \item Esto se puede lograr al trabajar con enteros de 32 bits haciendo:
+        \item \texttt{k = 31 - \_\_builtin\_clz(j-i)} en C++,
+        \item \texttt{k = 31 - Integer.numberOfLeadingZeros(j-i)} en Java.
+        %\pause
+        \item Notar que esta estructura \textbf{no} permite modificar el arreglo durante el proceso de consulta.
+      }
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{¡Intervalo!}
+    
+   A despejarse el bocho. En un rato continuamos.
+   \begin{figure}
+       \includegraphics[scale=0.7]{land_of_chocolate.jpg}
+    \end{figure}
+\end{frame}
+
+\subsection{Segment Tree}
+
+\begin{frame}{Estructura : Descripción}
+    \begin{itemize}
+      \item Para trabajar con el segment tree asumiremos que $n$ es potencia de $2$. De no serlo, basta extender el arreglo $v$ con a lo sumo $n$
+            elementos adicionales para que sea potencia de $2$.
+      %\pause
+      \item Utilizaremos un árbol binario completo codificado en un arreglo: 
+      %\pause
+      \item $A_1$ guardará la raíz del árbol.
+      \item Para cada $i$, los dos hijos del elemento $A_i$ serán $A_{2i}$ y $A_{2i+1}$. 
+      \item El padre de un elemento $i$ será \texttt{i/2}, salvo en el caso de la raíz.
+      \item Las hojas tendran índices en $[n,2n)$.
+      %\pause
+      \item La idea será que cada nodo interno del árbol (guardado en un elemento del arreglo) almacene el mínimo entre sus dos hijos.
+      %\pause
+      \item Las hojas contendrán en todo momento los elementos del arreglo $v$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Inicializacion}
+    \begin{itemize}
+       \item Llenamos $A_n, \cdots, A_{2n-1}$ con los elementos del arreglo $v$.
+       %\pause
+       \item Usando programación dinámica hacemos simplemente:
+        $$A_i = \mimin(A_{2i},A_{2i+1})$$
+        \item Notar que se debe recorrer $i$ en forma descendente para no utilizar valores aún no calculados.
+        %\pause
+        \item El proceso de inicialización toma tiempo $O(n)$, y la estructura utiliza $O(n)$ memoria.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Modificaciones}
+    \begin{itemize}
+       \item Para modificar el arreglo, utilizaremos nuevamente la fórmula:
+       $$A_i = \mimin(A_{2i},A_{2i+1})$$
+       %\pause
+       \item Notemos que si cambiamos el valor de $v_i$ por $x$, debemos modificar $A_{n+i}$ haciéndolo valer $x$, y recalcular
+          los nodos internos del árbol...
+       %\pause
+       \item Pero sólo se ven afectados los ancestros de $A_{n+i}$.
+       %\pause
+       \item Luego es posible modificar un valor de $v$ en tiempo $O(\lg n)$, recalculando sucesivamente los padres desde $A_{n+i}$ hasta llegar a la raíz.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Estructura : Queries}
+     Consideremos el siguiente algoritmo recursivo:
+    \begin{itemize}
+         \item $$f(k,l, r, i,j) = \left\{ \begin{array}{ll}
+                                     A_k & \mbox{si $i \leq l < r \leq j$};\\
+                                     +\infty & 
+                                      \mbox{si $r \leq i$ o $l \geq j$} \\
+                                     \mimin(f(2k,l,\frac{l+r}{2},i,j), & \\
+                                     ,f(2k+1,\frac{l+r}{2},r,i,j))& sino.\end{array} \right. $$
+         \item La respuesta vendrá dada por $RMQ(i,j) = f(1,0,n,i,j)$
+         %\pause
+         \item La complejidad temporal de un query es $O(\lg n)$
+    \end{itemize}
+\end{frame}
+
+\subsection{Aplicación}
+
+\begin{frame}{Problema:}
+Aplicación de RMQ:
+
+http://acm.sgu.ru/problem.php?contest=0\&problem=155
+
+%\pause
+
+\begin{itemize}
+    %\invisible<1>
+    {
+        \item ¿Qué pasa con la raíz?
+        %\pause
+        \item Esto nos sugiere un algoritmo de divide and conquer...
+        %\pause
+        \item ¡Pero la complejidad en peor caso resulta cuadrática!
+    }
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Buscando ideas...}
+        Hay dos problemas que resolver en el paso del divide and conquer:
+        \begin{itemize}
+            \item Encontrar el mínimo elemento en la heap (raíz del arbol). La solución trivial es $O(n)$
+            \item Dividir a los nodos en los menores que la raíz y los mayores que la raíz.  La solución trivial es $O(n)$
+        \end{itemize}
+    %\invisible<1>
+    {
+        \begin{itemize}
+            \item Idea 1: Para dividir los nodos rápidamente, podemos ordenarlos una sola vez al comienzo. $O(n \lg n)$
+            %\pause
+            \item Luego, en todo momento los elementos de nuestro problema constituyen un intervalo, y podemos separar en $O(1)$
+        \end{itemize}
+    }
+\end{frame}
+
+\begin{frame}{Pero necesitamos más ideas...}
+        \begin{itemize}
+            \item Idea 2: Para encontrar el mínimo, podemos usar una estructura de RMQ sobre el arreglo de elementos ordenados, ya que siempre se consultará por un intervalo del mismo.
+            %\pause
+            \item Como no interesa modificar el arreglo, lo mejor es utilizar sparse table ya que es más simple que un segment tree. Luego de un
+                primer preproceso $O(n \lg n)$, podremos encontrar mínimos en $O(1)$
+            %\pause
+            \item La complejidad final resulta $O(n \lg n)$
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Nosotros ya estamos pero...}
+        \begin{itemize}
+            \item Para el problema de competencia en cuestión, una solución $O(n \lg n)$ es más que suficiente.
+            %\pause
+            \item Pero es posible resolverlo en $O(n)$, utilizando una pila adecuadamente.
+            %\pause
+            \item Ver por ejemplo: 
+            
+            \texttt{http://www.topcoder.com/tc?}
+                
+            \texttt{module=Static\&d1=tutorials\&d2=lowestCommonAncestor}
+        \end{itemize}
+\end{frame}
+
+\subsection{Tarea} %KGSS
+
+\begin{frame}{Tarea}
+        \begin{itemize}
+            \item http://www.spoj.pl/problems/KGSS/
+            \item http://poj.org/problem?id=2374
+        \end{itemize}
+\end{frame}
+
+
+
+\section{Lowest Common Ancestor} % 20 min
+
+\subsection{Visión del usuario}
+
+\begin{frame}{Visión del usuario de LCA}
+   \begin{block}{LCA}
+      Dado un árbol con raíz de $n$ nodos, una estructura de LCA permite responder rápidamente consultas por el \textbf{ancestro común
+      más bajo} entre dos nodos (es decir, el nodo más alejado de la raíz que es ancestro de ambos).
+  \end{block}
+  %\pause
+  \begin{itemize}
+      \item Sorprendentemente se puede reducir una estructura de LCA a una de RMQ!
+      \item Luego no daremos explícitamente una estructura para LCA, sino que mostraremos como reducirla a RMQ para poder aplicar
+      cualquiera de las técnicas ya vistas.
+  \end{itemize}
+\end{frame}
+
+\subsection{Reducción a RMQ}
+
+\begin{frame}{Recorrido de DFS}
+\begin{itemize}
+   \item Utilizando un recorrido de DFS, podemos computar un arreglo $v$ de $2n - 1$ posiciones que indica el orden en que
+   fueron visitados los nodos por el DFS (cada nodo puede aparecer múltiples veces).
+   %\pause
+   \item Aprovechando este recorrido podemos computar también la \textbf{profundidad} (distancia a la raíz) de cada nodo $i$, que notaremos $P_i$.
+   %\pause
+   \item También guardaremos el índice de la primer aparición de cada nodo $i$ en $v$, que notaremos $L_i$ (Cualquier posición servirá, así
+   que es razonable tomar la primera).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Utilizacion del RMQ}
+\begin{itemize}
+   \item La observación clave consiste en notar que para dos nodos $i,j$ con $i \neq j$:
+   $$ LCA(i,j) = RMQ(\mimin(L_i,L_j),\mimax(L_i,L_j)) $$
+   \item Tomamos mínimo y máximo simplemente para asegurar que en la llamada a $RMQ$ se especifica un rango válido ($i < j$).
+   \item Notar que en la igualdad anterior, $RMQ(i,j)$ compara los elementos de $v$ por sus valores de profundidad dados por $P$.
+   %\pause
+   \item La complejidad de la transformación del LCA al RMQ es $O(n)$, con lo cual la complejidad final de las operaciones
+   será la del $RMQ$ utilizado.
+\end{itemize}
+\end{frame}
+
+\subsection{Aplicación} % 
+
+\begin{frame}{Distancias en árboles}
+\begin{itemize}
+   \item Queremos utilizar consultas de LCA para obtener una estructura capaz de computar rápidamente distancias entre nodos en un árbol.
+   \item Notar que computar todas las distancias en un árbol utilizando un algoritmo como DFS o BFS $n$ veces toma tiempo $O(n^2)$, que es
+   lineal en la cantidad de distancias existentes.
+   %\pause
+   \item El algoritmo que propondremos por lo tanto solo constituirá una ventaja importante cuando se quieran consultar muchas menos que las $n^2$
+   distancias (pero suficiente cantidad como para que resolver cada una en forma independiente no sea práctico)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Distancias en árboles (Algoritmo)}
+\begin{itemize}
+   \item Tomamos un elemento cualquiera como raíz.
+   \item Utilizamos DFS o BFS para recorrer el árbol computando las distancias desde la raíz hasta cada uno de los vértices.
+   \item A partir de ahora, para resolver la distancia entre dos nodos cualesquiera $i$ y $j$, utilizamos la identidad:
+   
+   $$ D(i,j) = D(r,i) + D(r,j) - 2 D(r,LCA(i,j)) $$
+   %\pause
+   \item El algoritmo propuesto responde una distancia con una complejidad de $O(1)$ más una consulta de LCA. La inicialización más allá del LCA es un único
+   DFS o BFS, por lo que es $O(n)$.
+\end{itemize}
+\end{frame}
+
+\subsection{Tarea}
+
+\begin{frame}{Tarea}
+\begin{itemize}
+    \item http://acm.uva.es/p/v109/10938.html
+    \item http://www.spoj.pl/problems/QTREE2/
+    \item http://poj.org/problem?id=2763
+    \item http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p=2045
+    \item http://poj.org/problem?id=1986
+\end{itemize}
+\end{frame}
+\section{Tablas aditivas con modificaciones} % 20 min
+
+\subsection{Visión del usuario}
+
+\begin{frame}{Visión del usuario}
+  \begin{itemize}
+    \item Ya hemos mencionado la visión del usuario de esta estructura.
+    \item La diferencia consiste en este caso en que además de consultar suma de subarreglos consecutivos, nos interesara modificar
+    los elementos almacenados en la estructura. Por simplicidad, supondremos que lo haremos sumándole una constante (negativa o positiva),
+    a un valor en una posición dada (Operación que notaremos $add(i,x)$).
+    %\pause
+    \item Tambien por simplicidad estudiaremos el cálculo de la suma de los elementos con índice menor que un cierto valor $i$ dado,
+    operación que notaremos $accum(i)$. Notar que la suma del intervalo $[i,j)$ se calcula simplemente como $accum(j) - accum(i)$.
+    %\pause
+    \item En esta charla nos limitaremos al caso unidimensional. El caso multidimensional es análogo, utilizando
+    ``tablas aditivas sobre tablas aditivas''.
+    %\pause
+    \item La implementación que propondremos tendrá una complejidad logarítmica para sus operaciones.
+  \end{itemize}
+\end{frame}
+
+\subsection{Binary Indexed Tree}
+
+\begin{frame}{Estructura : Descripción}
+    \begin{itemize}
+      \item Utilizaremos un arreglo que en cada posición guardará la suma de ciertos intervalos.
+      %\pause
+      \item Más precisamente, utilizaremos un arreglo $V$ de $n$ elementos indexados desde $1$. Notar que los elementos de
+      $v$, el vector original son $v_0, \cdots, v_{n-1}$; mientras que los de $V$ son $V_1, \cdots, V_n$.
+      %\pause
+      \item El arreglo $V$ estará definido por: $V_i = \sum_{j=i-k}^{i-1}{v_j}$, siendo $k$ la potencia de $2$ más grande que divide a $i$.
+      %\pause
+      \item La estructura comienza con todos los valores del arreglo en 0, y cada vez que se hace un $add$ a una posición del vector original,
+      se suma la cantidad correspondiente a todos los intervalos que lo contengan.
+      %\pause
+      \item Para el cálculo de $accum(i)$, se suman todos los intervalos necesarios.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Accum}
+    Código fuente C++ para el $accum$
+\begin{lstlisting}
+int accum(int i)
+{
+    int res = 0;
+    while (i != 0)
+    {
+        res += v[i];
+        i = (i-1)&i;
+    }
+    return res;
+}
+\end{lstlisting}
+%\pause
+    \begin{itemize}
+        \item La idea es simplemente ir acumulando en $res$ todas las sumas relevantes.
+        \item El invariante de ciclo es: ``La respuesta al problema viene dada por $res + \sum_{j=0}^{i-1}{v_j}$''
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Add}
+    Código fuente C++ para el $add$
+    \begin{lstlisting}
+void add(int i, int x)
+{
+    int ceros = ~i;
+    for (int bit = ceros & (-ceros); 
+         bit <= N; 
+         ceros -= bit, bit = ceros &(-ceros))
+              v[(i &~(bit-1)) | bit] += x;
+}
+    \end{lstlisting}
+%\pause
+    \begin{itemize}
+        \item La idea es simplemente sumar $x$ a todos los intervalos guardados que contengan a $v_i$
+    \end{itemize}
+\end{frame}
+
+\subsection{Tarea} %MATSUM
+
+\begin{frame}{Tarea}
+\begin{itemize}
+    \item http://www.spoj.pl/problems/MATSUM/
+    \item http://www.topcoder.com/stat?c=problem\_statement
+    
+    \&pm=6551\&rd=9990
+\end{itemize}
+\end{frame}
+
+\section{Epílogo}
+
+\subsection{Extras}
+\begin{frame}{Extras}
+    Otras estructuras interesantes.
+    \begin{itemize}
+        \item Dado un árbol con raíz, dar una estructura capaz de responder, para cualquier nodo $v$, cuál es el $k$-ésimo nodo en el camino 
+        desde $v$ hasta la raíz, en tiempo $O(\lg k)$, con tiempo de preproceso $O(n \lg n)$. En varios problemas se combina esta estructura con
+        LCA.
+        \item Sumar una constante a todos los elementos de un sub-arreglo de un arreglo en $O(1)$, con la limitación de que solo se puede mirar
+        el estado del arreglo al final de todas estas sumas, luego de hacer un cómputo de complejidad lineal. Está fuertemente relacionado con
+        las tablas aditivas.
+    \end{itemize}
+\end{frame}
+
+\subsection{Despedida}
+
+\begin{frame}{Chiao}
+    ¡¡¡¡¡¡¡¡Éxito a todos en todo!!!!!!!!
+    \begin{figure}
+   \includegraphics[scale=0.35]{fiesta.jpg}
+    \end{figure}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,175 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{Libre análisis}
+\author{}
+\date{}
+
+\makeindex
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+%Ejemplos de macros
+%\newcommand{\Left}{\textbf{Left}\xspace}
+%\newcommand{\Right}{\textbf{Right}\xspace}
+%\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+%\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+
+\begin{document}
+
+\maketitle
+
+\section{Problema 1}
+
+Calcule el siguiente límite:
+
+$$\lim_{x \rightarrow 0}{\frac{\int_0^{x^2}{t^4e^{t^2}dt}}{x^9 \sin x}}$$
+
+\subsection{Solucion 1}
+
+Por teorema de taylor, como las funciones correspondientes son $C^2$, sabemos que tendiendo a 0:
+
+$$e^{t^2} = e^{0^2} + O(t) = 1 + O(t)$$
+$$\sin x = \sin(0) + \cos (0) x + O(x^2) =  x + O(x^2)$$
+
+Reemplazando en la expresión original:
+
+$$\frac{\int_0^{x^2}{t^4e^{t^2}dt}}{x^9 \sin x} = \frac{\int_0^{x^2}{t^4(1 + O(t))dt}}{x^9 (x + O(x^2))} = 
+              \frac{\int_0^{x^2}{t^4 + O(t^5) dt}}{x^{10} + O(x^{11})} =  \frac{\frac{x^{10}}{5} + O(x^{12})}{x^{10} + O(x^{11})} = 
+                \frac{\frac{1}{5} + O(x^2)}{1 + O(x)}$$
+
+El ultimo termino trivialmente tiende a $\frac{1}{5}$ cuando $x$ tiende a 0, luego hemos terminado y esta es la respuesta.
+
+\subsection{Solucion 2}
+
+Llamemos $f(x) = \int_0^{x}{t^4e^{t^2}dt}$. Sabemos por teorema fundamental del calculo que $f'(x) = x^4e^{x^2}$. El numerador del
+limite es $f(x^2)$. Notemos ademas que el limite es una clara indeterminacion del tipo $\frac{0}{0}$. Luego podemos aplicar regla
+de L'Hopital:
+
+$$\frac{(f(x^2))'}{(x^9 \sin x)'} = \frac{2xx^8e^{x^4}}{9x^8 \sin x + x^9 \cos x} = \frac{x}{9 \sin x + x \cos x}2e^{x^4} $$
+
+Es claro que $2e^{x^4}$ tiende a $2$ cuando $x$ tiende a 0. Por otra parte, la fraccion que queda es nuevamente $\frac{0}{0}$ asi que
+podemos hacer L'Hopital de nuevo:
+
+$$\frac{(x)'}{(9 \sin x + x \cos x)'} = \frac{1}{9 \cos x - x \sin x + \cos x} = \frac{1}{10 \cos x - x \sin x}$$
+
+Que claramente tiende a $\frac{1}{10}$ cuando $x$ tiende a $0$. Luego la respuesta es $2 \cdot \frac{1}{10} = \frac{1}{5}$
+
+\pagebreak
+
+\section{Problema 2}
+
+Sea $f_a(x) = x^ae^{2a-x}$. Hallar $a \in \mathbb{R}^+$ para que el maximo de $f_a(x)$ en $\lbrack 0,+\infty)$ tenga el menor valor posible.
+
+\subsection{Solucion}
+
+La derivada con respecto a $x$ de $f_a(x)$ es $x^{a-1}e^{2a-x}(a-x)$. Claramente es positiva en $(0,a)$, nula en $a$, y negativa en $(a,+\infty)$.
+Esto implica claramente que el maximo de $f_a$ se alcanza en $x = a$, y es $f_a(a) = a^ae^a$.
+
+La derivada con respecto a $a$ de $a^ae^a$ es $(2+\ln a)a^ae^a$. Claramente esta es negativa cuando $a < e^{-2}$, nula si $a = e^{-2}$,
+y positiva si $a > e^{-2}$. Esto implica claramente que el minimo valor posible de $f_a(a)$ se alcanza cuando $a = e^{-2}$.
+
+Luego $a = e^{-2}$ es el valor buscado.
+
+\section{Problema 3}
+
+Aproximar el valor de $\int_0^{0,1}{e^{t^2}dt}$ con un error menor que $10^{-5}$
+
+\subsection{Solucion}
+
+Llamamos $f(x) = \int_0^{x}{e^{t^2}dt}$. Queremos aproximar $f(\frac{1}{10})$. Tomamos la expansion de taylor de $f$ alrededor de $x = 0$:
+
+$$f(0) = 0$$
+
+$$f'(x) = e^{x^2} \Rightarrow f'(0) = 1$$
+
+$$f''(x) = 2xe^{x^2} \Rightarrow f''(0) = 0$$
+
+$$f^{(3)}(x) = (2 + 4x^2)e^{x^2} \Rightarrow f^{(3)}(0) = 2$$
+
+$$f^{(4)}(x) = (12x + 8x^3)e^{x^2} \Rightarrow f^{(4)}(0) = 0$$
+
+$$f^{(5)}(x) = (12 + 48x^2 + 16x^4)e^{x^2}$$
+
+Luego por el teorema de taylor:
+
+$$f(x) = x + \frac{x^3}{3} + \frac{(12 + 48c^2 + 16c^4)e^{c^2}x^5}{120}$$
+
+Para cierto $c \in [0,x]$. Como $f^{(5)}(x)$ es claramente creciente con $x$ positivo, el modulo del termino de error es como mucho:
+
+$$\frac{(12 + 48x^2 + 16x^4)e^{x^2}x^5}{120}$$
+
+En nuestro caso resulta:
+
+$$\left |f \left (10^{-1} \right ) - \left (10^{-1} + \frac{10^{-3}}{3} \right ) \right | \leq
+     \frac{(12 + 48 \cdot 10^{-2} + 16 \cdot 10^{-4})e^{10^{-2}}10^{-5}}{120} \leq
+     \frac{(12 + 1 + 1) \cdot 3\cdot 10^{-5}}{120} < 10^{-5}$$
+
+Luego tomando como aproximacion $10^{-1} + \frac{10^{-3}}{3} = \frac{301}{3000}$, el error esta dentro del margen requerido.
+
+\section{Problema 4}
+
+Hallar $f : \mathbb{R} \rightarrow \mathbb{R}$ derivable tal que $f(0) = \sqrt[3]{e}$ y que sea solucion de la ecuacion:
+
+$$\frac{f'(x)}{\ln(\sin(x^2) + e)} - \frac{2x\cos(x^2)}{3f(x)^2} = 0$$
+
+\subsection{Solucion}
+
+Reescribimos la condicion:
+
+$$3f(t)^2f'(t) = 2t\cos(t^2) \ln(\sin(t^2) + e)$$
+
+Integramos ambos entre $0$ y $x$:
+
+$$\int_0^x{3f(t)^2f'(t)dt} = \int_0^x{2t\cos(t^2) \ln(\sin(t^2) + e)dt}$$
+
+Aplicando las sustituciones evidentes $u = f(t)$ y $u = \sin(t^2) + e$, las integrales quedan:
+
+$$\int_{f(0)}^{f(x)}{3u^2du} = \int_e^{\sin(x^2) + e}{\ln(u)du}$$
+
+Recordando que una primitiva de $\ln u$ es $u(\ln u - 1)$ (sale con integracion por partes, mirandolo como $1 \cdot \ln u$), queda:
+
+$$f(x)^3 - f(0)^3 = (\sin (x^2) + e)(\ln(\sin (x^2) + e) - 1)$$
+
+$$f(x) = \sqrt[3]{e + (\sin (x^2) + e)(\ln(\sin (x^2) + e) - 1)}$$
+
+Que satisface lo pedido.
+
+\section{Problema 5}
+
+Calcular el radio de convergencia de la serie $\sum_{n=1}^\infty{\frac{x^nn^n}{2^n n!}}$
+
+\subsection{Solucion}
+
+Llamando $a_n = \frac{x^n n^n}{2^n n!}$, tenemos que:
+
+$$\frac{a_{n+1}}{a_n} = \frac{\frac{x^{n+1}(n+1)^{n+1}}{2^{n+1}(n+1)!}}{\frac{x^n n^n}{2^n n!}} = \frac{x \left (\frac{n+1}{n} \right )^n (n+1)}{2(n+1)} =
+ \frac{x}{2} \left (1 + \frac{1}{n} \right)^n$$
+
+Que tiende a $\frac{e}{2}x$ cuando $n$ tiende a infinito. Por lo tanto, la serie converge cuando $|x| < \frac{2}{e}$, y diverge si
+$|x| > \frac{2}{e}$, por el criterio de D'Alembert. Luego el radio de convergencia es $\frac{2}{e}$
+
+\end{document}

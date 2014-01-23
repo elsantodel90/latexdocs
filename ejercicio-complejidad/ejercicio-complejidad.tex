@@ -1,0 +1,26 @@
+\documentclass[12pt]{article}
+
+\title{Ejercicios de complejidad.}
+\author{Agust\'in Guti\'errez}
+
+\date{Hoy}
+
+\begin{document}
+
+  \maketitle
+  
+Habitualmente se ense\~na el master theorem como la receta magica salvapapas que resuelve todo misticamente. En realidad, hay una formulita mas poderosa (el primer resultado a continuacion), que salva las papas en casos mas generales todavia, y el master theorem no es mas que mirar esa cuentita con valores particulares (muy conveniente por cierto, dado que cuando aplica, master termina siendo una cuentita y una comparacion de dos numeros, es decir, una demostracion en O(1) esencialmente).
+
+Notacion: se asume que el caso base es siempre $T(1) = f(1)$
+  
+Probar que:
+
+$$ T \left(n \right) = a T \left( \frac{n}{c} \right) + \Theta \left ( f \left( n \right) \right ) \Rightarrow T \left(n \right) = \Theta \left ( \sum_{i=0}^{k}{a^i f \left ( \frac{n}{c^i} \right )} \right ) \ \ \mbox{si}\ \  n = c^k$$
+
+$$ \left ( \forall t \in \mathbf {Z}, t \geq 0 \right )T \left(n \right) = c T \left( \frac{n}{c} \right) + \Theta \left( n \lg^t n \right) \Rightarrow T \left(n \right) = \Theta \left( n \lg^{t+1}{n} \right)$$
+
+$$T \left(n \right) = c T \left( \frac{n}{c} \right) + \Theta \left( \frac{n}{\lg n} \right) \Rightarrow T \left(n \right) = \Theta \left( n \lg{\lg{n}} \right)$$
+
+$$ \left ( \forall t \in \mathbf {Z}, t \geq 2 \right )T \left(n \right) = c T \left( \frac{n}{c} \right) + \Theta \left( \frac{n}{\lg^{t}{n}} \right) \Rightarrow T \left(n \right) = \Theta \left( n \right)$$
+
+\end{document}

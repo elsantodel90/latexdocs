@@ -1,0 +1,201 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title{Divide \& Conquer}  % (optional, use only with long paper titles)
+
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[Octubre 2012] % (optional, should be abbreviation of conference name)
+{Octubre 2012}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}{¿En qué consiste un algoritmo de divide \& conquer?}
+
+  \begin{itemize}
+   \item Muchos algoritmos de utilidad son recursivos: para resolver un problema, se utilizan las soluciones a subproblemas fuertemente relacionados.
+   \pause
+   \item Estos algoritmos suelen ajustarse a un esquema de divide and conquer: Se divide el problema en varios subproblemas 
+   que luego se resuelven y se combinan las soluciones obtenidas para resolver el original.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{El esquema general}
+   \begin{itemize}
+   \item Los algoritmos de divide and conquer se organizan en 3 pasos que responden al siguiente esquema general:
+   \pause
+   \item \textbf{Divide:} Se divide el problema en subproblemas más pequeños (más fáciles), similares al problema original.
+   \item \textbf{Conquer:} Se resuelven cada uno de los subproblemas: Esto se hace típicamente de manera recursiva, invocando el mismo
+     algoritmo de divide and conquer, pero al llegar a instancias suficientemente pequeñas se utiliza algún otro método como caso base
+     de la recursión.
+   \item \textbf{Combine:} Se combinan las soluciones de los subproblemas para obtener una solución al problema original
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Referencias}
+   \begin{itemize}
+   \item Introduction to Algorithms, 2nd Edition. MIT Press. Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein
+   Página 28: 2.3.1 The divide-and-conquer approach
+
+   
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{El problema de armar fixtures}
+	Ejercicio 3.4, práctica 3 de Algoritmos y Estructuras de Datos 3:
+
+\ 
+
+	Hay que organizar un torneo que involucre a $n$ competidores. Cada competidor debe jugar exactamente una vez contra
+	cada uno de sus oponentes. Además cada competidor debe jugar un partido por día con la sola posible excepción de un día
+	en el cual no juegue.
+	\pause
+   \begin{itemize}
+   \item[a] Si $n$ es potencia de 2, dar un algoritmo que use la técnica de dividir y conquistar para armar el fixture para que el torneo
+   termine en $n-1$ días.
+   \item[b] Si $n > 1$ no es potencia de 2, dar un algoritmo para armar el fixture para que el torneo termine en $n-1$ días si $n$ es par,
+   o en $n$ si $n$ es impar.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{El problema de armar fixtures (cont)}
+	Supondremos que tenemos disponible una operación:
+	
+	\texttt{jugar(fecha, jugador1, jugador2)}
+	
+	que reporta que se debe jugar un partido entre esos
+    jugadores en esa fecha (Podría consistir en loguear el evento por ejemplo, o en agregarlo a una lista de partidos para ser procesada luego).
+    
+    Numeraremos los jugadores con enteros consecutivos desde 0 hasta $n-1$, e igualmente numeraremos las fechas con enteros desde 0.
+   
+\end{frame}
+
+
+\begin{frame}[fragile]{Solución (parte a)}
+	Utilizando divide and conquer:
+\begin{lstlisting}
+reportarPartidos(listaJugadores):
+    n <- cantidad de jugadores
+    // Si hay un solo jugador, no hace falta jugar nada.
+    SI n > 1: 
+        j1 <- lista de los primeros n/2 jugadores de listaJugadores
+        j2 <- lista de los ultimos n/2 jugadores de listaJugadores
+        // Armamos las primeras fechas del fixture recursivamente
+        reportarPartidos(j1)
+        reportarPartidos(j2)
+        // Y armamos las últimas n/2 fechas para obtener el fixture final
+        PARA i <- 0 HASTA n/2 - 1:
+            PARA j <- 0 HASTA n/2 - 1:
+                jugar(n/2 - 1 + i, j1[j], j2[(i+j)%(n/2)])
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Solución (parte b)}
+	¿Cómo se puede adaptar la idea de la parte a para resolver la parte b?
+	\pause
+	\invisible<1>
+	{
+		\begin{itemize}
+			\item Para resolver los casos impares, podemos agregar un jugador ``centinela'', de manera que ahora una fecha donde un jugador no juega
+			  se interpreta como una fecha donde juega contra el centinela. El problema equivale ahora a armar un fixture con los $n+1$ jugadores
+			  que quedan, y podemos reducir el problema al caso par.
+			\item En el divide and conquer del caso par, ahora puede pasar que $\frac{n}{2}$ resulte ser impar (aunque $n$ sea par), y por
+			  lo tanto los subproblemas contendrán partidos con jugadores libres. Si emparejamos en cada fecha a los jugadores libres de
+			  cada torneo, podemos proceder similar a como hacíamos en la parte a y armar un fixture en $n-1$ fechas.
+		\end{itemize}
+	}
+\end{frame}
+
+
+\end{document}

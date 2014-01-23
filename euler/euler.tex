@@ -1,0 +1,233 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{TITULO}
+\author{AUTOR}
+\date{}
+
+\makeindex
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+%Ejemplos de macros
+%\newcommand{\Left}{\textbf{Left}\xspace}
+%\newcommand{\Right}{\textbf{Right}\xspace}
+%\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+%\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+
+\newcommand{\FUNCION}{(\mathbb{R}^3)^\mathbb{R}\xspace}
+\newcommand{\DT}[1]{\frac{d }{dt}\left( #1 \right)\xspace}
+\newcommand{\DTS}[1]{\frac{d^2 }{dt^2}\left( #1 \right)\xspace}
+\newcommand{\V}[1]{\mathbf{#1}\xspace}
+\newcommand{\M}{\mathcal{M}\xspace}
+\newcommand{\LAG}{\mathcal{L}\xspace}
+\newcounter{problemCounter}
+\setcounter{problemCounter}{0}
+\newcommand{\problem}{\stepcounter{problemCounter} \ \newline \theproblemCounter ) \xspace}
+
+\begin{document}
+
+%\maketitle
+
+%\pagebreak
+
+%\tableofcontents
+
+Notación : $A^B$ es el conjunto de todas las funciones de $B$ en $A$. Notamos en negrita los vectores o funciones vectoriales. $\times$ denota producto vectorial, $\cdot$ denota producto escalar.
+
+\ 
+
+\ 
+
+Sea $n \in \mathbb{N}$. Sean $\V{x_1}, \cdots, \V{x_n} \in \FUNCION$. Sean $m_1, \cdots, m_n \in \mathbb{R}_{\geq 0}$. Sean $\V{f_1}, \cdots, \V{f_n} \in \FUNCION$. Definimos
+
+$$\V{v_i}(t) = \DT{\V{x_i}(t)}$$
+
+Además, vale que:
+
+$$\V{f_i}(t) = \DT{m_i \V{v_i}(t)}$$
+
+Existen además: 
+
+$$\V{s_1}, \cdots, \V{s_k} \in \FUNCION, a_1, \cdots, a_k, b_1, \cdots, b_k \in \{1, \cdots, n\}$$
+
+$$\V{e_1}, \cdots, \V{e_l} \in \FUNCION, c_1, \cdots, c_l \in \{1, \cdots, n\}$$
+
+Tales que:
+
+$$\V{f_i} = \sum_{c_j = i}{\V{e_j}} + \sum_{a_j = i}{\V{-s_j}} + \sum_{b_j = i}{\V{s_j}}\ \ \ \  \forall 1\leq i \leq n$$
+
+$$\V{s_i} \times (\V{x_{a_i}} - \V{x_{b_i}}) = 0\ \ \ \ \ \  \forall 1 \leq i \leq k$$
+
+Notamos:
+
+$$M \in \mathbb{R}, M = \sum_{i=1}^{n}{m_i}$$
+
+$$\V{E} \in \FUNCION, \V{E} = \sum_{i=1}^{l}{\V{e_i}}$$
+
+$$\V{X} \in \FUNCION, \V{X} = \frac{1}{M}\sum_{i=1}^{n}{m_i \V{x_i}}$$
+
+$$\V{V} \in \FUNCION, \V{V}(t) = \DT{\V{X}(t)}$$
+
+\problem Probar que:
+
+$$\V{E}(t) = \DT{M \V{V}(t)}$$
+
+\problem Sean: 
+
+$$\V{r_i} \in \FUNCION, \V{r_i} = \V{x_i}-\V{X}$$
+
+$$\V{p_i} \in \FUNCION, \V{p_i}(t) = m_i \DT{\V{r_i}(t)}$$
+
+$$\M \in \FUNCION, \M = \sum_{i=1}^{l}{\V{r_{c_i}} \times \V{e_i}}$$
+
+$$\V{L} \in \FUNCION, \V{L} = \sum_{i=1}^{n}{\V{r_i} \times \V{p_i}}$$
+
+Probar que:
+
+$$\M(t) = \DT{\V{L}(t)}$$
+
+\problem Supongamos para este problema que existen:
+
+$$V_i(t) : \mathbb{R}^3 \rightarrow \mathbb{R} \mbox{ tal que } \V{e_i}(t) = -\nabla V_i(t)(\V{x_{c_i}}(t))\ \ \ \forall t\in \mathbb{R}, 1 \leq i \leq l$$
+
+$$q_1,q_2,\cdots,q_u : \mathbb{R} \rightarrow \mathbb{R} \mbox{ derivables}$$
+
+$$\V{F_1},\V{F_2},\cdots,\V{F_n} : \mathbb{R}^{u+1} \rightarrow \mathbb{R}^3 \mbox{ de clase } \mathcal{C}^2$$
+
+$$\V{Y} : \mathbb{R} \rightarrow \mathbb{R}^{u+1} , \V{Y}(t) = (q_1(t),q_2(t),\cdots,q_u(t),t)$$
+
+Tales que $\V{F_i}(\V{Y}(t)) = \V{x_i}(t) \forall 1 \leq i \leq n$. Notaremos $\frac{\partial \V{F_i}}{\partial x_j}$
+a la derivada parcial de $\V{F_i}$ respecto a la $j$-ésima coordenada.
+
+Definimos:
+
+$$\V{G_i} : \mathbb{R}^{2u+1} \rightarrow \mathbb{R}^3, \V{G_i}(x_1,\cdots,x_{2u+1}) = 
+ \frac{\partial \V{F_i}}{\partial x_{u+1}}(x_1,\cdots,x_u,x_{2u+1}) + \sum_{j=1}^u{x_{u+j} \frac{\partial \V{F_i}}{\partial x_j}(x_1,\cdots,x_u,x_{2u+1})} $$
+
+$$H : \mathbb{R}^{2u+1} \rightarrow \mathbb{R}, H(x_1,\cdots,x_{2u+1}) = 
+\sum_{i=1}^n{\frac{1}{2}m_i||\V{G_i}(x_1,\cdots,x_{2u+1})||^2} - \sum_{i=1}^l{V_i(t)(\V{F_{c_i}}(x_1,\cdots,x_u,x_{2u+1}))}$$
+
+$$\V{Z} : \mathbb{R} \rightarrow \mathbb{R}^{2u+1}, \V{Z}(t) = (q_1(t),q_2(t),\cdots,q_u(t),\DT{q_1(t)},\cdots,\DT{q_u(t)},t)$$
+
+Probar que:
+
+1)
+
+$$\frac{\partial H}{\partial x_i}(\V{Z}(t)) = \DT{\frac{\partial H}{\partial x_{u+i}}(\V{Z}(t))}$$
+
+Para todo $1 \leq i \leq u$
+
+2) Si $\V{R_1},\cdots,\V{R_n} : \mathbb{R}^{u+1} \rightarrow \mathbb{R}^3$ son tales que:
+
+$$\sum_{i=1}^n{\V{R_i}(x_1,\cdots,x_u,x_{2u+1}) \cdot \V{G_i}(x_1,\cdots,x_u,x_{u+1},\cdots,x_{2u},x_{2u+1})} = 0$$
+
+Para todo $(x_1,\cdots,x_{2u+1}) \in \mathbb{R}^{2u+1}$, probar que:
+
+$$\sum_{i=1}^n{\V{R_i}(\V{Y}(t)) \cdot \frac{\partial \V{F_i}}{\partial x_j}}(\V{Y}(t)) = 0$$
+
+Para todo $t \in \mathbb{R}$.
+
+3) Probar que si $||\V{F_i}(x_1,\cdots,x_u,x_{2u+1}) - \V{F_j}(x_1,\cdots,x_u,x_{2u+1})|| = C$, con $C \in \mathbb{R}$ una constante fija,
+entonces dado $\gamma : \mathbb{R} \rightarrow \mathbb{R}$, tomando:
+
+$$\V{R_i}(x_1,\cdots,x_u,x_{2u+1}) = (\V{F_i}(x_1,\cdots,x_u,x_{2u+1}) - \V{F_j}(x_1,\cdots,x_u,x_{2u+1})) \gamma(x_{2u+1})$$
+$$\V{R_j} = -\V{R_i}$$
+$$\V{R_k} = 0 \mbox{ si } k \neq i,j$$
+
+Satisface las hipótesis de 2)
+
+\problem Supongamos a partir de ahora que:
+
+$$(\forall t_1,t_2 \in \mathbb{R})(\forall i,j \in \{1, \cdots, n\}) ||\V{x}_i(t_1) - \V{x}_j(t_1)|| = ||\V{x}_i(t_2) - \V{x}_j(t_2)||$$
+Y además, que existen $i,j,k \in \{1,\cdots,n\}$ tales que $\{\V{r_i}(0),\V{r_j}(0),\V{r_k}(0)\}$ es linealmente independiente en $\mathbb{R}^3$.
+
+Probar que existe una única $R : \mathbb{R} \rightarrow Hom(\mathbb{R}^3,\mathbb{R}^3)$ tal que:
+
+$$\V{r_i}(t) = R(t)( \V{r_i}(0))\ \ \ \  \forall 1\leq i \leq n$$
+
+Y además $R$ es dos veces derivable y $R(t)$ es rotación para cualquier $t \in \mathbb{R}$.
+
+\problem  Probar que existe un único $\omega \in \FUNCION$ tal que:
+
+$$\DT{\V{r_i}(t)} = \V{\omega}(t) \times \V{r_i}(t)\ \ \ \  \forall 1\leq i \leq n$$
+
+\problem  Para cada $t \in \mathbb{R}$, sea $I(t)$ el endomorfismo de $\mathbb{R}^3$ dado por:
+
+$$I(t)(\V{v}) = \sum_{i=1}^n{m_i \V{r_i}(t) \times (\V{v} \times \V{r_i}(t))}$$
+
+Probar que:
+
+$$\V{L}(t) = I(t) (\V{\omega}(t))$$
+
+\problem  Sean en $\mathbb{R}^3$ los versores $\V{x} = (1,0,0),\V{y} = (0,1,0),\V{z} = (0,0,1)$
+
+Probar que la matriz $|I|$ de $I$ en la base canónica $\{\V{x},\V{y},\V{z}\}$, viene dada por:
+
+$$|I|_{1,1} = \sum_{i=1}^n{m_i ||\V{r_i} \cdot (\V{y} + \V{z})||^2}$$
+
+$$|I|_{2,2} = \sum_{i=1}^n{m_i ||\V{r_i} \cdot (\V{x} + \V{z})||^2}$$
+
+$$|I|_{3,3} = \sum_{i=1}^n{m_i ||\V{r_i} \cdot (\V{x} + \V{y})||^2}$$
+
+$$|I|_{1,2} = |I|_{2,1} = -\sum_{i=1}^n{m_i (\V{r_i} \cdot \V{x}) (\V{r_i} \cdot \V{y})}$$
+
+$$|I|_{1,3} = |I|_{3,1} = -\sum_{i=1}^n{m_i (\V{r_i} \cdot \V{x}) (\V{r_i} \cdot \V{z})}$$
+
+$$|I|_{2,3} = |I|_{3,2} = -\sum_{i=1}^n{m_i (\V{r_i} \cdot \V{y}) (\V{r_i} \cdot \V{z})}$$
+
+\problem  Probar que para cualquier $\V{v} \in \mathbb{R}^3, \V{v} \neq 0, t \in \mathbb{R}$, se tiene:
+
+$$\frac{\V{v} \cdot I(t)(\V{v})}{||\V{v}||^2} = \sum_{i=1}^n{m_i \frac{||\V{v} \times \V{r_i}||^2}{||\V{v}||^2}}$$
+
+\problem  Sea $\V{v}$ un autovector de $I(t)$ para cierto $t \in \mathbb{R}$, con $I(t)(\V{v}) = \lambda \V{v}$. Probar que:
+
+$$\lambda = \sum_{i=1}^n{m_i \frac{||\V{v} \times \V{r_i}||^2}{||\V{v}||^2}}$$
+
+\problem  Probar que si para cierto $t \in \mathbb{R}$ resulta que $\V{v}$ es eje de simetría del conjunto
+$\{\V{r_1}(t), \cdots, \V{r_n}(t) \}$, entonces $\V{v}$ es autovector de $I(t)$.
+
+\problem  Probar que para cualquier $t \in \mathbb{R}$, $I(t)$ es autoadjunta y semidefinida positiva.
+
+\problem  Probar que $I(t) = R(t) \circ I(0) \circ R^{-1}(t)$
+
+\problem  Probar que $I$ y $\V{\omega}$ son derivables, y llamando $\V{\alpha}(t) = \DT{\V{\omega}(t)}$ vale:
+
+$$ \M(t) = \DT{I(t)}( \V{\omega}(t)) + I(t)( \V{\alpha}(t))$$
+
+\problem Dado $\V{v} \in \mathbb{R}^3$, definimos el endomorfismo $ [\V{v}] : \mathbb{R}^3 \rightarrow \mathbb{R}^3$ como:
+
+$$[\V{v}](\V{w}) = \V{v} \times \V{w}$$
+
+Probar que:
+
+$$[\V{\omega}(t)] = \DT{R(t)} \circ R^{-1}(t)$$
+
+$$[\V{\alpha}(t)] = \DTS{R(t)} \circ R^{-1}(t) + \DT{R(t)} \circ \left(\DT{R(t)} \right)^*$$
+
+Donde dado un endomorfismo $T$ de $\mathbb{R}^3$, $T^*$ denota la adjunta de $T$.
+
+\end{document}

@@ -1,0 +1,86 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{Espacio de matrices que conmutan con una dada}
+\author{}
+\date{}
+
+\makeindex
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+\begin{document}
+
+\maketitle
+
+Sea $V$ un $K$-espacio vectorial de dimension finita. Sea $f$ un endomorfismo en $V$. Es sabido que el conjunto
+de los endomorfismos $g$ tales que $fg = gf$ forman un subespacio del espacio de endomorfismos de $V$, que llamaremos $E_f$. Vamos a
+caracterizarlo, suponiendo que $m_f$, el minimal de $f$, se factoriza linealmente en $K$. En particular, vamos a dar una
+expresion para su dimension en base a los bloques de la forma de jordan de $f$.
+
+Si $m_f = PQ$, con $P,Q$ coprimos, entonces $V = Nu(P(f)) \oplus Nu(Q(f))$, ambos $f$-invariantes. Si $g \in E_f$, es inmediato comprobar que
+$Nu(P(f))$ y $Nu(Q(f))$ son $g$-invariantes. Luego podemos considerar la restriccion de $g$ a estos subespacios, y $g$ conmutara cuando cada
+una de estas restricciones lo haga con las correspondientes restricciones de $f$.
+
+Luego tenemos que estudiar ahora el caso en que $m_f = (X-\lambda)^t$. Si llamamos a partir de ahora $f$ a lo que seria $f - \lambda id$,
+es trivial que no cambia el espacio $E_f$, porque todo conmuta con la identidad. Luego falta ver solamente quienes conmutan con una $f$
+nilpotente, es decir, tal que $m_f = X^t$.
+
+Consideremos una base de jordan de esta $f$, dada por:
+
+$$v_1, f(v_1), \cdots, f^{r_1 - 1}(v_1)$$
+
+$$\cdots$$
+
+$$v_k, f(v_k), \cdots, f^{r_k - 1}(v_k)$$
+
+Y tal que $f^{r_i}(v_i) = 0$.
+
+Supongamos que $w_i = g(v_i)$. Notemos que para que $g$ conmute con $f$, debe ser para cualquier $t$:
+
+$$g(f^t(v_i)) = f^t(w_i)$$
+
+En particular, $0 = g(0) = g(f^{r_i}(v_i)) = f^{r_i}(w_i)$.
+
+Luego, vemos que todos los $g \in E_f$ se pueden obtener fijando un $w_i$ tal que $w_i \in Nu(f^{r_i})$, y
+definiendo la $g$ sobre el resto de la base de Jordan segun $g(f^t(v_i)) = f^t(w_i)$ . La pregunta
+que falta es si todos los $g$ que se obtienen por este mecanismo son un $g \in E_f$, pero esto se
+comprueba mecanicamente ya que por la definicion dada, $g$ y $f$ conmutan en los vectores de la base de Jordan,
+luego conmutan en general.
+
+Juntando todo esto hemos dado una caracterizacion de los elementos de $E_f$. De la misma se observa que su
+dimension ha de ser:
+
+$$\sum_{\lambda}{\sum_{i=1}^{\infty}{\gamma(f,\lambda,i) \dim \left ( Nu((f-\lambda I)^i) \right )}}$$
+
+Donde notamos $\gamma(f,\lambda,i)$ a la cantidad de bloques de Jordan de $f$ de autovalor $\lambda$ de tamaño $i$.
+
+Un caso especial de interes se da cuando $m_f = \chi_f$. En este caso, el espacio de los endomorfismos que son
+un polinomio de $f$ tiene dimension $n$ (su dimension en general es el grado de $m_f$) y como puede observarse,
+en este caso el espacio de las $g$ que conmutan con $f$ tambien tiene dimension $n$. Como los $P(f)$ conmutan
+con $f$, resulta que en este caso el espacio de las $g=P(f)$ coincide con $E_f$.
+
+\end{document}

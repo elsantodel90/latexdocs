@@ -1,0 +1,336 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+\title{Axiomas de Teorías de conjuntos}
+\author{Agust\'\i n Guti\'errez}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Preliminar}
+
+En todas las teorias de conjuntos estandar que veremos, el lenguaje de la logica consta, ademas del igualador, de un unico relator
+binario que denota la pertenencia entre conjuntos (clases en NBG), y notaremos con $\in$.
+
+Notar que primero describimos las teorías de conjuntos ``básicas'', es decir, los axiomas que afirman qué conjuntos existen y las relaciones
+entre ellos. A todas estas teorías básicas, se agregan luego axiomas especiales que afirman otros hechos importantes, como infinitud, elección, partes, etc.
+
+
+\section{Zermelo (Z)}
+
+La teoría de conjuntos de Zermelo (Z) fue la primera formalización razonable de la matemática (creada especialmente para evitar la paradoja
+de Rusell presente en la teoría original de Frege, lo cual logró restringiendo el poder del axioma de especificación).
+
+El universo de objetos sobre el que habla la teoria son los conjuntos. Los axiomas dados por Zermelo fueron:
+
+1) $(\forall UV) ((\forall X) (X \in U \Leftrightarrow X \in V) \Rightarrow U = V)$ \ \ \ \ \ \ extensionalidad
+
+2) $(\forall XY) (\exists Z) (\forall U) (U \in Z \Leftrightarrow U = X \vee U = Y)$ \ \ \ \ \ par
+
+3) $(\exists Y) (\forall X) (X \notin Y)$ \ \ \ \ \  vacio
+
+4) $(\forall X) (\exists Y) (\forall U) (U \in Y \Leftrightarrow (\exists V) (U \in V \wedge V \in X))$ \ \ \ \ \ \ union
+
+5) Para toda formula $\phi(x)$ (tal vez con mas variables libres) la formula siguiente es axioma
+
+$$(\forall A) (\exists B) (\forall X) (X \in B \Leftrightarrow X \in A \wedge \phi(X)) \mbox{\ \ \ \ \ \ \ \ especificacion}$$
+
+\section{Zermelo-Fraenkel (ZF)}
+
+La teoría de conjuntos de Zermelo-Fraenkel (ZF), surge cuando Fraenkel reemplaza el esquema de especificacion, por el mas fuerte esquema de
+reemplazo:
+
+5) Para toda formula $\phi(X,Y)$ (quiza con mas variables libres), vale el siguiente esquema axiomatico de reemplazo:
+
+$$(\forall XYZ) ((\phi(X,Y) \wedge \phi(X,Z) \Rightarrow Y = Z) \Rightarrow (\forall A) (\exists B) (\forall Y) (Y \in B \Leftrightarrow (\exists X \in A) (\phi(X,Y))) )$$
+
+El esquema de reemplazo es necesario para probar la existencia de ciertos conjuntos cociente , ciertos ordinales, probar ciertos resultados
+abstractos de teoria de conjuntos, y otras yerbas, pero el grueso de la matematica tradicional puede llevarse a cabo con solo el axioma
+de especificacion.
+
+\section{von Neumann - Bernays - Gödel (NBG) y \\ Morse-Kelley (MK)}
+
+La teoría de conjuntos de von Neumann - Bernays - Gödel (NBG) predica sobre las \textit{clases} de conjuntos.
+La idea es que para cualquier propiedad bien definida exista la clase de los conjuntos con esa propiedad, por ejemplo,
+la clase de todos los conjuntos, la clase de los conjuntos que no se pertenecen a si mismos, etc. El chiste es que una
+clase no tiene por que ser un conjunto, con lo cual los axiomas en general persiguen dos objetivos principales: Asegurar
+que cualquier propiedad define una clase, y asegurar que ciertas clases particulares de interés, son conjuntos. La
+relación con ZF es bastante evidente (ZF habla exactamente de lo que en NBG son las clases que son conjuntos).
+
+\subsection{Notación previa}
+
+Se define $cto \ X$, ``$X$ es un conjunto'', como $\exists Y X \in Y$. Así, definimos los conjuntos como las clases que
+pertenecen a alguna clase (o sea que las clases son algunas colecciones de conjuntos particulares, y sobre ellas habla
+la teoría NBG).
+
+Notaremos siempre a las clases con mayusculas y a los conjuntos con minusculas. Es decir, valen las siguientes abreviaciones
+
+$$\forall x \alpha \equiv \forall X (cto\ X \Rightarrow \alpha)$$
+
+$$\exists x \alpha \equiv \exists X (cto\ X \wedge \alpha)$$
+
+Se definen las tuplas como:
+
+$$\{Y_1, \cdots, Y_n \} \equiv Z | \forall u (u \in Z \Leftrightarrow u = Y_1 \vee \cdots \vee u = Y_n )$$
+
+$$(Y_1) \equiv Y_1$$
+
+$$(Y_1, Y_2) \equiv \{ \{ Y_1 \}, \{Y_1,Y_2 \} \}$$
+
+$$(Y_1, \cdots ,Y_n) \equiv ((Y_1, \cdots , Y_{n-1}), Y_n)$$
+
+Tambien definimos la abreviacion $Un \ X$, ``representar una funcion'', como:
+
+$$Un \ X \equiv \forall uvw( (u,v) \in X \wedge (u,w) \in X \Rightarrow v = w)$$
+
+\subsection{Axiomas}
+
+\subsubsection{Axiomatizacion finita de NBG}
+
+01) $(\forall XY)((\forall u)(u \in X \Leftrightarrow u \in Y) \Rightarrow X = Y)$ \ \ \ \ extensionalidad
+
+02) $(\forall XY) (\exists Z) (\forall u)(u \in Z \Leftrightarrow u \in X \wedge u \in Y)$ \ \ \ \ \ interseccion
+
+03) $(\forall X) (\exists Y) (\forall u) (u \in Y \Leftrightarrow u \notin X)$ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ complemento
+
+04) $(\forall uv) (\exists y) (\forall x) (x \in y \Leftrightarrow x = u \vee x = v)$ \ \ \ \ \ \ \ \ \ \ par
+
+05) $(\exists A) (\forall xy) ((x,y) \in A \Leftrightarrow x \in y)$ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pertenencia
+
+06) $(\forall A) (\exists B) (\forall x) (x \in B \Leftrightarrow (\exists y)( (x,y) \in A))$ \ \ \ \ \ \ \ dominio
+
+07) $(\forall A) (\exists B) (\forall xy) ((x,y) \in B \Leftrightarrow x \in A)$ \ \ \ \ \ \ \ \ \ \ producto cartesiano
+
+08) $(\forall A) (\exists B) (\forall xy) ((x,y) \in B \Leftrightarrow (y,x) \in A)$ \ \ \ \ \ \ \ \ relacion inversa
+
+09) $(\forall A) (\exists B) (\forall xyz) ((x,y,z) \in B \Leftrightarrow (y,z,x) \in A)$ \ \ \ \ permutacion
+
+10) $(\forall A) (\exists B) (\forall xyz) ((x,y,z) \in B \Leftrightarrow (x,z,y) \in A)$ \ \ \ \ permutacion
+
+11) $(\exists x) (\forall y) (y \notin x)$ \ \ \ \ conjunto vacio
+
+12) $(\forall x) (\exists y) (\forall uv) (u \in v \wedge v \in x \Rightarrow u \in y)$  \ \ \ \ \ union
+
+13) $(\forall xA) (Un \ A \Rightarrow (\exists y) (\forall u) (u \in y \Leftrightarrow (\exists v \in x)( (v,u) \in A)))$ \ \ \ \ reemplazo
+
+\subsubsection{Axiomatizacion con esquema axiomatico}
+
+La anterior axiomatizacion es finita, lo cual tiene la propiedad interesante de mostrar que NBG (y en particular la matematica toda) puede
+formalizarse con una cantidad finita de axiomas. No obstante esto, resulta engorrosa por tener que postular explicitamente la existencia
+de muchos conjuntitos y clases muy especificos (como por ejemplo los axiomas de permutacion).
+
+Una formula se llama primitiva cuando no cuantifica sobre clases, es decir, todas las cuantificaciones que aparecen son sobre conjuntos.
+Puede probarse que con los axiomas anteriores, si $\phi$ es una formula primitiva, el siguiente es un teorema en NBG:
+
+$$(\exists Y)(\forall x) (x \in Y \Leftrightarrow \phi)$$
+
+Es decir, para cualquier propiedad que no cuantifique sobre clases, existe una clase cuyos elementos son exactamente los conjuntos que cumplen
+la propiedad. Si tomamos esto como un esquema axiomatico, podemos obtener muchos de los axiomas anteriores a partir del mismo. Esto nos
+permite enunciar la siguiente axiomatizacion equivalente de NBG (Que resulta mucho mas simple y usual, aunque tiene infinitos axiomas):
+
+1) $(\forall XY)((\forall u)(u \in X \Leftrightarrow u \in Y) \Rightarrow X = Y)$ \ \ \ \ extensionalidad
+
+2) Para toda formula primitiva $\phi$ (donde $Y$ no esta libre)
+
+$$ (\exists Y)(\forall x) (x \in Y \Leftrightarrow \phi) \mbox{\ \ \ \ \ formacion de clases}$$ 
+
+3) $(\forall uv) (\exists y) (\forall x) (x \in y \Leftrightarrow x = u \vee x = v)$ \ \ \ \ \ \ \ \ \ \ par
+
+4) $(\exists x) (\forall y) (y \notin x)$ \ \ \ \ \ \ \ \ \  conjunto vacio
+
+5) $(\forall x) (\exists y) (\forall uv) (u \in v \wedge v \in x \Rightarrow u \in y)$  \ \ \ \ \ union
+
+6) $(\forall xA) (Un \ A \Rightarrow (\exists y) (\forall u) (u \in y \Leftrightarrow (\exists v \in x)( (v,u) \in A)))$ \ \ \ \ reemplazo
+
+\subsubsection{Teoría de conjuntos de Morse Kelley (MK)}
+
+La teoria de conjuntos de Morse Kelley (MK), se obtiene usando los 6 axiomas anteriores, pero en el esquema axiomatico de formacion de clases,
+se elimina la restriccion a formulas primitivas (permitiendo usarla sobre cualquier formula donde $Y$ no este libre). La teoria resultante no
+es equivalente a NBG si son consistentes.
+
+\section{Axioma de infinitud}
+
+Postula la existencia de un conjunto infinito. Hay dos versiones clasicas (equivalentes dados los otros axiomas)
+
+1) Existe una funcion $f : x \rightarrow x $ inyectiva y no sobreyectiva. (definicion de infinitud de Dedekind)
+
+2) Existe un conjunto inductivo (un conjunto que contiene a $\emptyset$, y que si contiene a $X$, contiene a $X \cup \{X \}$)
+
+\section{Axioma de partes}
+
+$$(\forall x)(\exists y) (\forall u) (u \subseteq y \Rightarrow u \in y)$$
+
+Notar que todas las letras son minusculas intencionalmente: en NBG, este axioma habla de conjuntos.
+
+\section{Axioma de regularidad}
+
+$$(\forall x) (x \neq \emptyset \Rightarrow (\exists y \in x) (y \cap x = \emptyset))$$
+
+Prohibe la existencia de conjuntos monstruos, pero por lo pronto el axioma este no es necesario para probar absolutamente nada importante.
+
+Agregando infinitud, partes y regularidad a los axiomas basicos, obtenemos $ZF$ o $NBG$ sin axioma de eleccion.
+
+\section{Axioma de elección}
+
+
+$$(\forall x)(\exists f) (f \mbox{ es una funcion } \wedge \mathcal{D}f = x \wedge (\forall u \in x)(u \neq \emptyset \Rightarrow f(u) \in u))$$
+
+O sea que para todo $x$ existe una \textit{funcion de eleccion} sobre $x$.
+
+Dado que el axioma de eleccion no parece ni mas ni menos obvio que por ejemplo el de reemplazo, cabe preguntarse por que este es tan famoso y
+genera tanto revuelo mientras que el de reemplazo no. 
+
+La respuesta es que lo llamativo del axioma de eleccion no es para nada su obviedad o no obviedad, nociones que no tienen
+sentido si no tenemos una nocion bien definida y entendida de conjunto (que no la tenemos), sino el caracter no constructivo del mismo:
+Mientras que el axioma de reemplazo nos permite construir una funcion cuando tenemos un criterio bien definido para elegir un elemento
+$f(x)$ para cada $x$, el axioma de eleccion nos dice que existe una funcion de eleccion, aunque no tenemos ni idea de cual puede haber sido
+el elemento que elige de cada conjunto.
+
+Al agregar a ZF el axioma de eleccion obtenemos ZFC. Al agregarlo a NBG obtenemos NBG con el axioma de eleccion (no estoy enterado de que haya
+una sigla habitual para distinguir NBG con o sin axioma de eleccion sin aclararlo especialmente, aunque creo que NBG a secas se suele entender
+como incluyendo el axioma de eleccion).
+
+\section{Teoría de conjuntos no estándar (IST)}
+
+La teoría de conjuntos no estándar que presentamos es la de Nelson (Hay otras, como la de Hrbacek, cuya relación con la de Nelson es análoga
+a la relación de NBG con ZFC).
+
+La teor\'\i a de conjuntos no est\'andar, llamada \textbf{Internal Set Theory}, utiliza el mismo lenguaje de l\'ogica que las teor\'\i as de conjuntos habituales,
+salvo que se agrega un nuevo relator unario \textit{est\'andar}, notado como $st$.
+As\'\i , $st\ x$ se lee \textit{$x$ es est\'andar}.
+
+
+Una f\'ormula l\'ogica que \textbf{NO} utiliza el relator $st$ se denomina una f\'ormula interna, est\'andar o cl\'asica.
+Naturalmente, una f\'ormula l\'ogica que utilice el citado relator se denomina externa, no est\'andar o no cl\'asica.
+As\'\i , las f\'ormulas l\'ogicas de la teor\'\i a de conjuntos ZFC habitual son f\'ormulas internas.
+
+
+Los axiomas de IST son los axiomas de ZFC, junto con tres axiomas adicionales (esquemas axiom\'aticos en realidad,
+para ser precisos) que se describen a continuaci\'on.
+No obstante, cabe destacar antes un detalle. En ZFC, algunos axiomas son esquemas axiom\'aticos, es decir,
+un conjunto infinito de axiomas que se obtienen reemplazando en una expresi\'on general del axioma una cierta
+f\'ormula l\'ogica. IST acepta los axiomas de ZFC, y en el caso de los esquemas axiom\'aticos, esto quiere decir
+que IST toma los infinitos axiomas correspondientes que tiene ZFC. Pero en ZFC, no existe el relator $st$, y
+por lo tanto la f\'ormula reemplazada en un esquema axiom\'atico debe ser necesariamente una f\'ormula interna
+(simplemente porque en ZFC no existen las f\'ormulas externas, al no existir relator $st$). Por lo tanto,
+las f\'ormulas l\'ogicas obtenidas al instanciar dichos esquemas axiom\'aticos con f\'ormulas externas \textbf{NO}
+no son axiomas de ZFC, y por lo tanto tampoco lo son de IST. As\'\i , por ejemplo, no se puede aplicar el
+axioma de especificaci\'on para construir un conjunto a partir de una f\'ormula externa.
+
+
+Dicho esto, a continuaci\'on se muestran los axiomas de la teor\'\i a de conjuntos no est\'andar, habitualmente llamada IST (Internal Set Theory).
+Notar que las iniciales de los nombres de los axiomas tambien son IST.
+
+
+Aclaraciones de notaci\'on:
+
+
+$(\forall^{st}x)(\phi)$ es una forma abreviada de escribir $(\forall x)(st \ x \Rightarrow \phi)$
+
+
+$(\exists^{st}x)(\phi)$ es una forma abreviada de escribir $(\exists x)(st \ x \wedge \phi)$
+
+Cuando decimos que una f\'ormula tiene ciertas variables libres, se entiende que de tener variables libres,
+estas han de ser un subconjunto de las mencionadas, y no que la f\'ormula debe tener a todas esas variables
+como variables libres presentes en la misma necesariamente.
+
+Esquema axiom\'atico de Idealizaci\'on (\textbf{I}dealization):
+
+Si $\phi$ es una f\'ormula interna, con variables libres $w_1, \cdots , w_n,f$ y $g$, la siguiente f\'ormula
+constituye un axioma de IST:
+$$(\forall w_1, \cdots , w_n)\left [ (\forall^{st} F \mbox{ finito})(\exists g)(\forall f \in F)(\phi) \Leftrightarrow 
+(\exists g)(\forall^{st} f)(\phi) \right ]$$
+
+Esquema axiom\'atico de Estandarizaci\'on (\textbf{S}tandarization):
+
+Si $\phi$ es una f\'ormula (externa o interna), con variables libres $w_1, \cdots , w_n,x$ y $A$, la siguiente f\'ormula
+constituye un axioma de IST:
+$$(\forall w_1, \cdots , w_n)(\forall^{st} A)(\exists^{st} B)(\forall^{st} x)(x \in B \Leftrightarrow x \in A \wedge \phi)$$
+
+Esquema axiom\'atico de Transferencia (\textbf{T}ransfer):
+
+Si $\phi$ es una f\'ormula interna, con variables libres $w_1, \cdots , w_n$ y $x$, la siguiente f\'ormula
+constituye un axioma de IST:
+$$(\forall^{st} w_1, \cdots , w_n) \left [ (\forall^{st} x)(\phi) \Rightarrow (\forall x)(\phi) \right ]$$
+
+Destacamos la interesante propiedad de que IST es una extensión conservativa de ZFC. Esto quiere decir,
+que cualquier teorema de IST cuyo enunciado no use el relator $st$, es un teorema de ZFC (el recíproco es obvio
+porque es una extensión). En particular, ZFC es consistente si y solo si IST lo es.
+
+Esto se demuestra de forma constructiva, es decir se conoce un algoritmo concreto que dada una demostración de un enunciado
+de ZFC usando IST, nos construye otra demostración del enunciado pero dentro de ZFC.
+
+Notar que esto quiere decir que las demostraciones usando teoría de conjuntos no estándar (en particular, análisis no estándar
+, números infinitos, infinitésimos, etc), son lógicamente incuestionables. 
+A un matemático más ``clásico'' podrían llegar a parecerle ``feas'' o ``cuestionables'', pero no puede negarlas sin negar
+al tradicional ZFC. Si prefiere pensarlo así, puede pensar que usar IST es simplemente un ``efecto especial'', un simple truquito
+indirecto para construir finalmente una demostración ``de verdad''. Piense lo que quiera, funcionar funciona.
+
+En particular, hay muchísimos casos en que las demostraciones en IST son (para muchos) más simples. Ejemplos clásicos se podrían dar
+con resultados como Bolzano o Weirstrass (Weirstrass se puede demostrar de forma particularmente simple). Algunos también consideran
+las definiciones mucho más intuitivas (Por ejemplo se puede definir la integral de una función estándar como la parte estándar de una
+suma de Riemann donde los intervalos tienen longitud infinitesimal).
+
+Como ejemplo solo para ver la ``pinta'' de una demostración no estándar, en un caso de ejemplo donde creemos que simplifica la demostración,
+dejamos una demostración de un teorema de Sierpinski, con un par de aclaraciones entre paréntesis que no se incluirían para un lector habituado
+a la teoría por ser triviales y conocidas (Antes de leer la demostración con teoría de conjuntos no estándar,
+piensen y piensen y lleguen a una demostración clásica, como para comparar el estilo más claramente. Obviamente
+acá no se pretende que el lector entienda la demostración, cosa imposible si no está familiarizado con la teoría,
+simplemente nos parece interesante que aprecie la ``forma'' o ``pinta'' de la misma y la compare con su demostración clásica).
+
+\begin{teorema}
+    Si $a_1,\cdots,a_n,b$ son números reales positivos, la ecuación
+     $$\frac{a_1}{x_1} + \cdots + \frac{a_n}{x_n} = b$$
+     tiene a lo sumo un número finito de soluciones naturales.
+    
+\end{teorema}
+\begin{proof}
+   Podemos suponer sin pérdida de generalidad que los $n, a_1,\cdots,a_n,b$ son todos estándar (el axioma de transferencia garantiza automáticamente
+   que si esto vale cuando esos son todos estándar, entonces vale siempre).
+   Supongamos ahora que existen infinitas soluciones y lleguemos a un absurdo. 
+   
+   Tenemos que el conjunto de las soluciones es infinito y por lo tanto tiene un elemento no estándar.
+      Si tomamos una solución no estándar $(x_1, \cdots, x_n)$, algunos $x_i$ serán no estándar (``infinitos'', en el sentido de que son
+      más grandes que cualquier natural estándar, que son los que intuitivamente conocemos como ``naturales'', pero que no son todos los
+      naturales de IST). Llamemos $A$ al conjunto de los $i$ tal que $x_i$ es estándar y $B$ al resto de los $i$ ($B$ es no vacío).
+      
+       Ahora bien,
+      la suma $X = \sum_{i \in B} \frac{a_i}{x_i} \neq 0$ es un infinitésimo, luego $X$ es no estándar, pero por
+      ser $(x_1,\cdots,x_n)$ solución de la ecuación, $X = b - \sum_{i \in A}\frac{a_i}{x_i}$, 
+      luego $X$ debe ser estándar por ser suma, resta y cociente de números estándar. Absurdo. 
+\end{proof}
+
+Tenemos que destacar por otra parte, que para razonar de manera rigurosa, con seguridad y sin peligro de caer en contradicciones,
+hace falta al trabajar en IST un mejor entendimiento de la lógica subyacente que con ZFC.
+
+En otras palabras, un matemático que nada
+sabe de lógica pero que trabaja en el framework clásico de ZFC es difícil que se mande una cagada no permitida por ZFC como
+agarrarse el conjunto de todos los conjuntos o el conjunto de todos los cardinales o el conjunto de todos los conjuntos que no se pertenecen
+a si mismos, mientras que en IST es mucho más fácil que si alguien no entiende bien la lógica de IST, se tiente a agarrarse cosas como
+el conjunto de todos los naturales estándar, que no existe en la teoría.
+
+\end{document}

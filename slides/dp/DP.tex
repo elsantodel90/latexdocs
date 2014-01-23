@@ -1,0 +1,818 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme{spruce}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\sffamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Programación Dinámica] % (optional, use only with long paper titles)
+{Programación Dinámica}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[TC 2014] % (optional, should be abbreviation of conference name)
+{Training Camp 2014}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+    \tableofcontents[currentsection, currentsubsection]
+  \end{frame}
+}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Contenidos}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+
+
+\section{Programación Dinámica}
+
+\subsection{Recursión}
+
+\begin{frame}{Sucesión de Fibonacci}
+  \begin{block}{Sucesión de Fibonacci}
+  La sucesión de Fibonacci se define como $f_0 = 1$, $f_1 = 1$ y $f_{n+2} = f_n + f_{n+1}$ para todo $n \geq 0$
+  \end{block}
+  \pause
+  \invisible<1>{¿Cómo podemos computar el término 100 de la sucesión de Fibonacci?}\\
+  \pause
+  \invisible<1-2>{¿Cómo podemos hacerlo eficientemente?}  
+\end{frame}
+
+\begin{frame}{Algoritmos recursivos}
+	\begin{block}{Definición}
+	Un algoritmo se dice recursivo si calcula instancias de un problema en función de otras instancias del mismo problema hasta llegar a un caso base, que suele ser una instancia pequeña del problema, cuya respuesta generalmente está dada en el algoritmo y no es necesario calcularla.
+	\end{block}
+	\pause
+  \invisible<1>{\begin{block}{Ejemplo}
+  Para calcular el factorial de un número, un posible algoritmo es calcular Factorial($n$) como Factorial($n-1$) $\times n$ si $n \geq 1$ o 1 si $n = 0$
+  \end{block}}
+  \pause
+  \invisible<1-2>{Veamos como calcular el $n$-ésimo fibonacci con un algoritmo recursivo}
+\end{frame}
+
+\begin{frame}[fragile]{Cálculo Recursivo de Fibonacci}
+\begin{columns}
+\begin{column}{0.45\textwidth}
+\begin{lstlisting}
+int fibo(int n)
+{
+    if(n<=1)
+        return 1;
+    else
+        return fibo(n-2)+fibo(n-1);
+}
+\end{lstlisting}
+\end{column}
+\pause
+\invisible<1>{
+\begin{column}{0.45\textwidth}
+Notemos que fibo($n$) llama a fibo($n-2$), pero después vuelve a llamar a fibo($n-2$) para calcular fibo($n-1$), y a medida que va decreciendo el parámetro que toma fibo son más las veces que se llama a la función fibo con ese parámetro.
+\end{column}}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Problemas de la recursión}
+\begin{itemize}
+\item La función que usamos para calcular Fibonacci tiene un problema.
+\pause
+\invisible<1>{
+\item Llamamos muchas veces a la misma función con los mismos parámetros}
+\pause
+\invisible<1-2>{
+\item Básicamente tenemos  ``problemas de memoria''.}
+\pause
+\invisible<1-3>{
+\item ¿Podemos solucionar esto? ¿Podemos hacer que la función sea llamada pocas veces para cada parámetro?}
+\pause
+\invisible<1-4>{
+\item Para lograr resolver este problema, vamos a introducir el concepto de programación dinámica}
+\end{itemize}
+\end{frame}
+
+\subsection{Programación Dinámica}
+
+\begin{frame}{Programación dinámica}
+
+But do not despise the lore that has come down from distant years; 
+for oft it may chance that old wives keep in memory word of things that once were needful for the wise to know.
+
+\hfill Celeborn the Wise, 
+
+\hfill \textit{The Fellowship of the Ring},
+
+\hfill J. R. R. Tolkien
+\begin{itemize}
+    \item {La programación dinámica consiste, esencialmente, en una recursión con una suerte de memorización o cache.}
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Programación dinámica}
+
+\textbf{\underline{Visión tradicional:}}
+
+La programación dinámica es una técnica que consiste en:
+\begin{itemize}
+\pause
+\invisible<1>{
+\item Dividir un problema en dos o más subproblemas o reducirlo a una instancia más fácil de calcular del problema.}
+\pause
+\invisible<1-2>{
+\item Resolver las instancias de cada subproblema de la misma manera (dividiendo en subproblemas o reduciendo a otra instancia) hasta llegar a un caso base.}
+\pause
+\invisible<1-3>{
+\item Guardar el resultado de cada instancia del problema la primera vez que se calcula, para que cada vez que se vuelva a necesitar el valor de esa instancia ya esté almacenado, y no sea necesario calcularlo nuevamente.
+}
+\end{itemize}
+\pause
+\invisible<1-4>{
+¿Cómo hacemos para calcular una sóla vez una función para cada parámetro, por ejemplo, en el caso de Fibonacci?
+}
+\end{frame}
+
+\begin{frame}[fragile]{Cálculo de Fibonacci mediante Programación Dinámica}
+\begin{lstlisting}
+int fibo[100];
+int calcFibo(int n)
+{
+    if(fibo[n]!=-1)
+        return fibo[n];
+    fibo[n] = calcFibo(n-2)+calcFibo(n-1);
+    return fibo[n];
+}
+int main()
+{
+    for(int i=0;i<100;i++)
+        fibo[i] = -1;
+    fibo[0] = 1;
+    fibo[1] = 1;
+    int fibo50 = calcFibo(50);
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Ventajas de la Programación Dinámica}
+\begin{itemize}
+\item La función que vimos recién que usa programación dinámica tiene una ventaja con respecto a la versión recursiva que vimos anteriormente: Llama menos veces a cada función
+\pause
+\invisible<1>{
+\item Para calcular calcFibo(n-1) necesita calcular calcFibo(n-2), pero ya lo calculamos antes, por lo que no es necesario volver a llamar a calcFibo(n-3) y calcFibo(n-4)}
+\pause
+\invisible<1-2>{
+\item Así podemos calcular calcFibo(50) mucho más rápido ya que este algoritmo es lineal mientras que el anterior era exponencial.
+\item Esta forma particularmente sencilla de implementar programación dinámica, es decir, mediante el agregado al código exacto de la recursión ingenua, un par de líneas para guardar y leer respuestas previas de la cache, se llama \textit{memoización} (del inglés \textit{memoization}).
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Números combinatorios}
+\begin{block}{Ejemplo}
+Otro ejemplo de un problema que puede ser resuelto mediante programación dinámica es el de los números combinatorios
+\end{block}
+\pause
+\invisible<1>{
+\begin{block}{Cómo lo calculamos}
+El combinatorio $n \choose k$ se puede calcular como $\frac{n!}{k!(n-k)!}$, pero si en lugar de un único combinatorio queremos precalcular una tabla completa de combinatorios, lo más práctico es usar el procedimiento del triángulo de pascal.
+\end{block}}
+\end{frame}
+
+\begin{frame}[fragile]{Calculo recursivo del número combinatorio}
+\begin{block}{Algoritmo recursivo}
+\begin{lstlisting}
+int comb(int n, int k)
+{
+    if(k==0||k==n)
+        return 1;
+    else
+        return comb(n-1,k-1)+comb(n-1,k);
+}
+\end{lstlisting}
+\end{block}
+\pause
+\begin{itemize}
+\invisible<1>{
+\item Este algoritmo tiene un problema. ¿Cuál es el problema?
+}
+\pause
+\invisible<1-2>{
+\item Calcula muchas veces el mismo número combinatorio. ¿Cómo arreglamos esto?
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Número combinatorio calculado con programación dinámica}
+\begin{block}{Algoritmo con Programación Dinámica}
+\begin{lstlisting}
+int comb[100][100];
+void llenarTablaCombinatoriosHasta(int n)
+{
+    for (int i = 0; i <= n; i++)
+    {
+        comb[i][0] = comb[i][i] = 1;
+        for (int k = 1; k < i; k++)
+            comb[i][k] = comb[i-1][k] + comb[i-1][k-1];
+    }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}{Número combinatorio calculado con programación dinámica (continuado)}
+\begin{itemize}
+\item Este algoritmo no utiliza memoización (según algunos autores, esta forma \textit{bottom-up} es programación dinámica, pero memoización no).
+\item Esta forma es mucho más eficiente que memoización, cuando se calculan la mayoría de las entradas de la tabla cache.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Superposición de subproblemas}
+\begin{itemize}
+\item Los dos ejemplos vistos presentan una característica típica de la programación dinámica: La superposición de subproblemas.
+
+\item El beneficio de la programación dinámica se da justamente porque evitamos recalcular subproblemas que se superponen.
+
+\item {Sin superposición de subproblemas, podríamos usar programación dinámica, pero la complejidad extra de la cache no aportaría nada,
+porque nunca se reutilizaría un subproblema ya calculado, y podríamos haber usado directamente una recursión común (divide and conquer).}
+\end{itemize}
+\end{frame}
+
+\subsection{Principio de Optimalidad}
+
+\begin{frame}{Otro tipo de problemas}
+\begin{itemize}
+\item Hasta ahora vimos problemas en los que hay que calcular una \textit{cantidad} determinada.
+\pause
+\invisible<1>{
+\item En algunos casos lo que tenemos que calcular es el mínimo o máximo de alguna función objetivo, sobre un conjunto de soluciones posibles, es decir, resolver un problema de \textit{optimización}.}
+\pause
+\invisible<1-2>{
+\item En estos casos para poder usar programación dinámica necesitamos asegurarnos de que la solución de los subproblemas sea parte de la solución de la instancia original del problema.}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Principio de optimalidad}
+\begin{block}{Definición}
+Se dice que un problema cumple el \textit{principio de optimalidad de Bellman} cuando en una o más partes de una solución óptima al mismo, debe aparecer necesariamente una solución óptima a un subproblema.
+\end{block}
+\pause
+\invisible<1>{
+\begin {itemize}
+\item Bellman, quien estudió la programación dinámica en 1953, afirmó que el principio de optimalidad es un requisito indispensable para poder aplicar esta técnica.\\
+\item Notar que justamente es el principio de optimalidad lo que nos permite utilizar recursión.}
+\end{itemize}
+\pause
+\invisible<1-2>{
+Veamos un ejemplo de problema clásico.}
+\end{frame}
+
+\begin{frame}{Viaje óptimo en matriz}
+
+\begin{itemize}
+\item Supongamos que tenemos una matriz de $n \times m$, con números enteros, y queremos encontrar el camino de la esquina \textbf{superior-izquierda}, a la esquina \textbf{inferior-derecha}, que maximice la suma de las casillas recorridas.
+\item El camino está restringido a utilizar únicamente movimientos de tipo \textbf{derecha} y \textbf{abajo}.
+\item ¿Cómo resolveríamos este problema?
+\pause
+\invisible<1>{
+\item $f(x,y) = M_{x,y} + max(f(x-1,y) , f(x,y-1))$
+\item $f(1,y) = M_{1,y} + f(1,y-1))$
+\item $f(x,1) = M_{x,1} + f(x-1,1))$
+\item $f(1,1) = M_{1,1}$
+}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Viaje óptimo en matriz (camino)}
+
+\begin{itemize}
+\item La recursión anterior lleva a un algoritmo de programación dinámica para calcular la suma óptima en el recorrido.
+\item ¿Pero cómo recuperaríamos el camino en sí?
+\pause
+\invisible<1>{
+\item ¿Y si quisiéramos el camino lexicográficamente mínimo? 
+}
+\pause
+\invisible<1-2>{
+\item ¿Y si quisiéramos el camino número 420 en orden lexicográfico?
+}
+\pause
+\invisible<1-3>{
+\centering
+\includegraphics[width=70mm]{angelito.jpg}
+}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Visión constructiva}
+
+\begin{frame}{Visión constructiva de DP}
+\begin{itemize}
+\item En el ejemplo anterior, nos encontramos con que definimos la recursión de una cierta manera, pero después nos quedó \textbf{``al revés''}.
+\item Notar que si solamente quisiéramos calcular el resultado (numerito), daría lo mismo el orden o la recursión concreta.
+\item El problema surge al querer reconstruir el camino: \\
+      \begin{itemize}
+           \item Tenemos en mente un \textbf{procedimiento de construcción de la solución}
+           \item Ese procedimiento está formado por una secuencia ordenada de \textbf{pasos}, que son parte del problema y queremos ser capaces de reconstruir
+           \item Cada paso transforma un \textbf{estado} intermedio (o subproblema) en otro, durante el proceso de construcción de la solución.
+           \item ¡Pero nada de esto fue tenido en cuenta cuando pensamos la construcción!
+      \end{itemize}
+\item Por lo tanto, si nos importa reconstruir o razonar sobre el camino, se puede pensar programación dinámica de otra forma.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Visión constructiva de DP (continuado)}
+\begin{itemize}
+\item Identificamos un proceso de construcción de la solución, identificando \textbf{estados} y \textbf{transiciones}.
+\item El estado debe contener toda la \textbf{información} relevante que necesitaremos para poder decidir las transiciones óptimas.
+\item Las transiciones posibles no deben producir ciclos, (o nuestra recursión se volvería infinita).
+\item Ahora cada estado se corresponde a una entrada en la tabla o cache de nuestro algoritmo de DP, y las transiciones vienen dadas por las llamadas recursivas.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Visión constructiva de DP (continuado)}
+\begin{itemize}
+\item Si aplicamos esto al problema anterior, la función y estados nos quedan al revés que antes: Esto es ``de atrás para adelante'', pero notar que nos permite reconstruir el camino en el orden natural.
+\item ¡Ahora sí podemos encontrar el camino lexicográficamente mínimo!
+\item También podemos encontrar si utilizamos este orden, el camino 420 en orden lexicográfico, pero dejemos eso para más adelante.
+\end{itemize}
+\end{frame}
+
+\subsection{Ejemplos}
+
+\begin{frame}{Ejemplos}
+\begin{itemize}
+\item Mismo problema de antes, pero ahora podemos hacer hasta $K$ movimientos del tipo \textbf{izquierda}.
+\pause
+\invisible<1>{
+\item Mismo problema de arriba, pero además podemos usar hasta $W$ elefantes mágicos, que nos permiten hacer un movimiento de alfil de ajedrez en la matriz.}
+\pause
+\invisible<1-2>{
+\item Mismo problema de arriba, pero además podemos usar hasta $Z$ globos aerostáticos, que nos permiten hacer un movimiento de torre de ajedrez en la matriz.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ejemplos (más)}
+\begin{itemize}
+\item Subset sum: Dados $n$ números enteros positivos, decidir si se puede obtener una suma $S$ usando algunos de ellos (a lo sumo una vez cada uno).
+\item Knapsack o problema de la mochila: Dados objetos con peso y valor, queremos meter el máximo valor posible en una mochila que soporta hasta $P$ de peso.
+\item Resolvamos ambos pensándolos de la manera constructiva (¡Por ejemplo, porque nos piden la solución lexicográficamente más chica, y no queremos tener que reescribir todo al final porque nos quedó al revés!)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Resumiendo}
+\begin{itemize}
+\item Hemos visto dos maneras de pensar la programación dinámica: \\
+        \begin{itemize}
+            \item Tradicional (recursiva)
+            \item Pensando en un proceso de construcción de solución (constructiva)
+        \end{itemize}
+\item Si solo interesa el numerito, usar cualquier opción de las anteriores (la que resulte más natural o fácil).
+\item Si interesa reconstruir el camino, y muy especialmente si interesa algún camino en orden lexicográfico, pensarlo de la manera constructiva puede ser útil.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Resumiendo (continuado)}
+\begin{itemize}
+\item Y dos maneras de implementarla: \\
+        \begin{itemize}
+            \item Memoización (La más fácil, no hay que pensar en qué orden iterar los subproblemas. Buena cuando solo se usan algunos pocos subproblemas, difíciles de caracterizar o iterar)
+            \item Bottom-up (Más eficiente si se usan casi todos los estados posibles, pero requiere poder iterar todos los estados relevantes, y pensar con cuidado el orden de recorrida)
+        \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\subsection{Problemas}
+
+\begin{frame}{Problemas}
+Algunos problemas para practicar programación dinámica.
+\begin{itemize}
+\item \url{http://codeforces.com/problemset/problem/225/C}
+\item \url{http://codeforces.com/problemset/problem/163/A}
+\item \url{http://goo.gl/ARNe7}
+\item \url{http://goo.gl/BJtPZ}
+\end{itemize}
+\end{frame}
+
+\section{Dinámicas en rangos}
+
+\subsection{Introducción}
+
+\begin{frame}{Introducción}
+\begin{itemize}
+    \item El patrón de ``Dinámicas en rangos'' es un patrón típico que aparece mucho.
+    \item Consiste en estados (o subproblemas) de la forma $(a,b)$, es decir, intervalos o rangos.
+    \item Lo mejor es estudiar algunos ejemplos concretos.
+\end{itemize}
+\end{frame}
+
+\subsection{Ejemplos}
+
+\begin{frame}{ABB óptimo}
+    \begin{itemize}
+    \item Dada una secuencia de valores ordenados $v_1 < v_2 < \cdots < v_n$, junto a sus frecuencias o probabilidades de aparición $f_1, \cdots, f_n$, dar un
+     algoritmo que compute un árbol binario de búsqueda que minimice el tiempo (cantidad de comparaciones realizadas = profundidad) esperado para encontrar un elemento.
+    
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Parentesis}
+    \begin{itemize}
+    \item Dada una cadena de caracteres \{, \}, {[} , {]} , ( y ), de longitud par, dar la mínima cantidad de reemplazos de caracteres que se le deben realizar a este string para dejar una secuencia ``bien parenteseada''.
+    
+    \item Una secuencia bien parenteseada $T$ se puede formar con las siguientes reglas a partir de secuencias bien parenteseadas $S$ y $S_2$:
+    
+        \begin{itemize}
+            \item $T = \emptyset$
+            \item $T = SS_2$
+            \item $T = (S)$
+            \item $T = [S]$
+            \item $T = \{S\}$
+        \end{itemize}
+    
+    \end{itemize}
+\end{frame}
+
+\subsection{Tarea}
+
+\begin{frame}{Tarea}
+    Problema de la IOI de México 2006
+    \begin{itemize}
+    \item {\small \url{http://ioinformatics.org/locations/ioi06/contest/day2/mexico/mexico.pdf}}
+    \end{itemize}
+    
+    \centering
+    \includegraphics[width=70mm]{sombrerito.jpg}
+    
+\end{frame}
+
+
+\section{Máscaras de bits}
+
+\subsection{Iterando sobre subconjuntos}
+
+\begin{frame}{Subconjuntos}
+\begin{block}{Subconjuntos de un conjunto}
+Es muy común que aparezcan problemas en los que hay que iterar sobre los subconjuntos de un conjunto, y que para calcular una función sobre un subconjunto haya que calcularla previamente sobre sus subconjuntos, para esto utilizamos programación dinámica.
+\end{block}
+\pause
+\invisible<1>{
+\begin{block}{Problema de los Peces}
+Hay $n$ peces en el mar. Cada un minuto se encuentran dos peces al azar (todos los pares de peces tienen la misma probabilidad) y si los peces que se encuentran son el pez $i$ y el pez $j$, entonces el pez $i$ se come al pez $j$ con probabilidad $p[i][j]$ y el pez $j$ se come al pez $i$ con probabilidad $p[j][i]$. Sabemos que $p[i][j]+p[j][i] = 1$ si $i \neq j$ y $p[i][i] = 0$ para todo $i$. ¿Cual es la probabilidad de que sobreviva el pez 0? Sabemos que hay a lo sumo 18 peces.
+\end{block}
+}
+\end{frame}
+
+\begin{frame}{Máscaras de bits}
+\begin{itemize}
+\item Podemos iterar sobre los subconjuntos de un conjunto usando vectores que tengan los elementos del conjunto y crear vectores con todos los subconjuntos, pero esto es muy caro en tiempo y memoria.
+\pause
+\invisible<1>{
+\item Un subconjunto de un conjunto se caracteriza por tener (1) o no tener (0) a cada elemento del conjunto.}
+\pause
+\invisible<1-2>{
+\item Por ejemplo, si tenemos un conjunto de 10 elementos, sus subconjuntos pueden ser representados como números entre 0 y 1023 ($2^{10}-1$). Para cada número, si el $i$-ésimo bit en su representación binaria es un 1 lo interpretamos como que el $i$-ésimo pez del conjunto está en el subconjunto representado por ese número.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Máscaras de bits}
+\begin{itemize} 
+\item Cuando un número representa un subconjunto de un conjunto según los ceros o unos de su representación binaria se dice que este número es una máscara de bits
+\pause
+\invisible<1>{
+\item Para ver si un número $a$ representa un subconjunto del subconjunto que representa un número $b$ tenemos que chequear que bit a bit si hay un 1 en $a$ hay entonces un 1 en $b$}
+\pause
+\invisible<1-2>{
+\item Esto se puede chequear viendo que $a$ OR $b$ sea igual a $b$ donde OR representa al OR bit a bit}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Problema de los Peces}
+\begin{itemize}
+\item Para resolver el problema de los peces, podemos tomar cada subconjunto de peces, y ver qu\'e pasa ante cada opci\'on de que un pez se coma a otro. Esto nos genera un nuevo subconjunto de peces para el cual resolver el problema.
+\pause
+\invisible<1>{
+\item Cuando llegamos a un subconjunto de un s\'olo pez, si el pez es el pez 0, entonces la probabilidad de que sobreviva el pez 0 es 1, sino es 0.
+}
+\pause
+\invisible<1-2>{
+\item En cada paso, la probabilidad de que sobreviva el pez 0 es, la probabilidad de reducir el problema a otro subconjunto, por la probabilidad de que sobreviva dado ese subconjunto.
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Problema de los Peces}
+\begin{lstlisting}
+double dp[1<<18];
+int n;
+double p[18][18];
+
+int main()
+{
+    forn(i,(1<<18))
+        dp[i] = -1;
+    cin >> n;
+    forn(i,n)
+    forn(j,n)
+        cin >> p[i][j];
+    printf("%.6lf\n",f((1<<n)-1));
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Problema de los Peces}
+\begin{lstlisting}
+double f(int mask) {
+    if(dp[mask] > -0.5) return dp[mask];
+    int vivos = 0;
+    forn(i,n) if((mask>>i)%2==1) vivos++;
+    double pares = (vivos*(vivos-1))/2;
+    if(vivos==1) {
+        if(mask==1) dp[mask] = 1.;
+        else dp[mask] = 0.;
+        return dp[mask];
+    }
+    dp[mask] = 0.;
+    forn(i,n) forn(j,i) if((mask>>i)%2==1&&(mask>>j)%2==1) {
+        if(i!=0 && j!=0) dp[mask] += (f(mask^(1<<i))*p[j][i]+f(mask^(1<<j))*p[i][j])/pares;
+        else if(i==0) dp[mask] += f(mask^(1<<j))*p[i][j]/pares;
+        else if(j==0) dp[mask] += f(mask^(1<<i))*p[j][i]/pares;
+    }
+    return dp[mask][pez];
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Problema de los Peces}
+\begin{itemize}
+\item Supongamos que ahora tenemos que resolver el mismo problema, pero en lugar de para un s\'olo pez, para todos los peces. Podr\'iamos usar el mismo c\'odigo y resolver el problema 18 veces, pero hay algo m\'as eficiente.
+\pause
+\invisible<1>{
+\item Lo que hicimos anteriormente fue movernos de un conjunto a sus subconjuntos. Lo que vamos a hacer ahora es movernos de un conjunto a sus superconjuntos.
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Problema de los Peces}
+\begin{lstlisting}
+double dp[1<<18];
+int n;
+double p[18][18];
+
+int main()
+{
+    cin >> n;
+    forn(i,n)
+    forn(j,n)
+        cin >> p[i][j];
+    forn(i,(1<<n))
+        dp[i] = -1;
+    dp[(1<<n)-1] = 1.;
+    forn(i,n)
+        printf("%.6lf\n",f(1<<i));
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Problema de los Peces}
+\begin{lstlisting}
+double f(int mask)
+{
+    if(dp[mask]>-0.5)
+        return dp[mask];
+    dp[mask] = 0;
+    int vivos = 1;
+    forn(i,n)
+    if((mask>>i)%2==1)
+        vivos++;
+    double pares = (vivos*(vivos-1))/2;
+    forn(i,n)
+    forn(j,n)
+    {
+        if((mask&(1<<i))!=0&&(mask&(1<<j))==0)
+            dp[mask] += f(mask|(1<<j))*p[i][j]/pares;
+    }
+    return dp[mask];
+}
+\end{lstlisting}
+\end{frame}
+
+\subsection{Ejemplos}
+
+\begin{frame}{Compañeros de grupo}
+\begin{block}{Enunciado}
+En una clase hay $2n$ alumnos ($n \leq 8$) y tienen que hacer trabajos pr\'acticos en grupos de a 2. El $i$-ésimo alumno vive en el punto $(x_i,y_i)$ de la ciudad y tarda $\sqrt{(x_i-x_j)^2+(y_i-y_j)^2}$ minutos en llegar a la casa del $j$-ésimo alumno.\\ 
+El profesor sabe que los alumnos se reunen para hacer los trabajos pr\'acticos en la casa de uno de los dos miembros del grupo. Por eso decide que la suma de las distancias entre compañeros de grupo debe ser mínima. Dar esta distancia.
+\end{block}
+\pause
+\invisible<1>{
+Como son 16 alumnos podemos iterar sobre los subconjuntos, en cada paso tomamos una máscara y le sacamos dos bits (que representan dos alumnos). Resolvemos el problema con la nueva máscara y le sumamos la distancia entre la casa de esos dos alumnos.}
+\end{frame}
+
+\begin{frame}{Problema del viajante de comercio}
+\begin{block}{Enunciado}
+Un viajante debe recorrer $n \leq 20$ ciudades exactamente una vez cada una, formando un ciclo para vender sus productos en cada ciudad.
+Conociendo la tabla de distancias entre cada par de ciudades, proponer un ciclo que minimice la longitud total recorrida.
+\end{block}
+\pause
+\invisible<1>{
+Podemos encontrar una solución $O(2^n n^2)$ utilizando programación dinámica. Notar que esto es \textbf{muchísimo} mejor que el sencillo $O(n!)$.
+
+Como estado podemos tomar la ciudad actual, y el conjunto (máscara) de las ciudades ya recorridas, asumiendo que se empezó de una ciudad fija arbitraria.
+
+ \hfill \begin{tabular}{crl} 
+      $n$ & $2^n n^2$ & $n!$ \\
+      $5$ & $800$ & $120$ \\
+      $10$ & $102400$ & $3628800$ \\
+      $15$ & $7372800$ & $1307674368000$ \\
+      $20$ & $419430400$ & $2432902008176640000$ \\
+  \end{tabular} \hfill
+}
+\end{frame}
+
+
+\begin{frame}{Tarea}
+\begin{itemize}
+\item Tutorial de topcoder: \textit{A bit of fun: fun with bits}, por Bruce Merry\\
+\url{http://community.topcoder.com/tc?module=Static&d1=tutorials&d2=bitManipulation}
+\item {\tiny \url{https://icpcarchive.ecs.baylor.edu/index.php?option=com\_onlinejudge\&Itemid=8\&page=show\_problem\&problem=2451}}
+\item \url{http://goo.gl/iKtIH}
+\end{itemize}
+\end{frame}
+
+
+\section{Longest Increasing Subsequence}
+
+\begin{frame}{Subsecuencia creciente m\'as larga}
+\begin{block}{Subsecuencia creciente m\'as larga}
+El problema consiste en, dada una secuencia de n\'umeros, encontrar la subsecuencia de n\'umeros que aparezcan de manera creciente y que sea lo m\'as larga posible.
+\end{block}
+\pause
+\invisible<1>{
+\begin{block}{Soluci\'on cuadr\'atica}
+La soluci\'on trivial a este problema consiste en calcular en cada paso, la subsecuencia creciente m\'as larga que usa los primeros $i$ n\'umeros de la secuencia, recorriendo la soluci\'on para todos los $j<i$.
+\end{block}
+}
+\end{frame}
+
+\begin{frame}{Subsecuencia creciente m\'as larga}
+\begin{itemize}
+\item Existe una soluci\'on $O(n \log n)$ donde $n$ es la longitud de la secuencia. Para implementar esa soluci\'on vamos a tener tres vectores: el input (al que llamamos seq), $m$ y $p$.
+\pause
+\invisible<1>{
+\item En la $i$-\'esima iteraci\'on, vamos a tener en $m[j]$ un $k < i$ tal que hay una subsecuencia de largo $j$ que termina en $k$, con $seq[k]$ mínimo, mientras que $m[0]$ comienza inicializado en -1.
+\item Observación: $m$ está ordenado por los valores de $seq[m[i]]$ (esto nos permite hacer búsqueda binaria en tales valores).
+}
+\pause
+\invisible<1-2>{
+\item En la $i$-\'esima posicion de $p$ vamos a ir guardando el elemento anterior al $i$-\'esimo en la subsecuencia creciente m\'as larga que termina en el $i$-\'esimo elemento del input.
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Subsecuencia creciente m\'as larga}
+\begin{lstlisting}
+vector<int> lis()
+{
+    int n = seq.size(), L = 0;  m.resize(n+1);  m[0] = -1;  p.resize(n);
+    for(int i=0;i<n;i++){
+        int j = bs(L,seq[i]);
+        p[i] = m[j];
+        if(j==L||input[i]<seq[m[j+1]]){
+            m[j+1] = i;
+            L = max(L,j+1);
+        }
+    }
+    vector<int> res;
+    int t = m[L];
+    while(t!=-1){
+        res.push_back(seq[t]);
+        t = p[t];
+    }
+    reverse(res.begin(),res.end());
+    return res;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Subsecuencia creciente m\'as larga}
+\begin{lstlisting}
+int bs(int L, int num)
+{
+    int mx = L+1, mn = 0;
+    while(mx-mn>1)
+    {
+        int mid = (mx+mn)/2;
+        if(seq[m[mid]]<num)
+            mn = mid;
+        else
+            mx = mid;
+    }
+    return mn;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Subsecuencia creciente m\'as larga}
+\begin{itemize}
+\item Observemos que $m$ va a estar definido para todo $j < L$ y que $m[j]$ est\'a en el rango de vec para todo $0 < j \leq L$. Adem\'as en la b\'usqueda binaria nunca evaluamos $seq[m[0]]$.
+\pause
+\invisible<1>{
+\item Tambi\'en podemos ver que $p$ va a estar siempre definido para todo $0 \leq i < n$.
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tarea}
+\begin{itemize}
+\item \url{http://www.spoj.com/problems/SUPPER/}
+\item \url{http://www.spoj.com/problems/LIS2/}
+\end{itemize}
+\end{frame}
+
+\section{Bonus track}
+
+\begin{frame}{Cosas de las que se puede hablar si sobra tiempo y hay que llenar}
+    \begin{itemize}
+        \item Dinámicas con frente.
+        \item Cálculo de la iésima solución lexicográficamente
+    \end{itemize}
+\end{frame}
+
+\end{document}

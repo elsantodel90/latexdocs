@@ -1,0 +1,308 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{Libre álgebra}
+\author{}
+\date{}
+
+\makeindex
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+%Ejemplos de macros
+%\newcommand{\Left}{\textbf{Left}\xspace}
+%\newcommand{\Right}{\textbf{Right}\xspace}
+%\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+%\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+
+\begin{document}
+
+\maketitle
+
+\section{Problema 1}
+
+Considere la recta $\mathbb{L} : \lambda (-1,0,1) + (9,2,-13)$ y el punto $A = (1,2,-1)$
+
+Hallar todos los pares de puntos $B,C \in \mathbb{L}$ tales que el triángulo $ABC$ sea rectángulo en $B$ e isósceles.
+
+\subsection{Solucion}
+
+Sean $P = (9,2,-13)$ y $v = (-1,0,1)$. Para ciertos $\lambda_1,\lambda_2$ tenemos:
+
+$$B = P + \lambda_1 v$$
+
+$$C = P + \lambda_2 v$$
+
+La condicion de que $ABC$ sea rectangulo en $B$ se escribe como:
+
+$$(A-B)\cdot(C-B) = 0$$
+
+$$(A-B)\cdot((\lambda_2-\lambda_1) v) = 0$$
+
+$$(\lambda_2-\lambda_1) (A-B)\cdot v = 0$$
+
+Como para que sea triangulo $B \neq C$, tenemos $\lambda_1 \neq \lambda_2$ y entonces:
+
+$$(A-B) \cdot v = 0$$
+
+$$(A-P - \lambda_1 v) \cdot v = 0$$
+
+$$(A-P) \cdot v - \lambda_1 v \cdot v = 0$$
+
+$$\lambda_1 = \frac{(A-P) \cdot v}{v \cdot v}$$
+
+Lo cual nos fija $B$. Por otra parte, la condicion de que sea isosceles implica que:
+
+$$||A-B|| = ||C-B||$$
+
+$$||A-B|| = ||(\lambda_2-\lambda_1) v||$$
+
+$$||A-B|| = |\lambda_2-\lambda_1|\ ||v||$$
+
+$$\frac{||A-B||}{||v||} = |\lambda_2-\lambda_1|$$
+
+$$\lambda_2 = \lambda_1 \pm \frac{||A-B||}{||v||}$$
+
+Lo cual nos fija los dos valores posibles de $C$. (Dejo las cuentitas a cargo del lector)
+
+\section{Problema 2}
+
+Sean en $\mathbb{R}^4$ los subespacios $\mathbb{S} = \{ x\in \mathbb{R}^4 | 2x_1 + x_3 - x_4 = 0 \}$ y
+$\mathbb{T} = \left \langle (1,2,0,2), (1,a,b,0), (0,0,1,a) \right \rangle$. Hallar todos los pares de numeros
+reales $(a,b)$ tales que $\dim(\mathbb{S} \cap \mathbb{T}) \neq 2$
+
+\subsection{Solucion}
+
+Es trivial verificar que $dim(\mathbb{T}) = 3$ (porque los tres generadores dados son LI) salvo que sean $a=2, b=-1$. En dicho caso, resulta
+
+$$\mathbb{T} = \left \langle (1,2,0,2), (1,2,-1,0), (0,0,1,2) \right \rangle = \left \langle (1,2,0,2), (0,0,1,2) \right \rangle$$
+
+Notemos que $(1,2,0,2) \in \mathbb{S}$, pero $(0,0,1,2) \notin \mathbb{S}$. Luego 
+
+$$\alpha (1,2,0,2) + \beta (0,0,1,2) \in \mathbb{S} \Leftrightarrow \beta = 0$$
+
+Con lo cual $\mathbb{S} \cap \mathbb{T} = \left \langle (1,2,0,2) \right \rangle$, luego $\dim(\mathbb{S} \cap \mathbb{T}) = 1 \neq 2$,
+luego $a = 2, b = -1$ es un par posible.
+
+Si $(a,b) \neq (2,-1)$, entonces $dim(\mathbb{T}) = 3$. Luego cada elemento $v \in \mathbb{T}$ se escribe de forma unica como:
+
+$$v = \alpha (1,2,0,2) + \beta (1,a,b,0) + \gamma (0,0,1,a) $$
+
+Si llamamos $f : \mathbb{R}^4 \rightarrow \mathbb{R}$ dada por $f(x_1,x_2,x_3,x_4) = 2x_1 + x_3 - x_4$, por definicion resulta
+$\mathbb{S} = Nu(f)$. Como $(1,2,0,2) \in \mathbb{S}$ resulta que para $v \in Nu(f)$:
+
+$$f(v) = \alpha f(1,2,0,2) + \beta f(1,a,b,0) + \gamma f(0,0,1,a) = \beta (2+b) + \gamma (1-a) = 0$$
+
+Si $(a,b) = (1,-2)$, entonces $f(v) = 0 \forall v \in \mathbb{T}$, y por lo tanto $\mathbb{S} \cap \mathbb{T} = \mathbb{T}$ y su dimension es 3.
+Luego $(a,b) = (1,-2)$ es otro par posible.
+
+Estos son los unicos pares posibles, ya que en otro caso, de $\beta (2+b) + \gamma (1-a) = 0$ se deduce que $dim(\mathbb{S} \cap \mathbb{T}) = 2$.
+
+\section{Problema 3}
+
+Considere el polinomio $P(x) = x^4 - 6x^3 + ax^2 + bx + 27$. Hallar $a$ y $b$ de tal manera que la suma de dos de las raices de $P$
+sea 4 y el producto de las otras dos sea 3.
+
+\subsection{Solucion}
+
+Sean las raices $x_1,x_2,x_3,x_4$, en algun orden. Podemos escribir la condicion del enunciado como:
+
+$$x_1 + x_2 = 4$$
+
+$$x_3 x_4 = 3$$
+
+Es sabido que en un polinomio monico como $P$, $-(x_1 + x_2 + x_3 + x_4)$ es el coeficiente que sigue al coeficiente principal.
+Luego en nuestro caso $x_1 + x_2 + x_3 + x_4 = 6 \Rightarrow x_3 + x_4 = 2$.
+
+De manera similar, el termino independiente es $(-1)^n X$, con $X$ el producto de las raices y $n$ el grado del polinomio monico.
+Luego en nuestro caso $x_1x_2x_3x_4 = 27 \Rightarrow x_1x_2 = 9$.
+
+De todo esto resulta que $x_1,x_2$ son las raices de $X^2 - 4X + 9$, y $x_3,x_4$ son las raices de $X^2 -2X +3$.
+Por lo tanto debe ser $P(X) = (X^2-4X+9)(X^2-2X+3)$. Con esto obtenemos $P(X)$, y por lo tanto podemos determinar los unicos
+valores posibles de $a$ y $b$.
+
+\section{Problema 3'}
+
+Hallar todos los $z \in \mathbb{C}$ tales que $z^4|z|^2 + 16|z| = 16\sqrt{3}i|z|$
+
+¿Cual es el minimo grado que puede tener un polinomio $P \in \mathbb{R}[x]$ tal que todas las soluciones de dicha ecuacion sean raices de $P$ ?
+
+\subsection{Solucion}
+
+(Recordatorio: Para $\alpha \in \mathbb{R}$, se tiene $e^{\alpha i} = \cos \alpha + i \sin \alpha$. Si no se entiende porque, se
+puede tomar como una notacion, que resulta consistente con las propiedades de la exponencial y el producto y suma de complejos gracias
+al teorema de Moivre)
+
+Claramente $z=0$ cumple. Si $z\neq0$, podemos dividir por $|z|$ obteniendo:
+
+$$z^4|z| = 32(-\frac{1}{2} + \frac{\sqrt{3}}{2} i)$$
+
+Tomando modulo de ambos lados queda:
+
+$$|z|^5 = 32 \Rightarrow |z| = 2$$
+
+Reemplazando en la anterior:
+
+$$z^4 = 16(-\frac{1}{2} + \frac{\sqrt{3}}{2} i) = 16e^{\frac{2 \pi}{3} i}$$
+
+$$z = 2e^{\frac{(2 + 6k) \pi}{12} i}$$
+
+Con $k \in \{ 0,1,2,3 \}$ (son las raices de la anterior porque las 4 cumplen). Luego hemos encontrado las 5 soluciones posibles.
+
+El grado minimo de un polinomio real que contenga a estos 5 complejos como raiz es 9. En efecto, si un polinomio con coeficientes reales
+tiene una raiz compleja $z$, el conjugado $\overline z$ tambien es raiz. Luego los 4 conjugados de los $z$ no nulos encontrados deben
+ser raices tambien de un polinomio que contenga a todos esos $z$. Claramente el polinomio monico que tiene como raices exactamente
+a esos 9 complejos es real (porque cada vez que hay una raiz compleja, esta su conjugada), con lo cual estamos.
+
+\section{Problema 4}
+
+Sean en $\mathbb{R}^4$ los subespacios $\mathbb{S} = \{ x \in \mathbb{R}^4 | x_1 + 2x_3 - x_4 = x_2 + x_3 - x_4 = 0 \}$
+y $\mathbb{T} = \{ x \in \mathbb{R}^4 | x_1 + x_2 + x_3 = x_2 - x_3 + x_4 = 0 \}$. Definir, si es posible, una
+t.l. $f : \mathbb{R}^4 \rightarrow \mathbb{R}^4$ que satisfaga simultaneamente $Nu f = \mathbb{S}$, $Im f = \mathbb{T}$ y
+$(f \circ f)(1,0,0,1) = (f \circ f)(0,0,1,0) $
+
+\subsection{Solucion}
+
+Como la composicion de t.l. es t.l, resulta:
+
+$$(f \circ f)(1,0,0,1) = (f \circ f)(0,0,1,0) \Leftrightarrow (f \circ f)(1,0,-1,1) = 0 $$
+
+Luego debe ser $f(f(1,0,-1,1)) = 0 \Leftrightarrow f(1,0,-1,1) \in Nu f$. Ademas trivialmente $f(1,0,-1,1) \in Im f$, luego
+$f(1,0,-1,1) \in Nu f \cap Im f = \mathbb{S} \cap \mathbb{T}$
+
+Calculando $\mathbb{S} \cap \mathbb{T}$ (es buscar el nucleo del sistemita de 4 ecuaciones que sale de pegotear las ecuaciones
+de ambos), podemos tomar un vector $v \in \mathbb{S} \cap \mathbb{T}$, y luego completar con un $w$ de modo que $\{v,w\}$ sea base de $\mathbb{T}$.
+
+Si tomamos por otro lado una base $\{v_1,v_2\}$ de $\mathbb{S}$, y la extendemos con los vectores $(1,0,-1,1),v_4$ de modo que $\{v_1,v_2,(1,0,-1,1),v_4\}$
+sea base de $\mathbb{R}^4$ (esto es posible porque $(1,0,-1,1)$ no esta en $\mathbb{S}$), si definimos $f$ tal que:
+
+$$f(v_1) = f(v_2) = 0$$
+
+$$f(1,0,-1,1) = v$$
+
+$$f(v_4) = w$$
+
+Es facil comprobar que esta $f$ satisface todo lo pedido. He demostrado que existe la $f$ y he dado un procedimiento mecanico para construirla,
+usando operaciones estandar como extender conjuntos l.i. a bases, buscar nucleos, etc: Le dejo la construccion al lector (por otra parte,
+esta bueno hacer construcciones de esta forma en lugar de mandarse de una a las cuentas porque uno puede visualizar que carajo esta haciendo).
+
+\section{Problema 5}
+
+Sea $B = \{v_1,v_2,v_3\}$ una base de $\mathbb{R}^3$ y sea $f : \mathbb{R}^3 \rightarrow \mathbb{R}^3$ la t.l. tal que
+
+$$M_B(f) = \begin{pmatrix} 1 & 2 & 0 \\ -1 & 0 & 2 \\ 0 & 1 & 1 \end{pmatrix}$$
+
+Hallar, si existe, una base $B'$ de $\mathbb{R}^3$ tal que
+
+$$M_{B'}(f) = \begin{pmatrix} -1 & 1 & 2 \\ 0 & 1 & 0 \\ -1 & 1 & 2 \end{pmatrix}$$
+
+\subsection{Solucion}
+
+(Problema dificil para los conocimientos de algebra del CBC. Doy un sketch de solucion en la que pego un galerazo tremendo en un punto.)
+
+Si dos matrices codifican la misma transformacion lineal en distintas bases, se dice que las matrices son \textit{semejantes}.
+Esto equivale a que exista una matriz inversible $C$ tal que $A = CBC^{-1}$. $C$ resulta ser basicamente la matriz cambio de base
+que pasa de una de las bases a la otra. La semejanza es una relacion de equivalencia, que quiere decir que es es reflexiva,
+simetrica y transitiva (como la igualdad), o sea que de alguna manera particiona al mundo en bolsas de cosas que ``se parecen''
+entre si.
+
+Entonces, en el problema nos dan dos matrices y lo que nos piden basicamente es decidir si son semejantes, y si lo son, dar la $C$
+(nos piden la base $B'$, pero basicamente la base $B'$ en terminos de la $B$ es un dato que se lee directamente de la matriz cambio
+de base $C$).
+
+El approach general para ver que no son semejantes, es encontrar alguna propiedad intrinseca de la transformacion lineal $f$, que sea
+calculable a partir de la matriz en cualquier base (pero que la propiedad no depende de la base, que sea intrinseca a la $f$ en si),
+y ver que en ambas matrices difiere. Ejemplos podrian ser el determinante ($(-1)^n$ veces el producto de todos los autovalores, con multiplicidad, luego
+no depende de la base), la traza (suma de los elementos de la diagonal, que da la suma de los autovalores y por lo tanto no depende
+de la base), polinomio caracteristico (la traza y el determinante son dos coeficientes de este), etc.
+
+El approach general para ver que si son semejantes, es llevar cada una a alguna ``forma canonica'', o bien simplemente a cualquier matriz
+semejante, pero la misma para las dos. Lo que digo es: si $A = C_1MC_1^{-1}$, y $B = C_2MC_2^{-1}$, entonces $A = C_1C_2^{-1}BC_2C_1^{-1} =
+C_1C_2^{-1}B(C_1C_2^{-1})^{-1}$. Luego si hacemos un cambio de base a cada una que lleve a ambas a una misma matriz, componiendo esos
+cambios de base adecuadamente obtenemos un cambio de base entre las dos matrices que queremos relacionar. Este es el approach que
+voy a usar, porque estas matrices dadas son semejantes.
+
+La ``forma canonica'' a usar puede ser cualquier cosa, pero hay una obvia: Una matriz diagonal. Si dos matrices son diagonalizables, es
+claro que son semejantes si y solo si diagonalizan a matrices con los mismos autovalores, y si es asi, diagonalizando cada una podemos
+hacer lo que queremos.
+
+En este caso, si miramos las matrices, no son diagonalizables, pero cada una tiene un autovector de autovalor $1$ y uno de autovalor $0$.
+Si metemos esto en las bases correspondientes, esas columnas tienen un solo elemento no nulo en la diagonal, que corresponde a esos autovalores
+0 y 1. Como no son diagonalizables, no podemos pretender encontrarle otro autovector l.i. a ninguna de las dos, pero si encontramos por ejemplo
+un vector $v$ tal que $Mv = v + w$, siendo $w$ el autovector de autovalor 1 elegido para la base, si completamos la base con $v$ ademas de
+los dos autovectores, en la columna de $v$ la matriz tiene solo dos unos, uno en la fila de $v$ y otro en la de $w$. Luego si encontramos
+un $v$ de estas caracteristicas en cada matriz, estamos hechos porque para cada una tenemos un cambio de base que lo lleva a una matriz con
+la pinta esa que dije, y por lo tanto combinando bien esos cambio de base nos sale un cambio de base entre ambas y con eso estamos.
+
+El $v$ ese se puede encontrar buscando la solucion al sistemita lineal $(M-id)v = w$, que tiene solucion para ambas matrices en nuestro caso.
+
+Dejo todas las cuentas al lector. Es muy posible que no se entienda porque esta muy mal explicado :P
+
+\section{Problema 5'}
+
+Sean $B = \{ v_1,v_2,v_3 \}$ y $B' = \{v_2,v_2+v_3,v_1-v_2\}$ bases de $\mathbb{R}^3$. Consideramos la t.l. 
+$f : \mathbb{R}^3 \rightarrow \mathbb{R}^3$
+tal que:
+
+$$M_{BB'}(f) = \begin{pmatrix} -11 & -5 & -7 \\ 5 & 2 & 3 \\ \alpha & 0 & 0 \end{pmatrix}$$
+
+Hallar todos los $\alpha \in \mathbb{R}$ para los cuales existe una base $B*$ de $\mathbb{R}^3$ con
+
+$$M_{B*}(f) = \begin{pmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & \alpha^2 \end{pmatrix}$$
+
+\subsection{Solucion}
+
+Este es mas facil que el anterior aunque no parezca :P
+
+Notemos que en base a la primer matriz que nos dan se tiene:
+
+$$f(v_1) = -11v_2 + 5(v_2 + v_3) + \alpha(v_1-v_2) = \alpha v_1 + (-6 -\alpha) v_2 + 5v_3$$
+
+$$f(v_2) = -5v_2 + 2(v_2 + v_3) = -3v_2 + 2v_3$$
+
+$$f(v_3) = -7v_2 + 3(v_2 + v_3) = -4v_2 + 3v_3$$
+
+De aqui nos sale que
+
+$$M_{B}(f) = \begin{pmatrix} \alpha & 0 & 0 \\ -6-\alpha & -3 & -4 \\ 5 & 2 & 3 \end{pmatrix}$$
+
+Con lo cual podemos observar que el problema equivale a ver cuando esta matriz es semejante a la segunda matriz (semejanza definida
+en el problema anterior).
+
+El polinomio caracteristico de esta matriz es $(X-\alpha)(X^2-1)$. Como esta matriz debe ser semejante a la propuesta
+$M_{B*}(f)$, deben tener el mismo caracteristico. Pero el caracteristico de esta segunda matriz es
+$(X^2-1)(X-\alpha^2)$. De aqui resulta que debe ser $\alpha = \alpha^2$ o sea $\alpha = 0,1$.
+
+Si $\alpha = 0$ , ambas son diagonalizables (porque tienen 3 autovalores distintos), y con los mismos autovalores, luego son semejantes
+a la misma matriz diagonal, y por lo tanto son semejantes entre si.
+
+
+Si $\alpha = 1$, Podemos notar que la segunda matriz es diagonalizable, pero la primera no (si hice bien las cuentas, revisen). 
+Por lo tanto en ese caso no son semejantes.
+
+Luego el unico valor posible es $\alpha = 0$.
+
+\end{document}

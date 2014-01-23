@@ -1,0 +1,1168 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{Grafos}
+\author{Agustín Gutiérrez}
+\date{2/4/2012}
+
+\makeindex
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+\newtheorem{problema}{{\sc Problema}}
+
+%Ejemplos de macros
+%\newcommand{\Left}{\textbf{Left}\xspace}
+%\newcommand{\Right}{\textbf{Right}\xspace}
+%\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+%\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\section{Introducción}
+
+\subsection{Sobre este apunte}
+
+El presente apunte se basa en la charla sobre grafos que di en BRS el día Lunes 28 de Noviembre de 2011. La intención es dejar escrito todo lo que dije en la charla (y algunas cosas más que no dije).
+
+La estructura del apunte es simple: consta primero de esta introducción, luego una lista completa de todos los problemas motivadores, y finalmente secciones que despliegan la teoría que se desea mostrar, y que permite encarar los problemas anteriormente propuestos.
+
+Notar que el apunte consiste en simplemente algunos temitas de grafos que pueden ser útiles en competencias varias y que son interesantes por sí mismos. Existe muchísimo más dando vuelta en teoría de grafos,
+tanto en teoría combinatoria de grafos, teoría topológica de grafos, como en cuanto a algoritmos y problemas de complejidad computacional sobre grafos, y los temas contenidos en este apunte no están
+particularmente elegidos por su importancia ni siguiendo ningún criterio en especial, simplemente son más o menos útiles e interesantes, y cerraba meterlos en una charla.
+
+\textbf{Se recomienda fuertemente a cualquier lector, que piense todos y cada uno de los problemas antes de leer.} Además de servir como ejercicio útil, hacer esto facilitará el entendimiento de la posterior solución propuesta.
+
+\subsection{Preliminares básicas de grafos}
+
+En lo siguiente a veces uso 3 nombres distintos de la misma cosa en la misma oración, para que el lector se adapte por la fuerza a la terminología.
+
+Un \textit{grafo} consta de un conjunto de vértices, nodos o puntitos, $V$, y un conjunto de ejes, arcos , aristas o rayitas, $E$. En general un grafo no tiene por qué ser finito, pero es el caso más usual y siempre que digamos grafo en este apunte, pensamos en grafos finitos (es decir, tanto $V$ como $E$ serán finitos). Notaremos usualmente $|V| = n$ y $|E| = m$. Cada eje se dice que incide en dos nodos. Si esos dos nodos son el mismo, decimos que el eje es un rulo, bucle o autoeje. Si dado un par de nodos, existe más de un eje que incide en ellos, decimos que el grafo en cuestión tiene multiejes. La forma usual de dibujar un grafo es representar los vértices con puntitos, y las aristas con rayitas, de forma tal que la línea asociada a un eje une los nodos sobre los que el arco incide.
+
+A veces se considera importante la direccion de cada arco, es decir, importa si un arco que incide en nodos $a$ y $b$, sale de $a$ y llega a $b$, o viceversa. En tal caso decimos que el grafo es un grafo dirigido o digrafo. La forma usual de dibujarlos es igual que los grafos comunes pero representando las aristas con flechas en lugar de líneas, de forma que si el eje sale de $a$ y llega a $b$, se dibuja con una flecha desde $a$ hacia $b$. El grafo \textit{subyacente} de un grafo dirigido es el grafo comun que resulta de ignorar las direcciones de las aristas.
+
+Si $v \in V$, el \textit{grado} de $v$, $gr(v)$, se define como la cantidad de aristas que inciden en $v$. Los bucles suman 2 al grado del nodo en el que inciden, una vez por cada punta incidente. Es inmediato notar que $\sum_{v \in V}{gr(v)} = 2m$. Notar que esto implica en particular que la cantidad de nodos con grado impar es par, hecho que usaremos más adelante. En grafos dirigidos, se distingue el grado de salida, $gr_+(v)$, definido como la cantidad de ejes que salen de $v$, del grado de llegada, $gr_-(v)$, definido como la cantidad de ejes que llegan a $v$. Lo que se observa trivialmente es que $\sum_{v \in V}{gr_+(v)} = \sum_{v \in V}{gr_-(v)} = m$. Se define tambien en este caso el grado neto de un vertice $v$ como $gr_0(v) = gr_+(v) - gr_-(v)$. De lo anterior surge inmediatamente que $\sum_{v \in V}{gr_0(v)} = 0$.
+
+Un grafo \textit{simple} es un grafo no dirigido, sin multiejes ni bucles.
+
+Un \textit{subgrafo} de un grafo es un grafo que resulta de quitarle vértices y aristas al original. 
+
+Un \textit{camino} en un grafo es una secuencia no vacía de vértices $v_1,\cdots,v_n$, tal que hay una arista de $v_i$ a $v_{i+1}$ para $1\leq i < n$. En este caso se dice que la \textit{longitud} del camino es $n-1$, es decir, la cantidad de aristas que contiene. Notar que siempre existe un camino de longitud 0 de $v$ hasta $v$. Un \textit{ciclo} es un camino que comienza y termina en el mismo vertice. Un camino es \textit{simple} si no utiliza el mismo vértice más que una vez, salvo que sea un ciclo, en cuyo caso puede usar el vértice de origen a lo sumo dos veces (como vértice de origen y llegada).
+
+Si $P = v_1, \cdots, v_n$ es un camino, notamos $g(P)$ al grafo de $P$, que es el grafo que resulta de poner como vértices todos los vértices involucrados en $P$, y $n-1$ aristas uniendo $v_i$ con $v_{i+1}$, para $1 \leq i < n$. Es inmediato que $g(P)$ tiene todos sus vértices de grado par, si es un ciclo, o bien todos sus vértices de grado par menos los dos extremos de grado impar, si es un camino normal. Si el grafo es dirigido, lo que se observa es que $gr_0(v) = 0$ para todo vértice intermedio del camino (todos si es un ciclo), $gr_0(v) = 1$ en el vértice de origen, y $gr_0(v) = -1$ en el nodo de llegada. Para notar lo anterior basta observar que por cada vez que se entra a un vértice intermedio del camino, se sale de él.
+
+Un grafo dirigido se dice \textit{transitivo} si la relación entre los vértices dada por $u\ R\ v \Leftrightarrow $ existe arista desde $u$ hasta $v$
+es transitiva. La \textit{clausura transitiva} de un grafo $G$ es el grafo que resulta de agregar a $G$ las mínimas aristas posibles para que
+se vuelva transitivo (en otras palabras, cada vez que se puede viajar de $u$ a $v$ y no esté la arista directa de $u$ a $v$, agregarla).
+
+\pagebreak
+
+\section{Problemas}
+
+\begin{problema} 
+Consideramos los dominós hasta $n$ (los comunes son hasta 6. O sea cada domino tiene un par de numeros del 0 al $n$ inclusive).
+Mas precisamente, el conjunto de dominos es el conjunto de pares $\{a,b\}$ con $a$ y $b$ en $\{0,\cdots,n\}$, donde en los pares no importa el orden.
+Una ronda copada de dominós consiste en poner los dominos uno al lado del otro unidos por los extremos, pero de forma que si unimos dos extremos, los números en ese extremo en cada una de las fichas deben coincidir (la forma de los dominós no importa sino solo como enganchan los números).
+Decidir para que valores de $n$ se puede armar una ronda copada con los dominó.
+\end{problema}
+
+\begin{problema} 
+Una hormiguita camina por las lineas de una grilla de $N \times N$ cuadraditos unitarios. Comienza en el $(0,0)$ y termina el recorrido en el $(N,N)$.
+No puede pasar dos veces por la misma linea de la cuadricula (si puede pisar varias veces la misma interseccion) 
+¿Cual es la maxima cantidad de segmentitos unitarios que puede recorrer en un viaje entre las dos esquinas opuestas?
+\end{problema}
+
+\begin{problema} 
+Tenemos que dibujar la grilla del problema 2 con mínima cantidad de trazos. Un trazo es válido si es un camino valido de hormiguita del punto 2,
+salvo que puede empezar y terminar en cualquier lugar, y dos trazos distintos no pueden compartir una linea de la cuadricula (si se pueden tocar
+en las intersecciones de la grilla) ¿Cuántos trazos necesitamos?
+\end{problema}
+
+\begin{problema} 
+En un reino hay $n$ ciudades, algunos pares de las cuales estan conectadas directamente por una ruta que las une.
+Un recaudador de impuestos debe viajar entre pares de ciudades conectadas, de forma de recorrer cada ciudad exactamente una vez, y luego volver a la ciudad en la que inicio el viaje.
+
+La potencia de una ciudad $a$ se define como la cantidad de ciudades directamente conectadas a ella, $pot(a)$
+Siguiendo los consejos del ingeniero vial, el rey ordenó construir las rutas de tal forma que si dos ciudades $a$ y $b$ no están directamente conectadas entre sí, entonces $pot(a) + pot(b) \geq n$
+
+Demostrar que en un reino así diseñado, siempre es posible para el recaudador de impuestos realizar el circuito propuesto.
+\end{problema}
+
+\begin{problema} 
+Se tienen dos hojas de papel rectangulares congruentes, cada una particionada en $n$ paises de igual area (aunque las particiones en cada hoja
+son diferentes). Se superponen las hojas una encima de la otra. Demostrar que se puede pinchar con $n$ alfileres de forma que cada pais sea
+atravesado por exactamente un alfiler.
+\end{problema}
+
+\begin{problema}
+Torneo de ajedrez (O sea que un partido ganado suma un punto, empatado suma $\frac{1}{2}$ punto, perdido no suma). 
+
+Bob Marley el rey del reggae ya ha terminado de jugar todos sus partidos, y obtuvo en total $T$ puntos.
+
+Hay $n$ rivales, numerados $1$ a $n$. Faltan jugarse $m$ partidos numerados $1$ a $m$, el partido $i$ se juega entre los jugadores $a_i$ y $b_i$.
+En este momento el rival $i$ tiene $s_i$ puntos.
+
+Un par $(A,B)$ con $A \subseteq \{1,\cdots, m \}$ y $B \subseteq \{1, \cdots, n \}$ es bueno si para cada partido $1 \leq i \leq m$,
+$i \in A$ o $\{ a_i, b_i \} \subseteq B$ (O sea si para cada partido, el partido esta en $A$ o sus dos jugadores estan en $B$ o las dos cosas)
+
+Demostrar que Bob tiene posibilidad de salir campeón del torneo (posiblemente compartido) si y solo si para todo par bueno $(A,B)$ vale:
+
+$$m \leq |A| + \sum_{i \in B}{T - s_i}$$
+
+\end{problema}
+
+\begin{problema} 
+Hay un arreglo rectangular de numeros reales. En cada fila y columna, la suma de los números en esa fila o columna es entera.
+
+Probar que se puede cambiar cada valor $x$ por $\lfloor x \rfloor $ o $\lceil x \rceil$ de tal forma que no se alteren las sumas en cada fila y columna.
+\end{problema}
+
+
+\begin{problema}
+Se tiene una secuencia de $n^2 + 1$ enteros distintos. Una subsecuencia es una secuencia que resulta de borrar elementos a la secuencia
+manteniendo el orden (Ejemplo, 1 3 8 es subsecuencia de 1 2 3 4 5 6 7 8 9, al igual que 1,  o 1 8 9 o 2 3 5 6).
+
+Una subsecuencia es creciente si los numeros crecen de izquierda a derecha o decreciente si decrecen de izquierda a derecha. Una
+subsecuencia es monotona si es creciente o decreciente.
+
+Demostrar que existe una subsecuencia monotona de longitud n + 1
+\end{problema}
+
+\pagebreak
+
+\section{Ciclos y caminos eulerianos}
+
+\subsection{Condición necesaria y suficiente}
+
+\begin{definicion}[Camino Euleriano]
+Un camino euleriano en un grafo $G$, es un camino en $G$ que utiliza cada una de las aristas de $G$ exactamente una vez.
+\end{definicion}
+
+Si el camino es además un ciclo se lo llamará lógicamente un ciclo euleriano. Lo que queremos dar es una condición necesaria y suficiente para que un grafo cualquiera $G$ tenga un camino / ciclo euleriano.
+
+\textbf{1)} La primer observación es que el grafo $G$ debe ser conexo, \textbf{salvo por la presencia de vértices aislados}. En otras palabras, como un solo camino debe contener todas las aristas de $G$, estas deben estar todas conectadas entre sí, con lo cual el grafo original debe ser conexo, salvo a lo sumo por la presencia de vértices aislados que no aportan aristas. Si es dirigido, seguro que el grafo subyacente debe ser conexo por la misma razón.
+
+\textbf{2)} Para la segunda observación, notamos que si $P$ es un camino euleriano de $G$, debe ser $g(P) = G$, salvo por los vértices aislados en $G$. De aquí se desprende que si $G$ es no dirigido, todos sus nodos deben tener grado par, en cuyo caso podría haber ciclo euleriano, o bien todos sus nodos menos exactamente dos deben tener grado par, en cuyo caso podría haber camino euleriano con los dos nodos de grado impar como extremos. De ser dirigido, el grado neto de todos sus nodos debe ser 0, en cuyo caso podría haber ciclo euleriano, o bien todos deberían ser 0 menos dos, uno con 1 (necesariamente el origen) y otro con -1 (necesariamente la llegada).
+
+Veamos que estas dos condiciones, claramente necesarias, son suficientes. Lo veremos para ciclos eulerianos solamente: Notar que si vale para ciclos, vale tambien para caminos, pues en un grafo que cumple 1) y 2) para camino, si se agrega una arista desde el destino identificado hasta el origen identificado, se cumplen las hipotesis 1) y 2) para ciclos, luego si la suficiencia vale para ciclos tendriamos un ciclo euleriano con este eje adicional, y es claro entonces que quitándolo tenemos un camino euleriano en el original.
+
+Para demostrar la suficiencia, veremos primero que la condicion 2 implica (de hecho es equivalente ya que la vuelta es inmediata) el siguiente:
+
+\begin{lema}
+En un grafo $G$ que cumple la condicion 2 para ciclo euleriano, sus aristas pueden ser particionadas en ciclos disjuntos, es decir, cada arista es utilizada en exactamente un ciclo, exactamente una vez.
+\end{lema}
+\begin{proof}
+La demostración es por inducción en la cantidad de aristas: Si no hay aristas, el lema es trivial. Supuesto que vale para menos de $m$ aristas, y que $G$ tiene $m$ aristas, tomamos un vertice cualquiera $v$ no aislado, y tomamos un camino $P$ con origen en $v$, que no repita aristas, de longitud máxima. Dicho camino debe ser necesariamente un ciclo: en efecto, si $u$ es el nodo final del camino, el camino debe utilizar todas las aristas salientes de $u$, pues de lo contrario se podría extender a otro camino de longitud mayor. 
+
+\textbf{Caso no dirigido} Pero como $gr(u)$ en $G$ es par, debe ser entonces $gr(u)$ en $g(P)$ par, y como $u$ es el vértice terminal del camino, esto implica que $P$ es un ciclo.
+
+\textbf{Caso dirigido} Pero como $gr_0(u) = 0$ en $G$, debe ser entonces $gr_0(u) = 0$ en $g(P)$, y como $u$ es el vértice terminal del camino, esto implica que $P$ es un ciclo.
+
+Por lo tanto hemos encontrado un ciclo en $G$. Si quitamos todas sus aristas, obtenemos un grafo $G'$ que se puede particionar en ciclos por hipótesis inductiva, luego agregando el ciclo encontrado hemos particionado $G$ en ciclos como queríamos.
+\end{proof}
+
+Teniendo el lema, ya estamos en condiciones de demostrar el ansiado:
+
+\begin{teorema}
+Un grafo $G$ admite ciclo o camino euleriano, si y solo si se satisfacen las condiciones 1 y 2 antes enunciadas.
+\end{teorema}
+\begin{proof}
+Como ya hemos dicho, las condiciones son trivialmente necesarias. Veamos que son suficientes.
+
+Sabiendo entonces por el lema que se puede particionar el grafo en ciclos, falta unir esos ciclos en un único ciclo y habremos terminado. 
+Por la condicion 1, las aristas están conectadas entre sí, es decir, es posible viajar de cualquier arista a cualquier otra por un camino. 
+Es claro entonces que si nuestra partición tiene más de un ciclo, debe haber un par de ciclos que comparten un vértice. 
+Podemos entonces pegarlos en un solo ciclo: Se inicia el ciclo en ese vértice, se recorre por completo uno de los dos ciclos,
+y luego el otro, obteniendo un ciclo válido que abarca a ambos. 
+Continuando de esta forma tendremos un único ciclo, y por lo tanto queda demostrada la suficiencia de las condiciones propuestas.
+\end{proof}
+
+\subsubsection{Problemas 1 y 2}
+
+Con esto ya podemos encarar la solución de los problemas 1 y 2.
+
+\textbf{Para el problema 1}, notemos que si ponemos como vértices los números del 0 al $n$ inclusive, y cada dominó lo pensamos como una arista entre los números que contiene, nos preguntamos exactamente cuando el grafo completo con los nodos del 0 al $n$ (incluyendo los bucles) tiene un ciclo euleriano. Estos grafos son claramente conexos así que solo cabe preguntarse para que valores de $n$ resultan ser todos los grados pares. El grado de cualquier nodo en este grafo es claramente $n+2$ (el $+2$ proviene de los bucles), luego se podrá armar los ciclos exactamente cuando sea $n$ par.
+
+\textbf{Para el problema 2}, pensamos la cuadrícula como un grafo, con cada intersección como nodo y cada segmento unitario que une dos intersecciones como una arista entre ellas. Es claro en este caso que si quitamos las aristas que la hormiga no recorra, el grafo resultante debe contener un camino euleriano entre las dos esquinas opuestas. Por lo tanto, el problema es equivalente a quitar la mínima cantidad de aristas de forma que el grafo resultante contenga un camino euleriano entre las esquinas.
+
+Por las condiciones ya sabidas, en un tal grafo deberán tener todos los vértices grado par, salvo las dos esquinas en cuestión. Notamos que en el grafo inicial, los nodos que tienen su paridad incorrecta son las dos esquinas (grado 2, que debería ser impar) y todos los bordes que no son esquina (grado 3, debería ser par). Estos pueden partirse en dos conjuntos: aquellos $(x,y)$ con $x+y < N$, y aquellos con $x+y > N$ (ninguno de estos nodos con mala paridad está en la diagonal contraria a las esquinas origen y destino).
+
+Cada uno de estos conjuntos tiene $2N-3$ nodos. Además, es claro que ninguna arista incide al mismo tiempo en un vértice de cada conjunto. Como además cada vez que se elimina una arista se modifica el grado de exactamente 2 nodos, es claro que deberan eliminarse como mínimo $2\lceil \frac{2N-3}{2} \rceil = 2N - 2$ aristas. Es fácil eliminar esa cantidad obteniendo un grafo con las paridades correctas y conexo en aristas, luego esa es la mínima cantidad de segmentos que la hormiga podrá no recorrer (y el total de segmentos menos esos segmentos será lo máximo que puede caminar).
+
+\subsection{Mínimo cubrimiento de ejes por caminos}
+
+Consideremos el siguiente problema: Tenemos un grafo $G$, y queremos encontrar un conjunto de caminos (potencialmente ciclos) con la
+menor cantidad de caminos posible, y tales que particionen las aristas del grafo
+(se puede interpretar como ``Dibujar el grafo con mínima cantidad de trazos'').
+
+Lo resolveremos para grafos conexos, y para un grafo general la respuesta es claramente la suma sobre sus componentes conexas, pues
+un camino está completamente contenido en una componente.
+
+Si $G$ consta de un único vértice (única posibilidad para que no tenga aristas), con 0 caminos basta trivialmente. En lo siguiente
+podemos asumir entonces que se tiene al menos una arista (equivalentemente, al menos dos nodos).
+
+Si $G$ tiene todos sus nodos con grado par, la respuesta es 1 pues como ya vimos, existe ciclo euleriano así que podemos tomar ese.
+
+Falta ver entonces el caso en que hay $2k$ nodos con grado impar, con $k \geq 1$. Notemos que son necesarios al menos $k$ caminos: En efecto,
+es claro que el grado de cada nodo en $G$ es la suma de los grados que tiene ese nodo en cada camino de la partición. Como cada camino de
+la partición tiene a lo más 2 nodos de grado impar, y $G$ tiene $2k$ nodos de grado impar, es inmediato que serán necesarios al menos $k$
+caminos para lograr cubrir todas las aristas de $G$.
+
+Por otra parte, se puede observar que es suficiente: Pongamos los $2k$ nodos en parejitas, y coloquemos una arista adicional uniendo
+cada parejita. El grafo $G'$ resultante es conexo y tiene todos los nodos con grado par, luego tiene un ciclo euleriano. Ahora bien,
+si al ciclo euleriano de $G'$ le quitamos las $k$ aristas que hemos agregado, nos quedan $k$ caminos, que deben estar particionando las
+aristas de $G$.
+
+Luego hemos encontrado un algoritmo para calcular la mínima cantidad de trazos necesarios para dibujar un grafo $G$. En resumen:
+
+Tomar las componentes conexas, salvo los vértices aisladas, y para cada una, sumar $k$, donde la componente tiene $2k$ vértices de grado impar,
+salvo que sea $k=0$, en cuyo caso se debe sumar 1 igualmente.
+
+\subsubsection{Problema 3}
+
+Para resolver el problema 3, basta aplicar el algoritmo al grafo del problema.
+
+Hay una sola componente conexa, con $4(n-1)$ nodos de grado impar. Por lo tanto con $2(n-1)$ trazos estamos (siempre y cuando sea $n > 1$: Para
+$n = 1$ necesitamos un solo trazo).
+
+\pagebreak
+
+\section{Ciclo Hamiltoniano}
+
+\subsection{Definición e introducción}
+
+\begin{definicion}[Camino Hamiltoniano]
+Un camino hamiltoniano en un grafo $G$, es un camino en $G$ que utiliza cada uno de los vértices de $G$ exactamente una vez, salvo que
+sea un ciclo, en cuyo caso puede usar exactamente dos veces el nodo de origen y fin, y se lo llama un ciclo hamiltoniano.
+\end{definicion}
+
+La definición de ciclo hamiltoniano es casi igual a la de camino euleriano anteriormente vista: básicamente se reemplazó ``arista'' con ``nodo''
+en la definición. Sin embargo, si bien para el caso de ciclos eulerianos existe una condición necesaria y suficiente muy sencilla para su existencia,
+no se conoce ninguna para el caso de caminos y ciclos hamiltonianos. De hecho, el problema es \textit{NP-Completo}, lo cual implica que no se
+conoce ningún algoritmo eficiente para determinar si un grafo dado admite un ciclo o camino hamiltoniano.
+
+A continuación, daremos una condición suficiente para la existencia de un ciclo hamiltoniano en un grafo. Destacamos que dicha condición no es
+necesaria, pues por ejemplo, los ciclos simples no la satisfacen salvo los ciclos más pequeños, y trivialmente tienen un ciclo hamiltoniano.
+
+\subsection{Condición suficiente para la existencia de ciclo hamiltoniano}
+
+\begin{teorema}
+Supongamos que un grafo simple $G$ es tal que si dos nodos $a$ y $b$ no están directamente conectados entre sí, entonces $gr(a) + gr(b) \geq n$.
+Entonces $G$ tiene un ciclo hamiltoniano.
+\end{teorema}
+\begin{proof}
+Voy a dar un algoritmo para construir el ciclo hamiltoniano, con lo cual demostrando su correctitud tendremos existencia y algoritmo para calcularlo.
+
+Dada una permutación de los vértices $v_1, \cdots , v_n$, defino su ``valor'' como la cantidad de aristas de $G$ que unen algun $v_i$ con $v_{i+1}$,
+o bien $v_1$ con $v_n$. Es decir, la permutacion es en realidad una propuesta de ciclo hamiltoniano, y su valor cuenta cuantas de sus aristas son
+reales, y cuantas son aristas que no estan presentes realmente en el grafo. Queda claro entonces que una permutacion con valor $n$ nos da un
+ciclo hamiltoniano.
+
+A continuación describiré un algoritmo para dada una permutación con valor menor que $n$, aumentar su valor. Aplicándolo reiteradamente podremos
+llegar a una con valor $n$, luego tendremos un ciclo hamiltoniano.
+
+Sea entonces una permutación  $P = v_1, \cdots , v_n$ con valor $k < n$, y supongamos sin pérdida de generalidad que $v_1$ y $v_n$ no están conectados
+(si no, basta ``rotar'' la permutación hasta que esto ocurra).
+
+Supongamos que para cierto $i$, con $1 \leq i < n$, existen en el grafo las aristas de $v_1$ a $v_{i+1}$ y de $v_n$ a $v_i$.
+Si consideramos ahora la permutación $P' = v_1,v_2, \cdots, v_i, v_n, v_{n-1}, \cdots, v_{i+1}$, notamos que su valor es necesariamente
+mayor que el de $P$, pues se agregan las aristas de $v_1$ a $v_{i+1}$ y de $v_n$ a $v_i$, presentes en el grafo, y se quita como mucho
+una arista que va de $v_i$ a $v_{i+1}$ (También se quitó la de $v_1$ a $v_n$, pero sabemos que esa no está en el grafo así que no perdemos
+valor por eso).
+
+Veamos ahora que tal $i$ existe. Notemos que las $gr(v_1)$ aristas que salen de $v_1$ sirven para
+$gr(v_1)$ valores de $i$, y las $gr(v_n)$ aristas que salen de $v_n$ sirven para $gr(v_n)$ valores de $i$.
+Como hay $n-1$ valores de $i$, y $gr(v_1) + gr(v_n) \geq n$, por palomar para cierto valor de $i$ ambas sirven, y podemos aplicar lo anterior.
+\end{proof}
+
+Un corolario inmediato muy conocido de este teorema es que si en un grafo todos los nodos tienen grado al menos $\frac{n}{2}$, existe
+ciclo hamiltoniano.
+
+\subsubsection{Problema 4}
+
+El problema 4 pide demostrar el teorema, como hemos hecho (solo que habla de ciudades y caminos y reyes e ingenieros viales y recaudadores de impuestos y potencia).
+
+\pagebreak
+
+\section{Flujo}
+
+\subsection{Definiciones}
+
+\subsubsection{Red de flujo}
+
+Sea $G$ un grafo dirigido, y sea $c : E \rightarrow \mathbb{R}_{\geq 0}$. $c$ asigna a cada eje una \textit{capacidad} no negativa. Consideremos
+además dos vértices destacados $S,T \in V, S \neq T$. A $S$ lo llamamos fuente u origen, y a $T$ lo llamamos sumidero o destino. La tupla
+$(G,c,S,T)$ constituye una \textit{red de flujo}.
+
+La intuición detrás de esto es que podemos pensar los ejes como tuberías (dirigidas), donde la capacidad indica la cantidad de litros de agua
+por segundo que se puede enviar por la misma. La idea entonces será que queremos mandar agua desde $S$ hasta $T$, cumpliendo las restricciones
+de capacidad, y sin que el agua se acumule en ningún punto intermedio (fluya de $S$ hacia $T$ sin perderse parte en el camino). Para formalizar
+esto definimos a continuación la noción de flujo.
+
+\subsubsection{Flujo}
+
+Dada una red de flujo $(G,c,S,T)$, decimos que una función $f : E \rightarrow \mathbb{R}_{\geq 0}$ es un \textit{flujo} para dicha red,
+si se satisfacen las siguientes dos condiciones:
+
+$$0 \leq f(e) \leq c(e)\ \ \ \forall e \in E$$
+
+$$\sum_{e \in v^+}{f(e)} = \sum_{e \in v^-}{f(e)}\ \ \  \forall v \in V, v \neq S,T$$
+
+Donde notamos $v^+$ al conjunto de aristas que salen de $v$, y $v^-$ al conjunto de aristas que entran a $v$.
+
+La intuición es que $f(e)$ es la cantidad de flujo que decidimos enviar a través de la arista $e$. La primer condición claramente expresa que no
+se violan las restricciones de capacidad. La segunda además indica que, salvo en $S$ y en $T$, no se puede acumular flujo en ningún vértice
+intermedio del camino, ya que exigimos que la cantidad de flujo que entra sea igual a la cantidad de flujo que sale.
+
+El \textit{valor} de un flujo se define como
+
+$$v(f) = \sum_{e \in S^+}{f(e)} - \sum_{e \in S^-}{f(e)} = \sum_{e \in T^-}{f(e)} - \sum_{e \in T^+}{f(e)}$$
+
+Es decir, la cantidad de flujo que efectivamente estamos mandando desde $S$ hacia $T$.
+
+\subsubsection{Flujo entero}
+
+Un caso particular de gran importancia lo constituye el caso en que trabajamos en los enteros. Una \textit{red entera} es una red de flujo en
+la cual todas las capacidades son enteras. Un \textit{flujo entero} es un flujo en una red entera, tal que los valores del flujo son siempre
+enteros (es decir, $Im(f) \subseteq \mathbb{Z}$).
+
+La intuición en este caso es que en lugar de agua, lo que estamos moviendo son paquetitos, puntos, cartas, fichitas, o en general,
+unidades discretas indivisibles.
+
+\subsubsection{Existencia de un flujo máximo}
+
+Vamos a demostrar a continuación que en una red de flujo, siempre existe un flujo máximo (es decir un flujo cuyo valor es máximo).
+Para eso vamos a usar un poquito de análisis. Los que no entiendan esta demostración, no desesperen: 
+Pueden creerse que existe un flujo máximo y ya. Para ellos, notar que si bien estudiamos el flujo en un contexto general donde las
+capacidades y el flujo pueden tomar valores reales, en la práctica solo lo usaremos para flujos sobre una red entera (que es
+el caso más importante en la práctica), y para este caso, basta observar que de las demostraciones que daremos más adelante, y en particular
+del método de Ford-Fulkerson que describiremos, se sigue inmediatamente que existe un flujo máximo en dicho caso (y además existe un flujo máximo entero).
+
+Vamos a ver ahora la existencia de un flujo máximo en una red cualquiera. Si $E = \{e_1, e_2, \cdots, e_m\}$, $V = \{v_1, v_2, \cdots, v_n\}$ y para un $x \in \mathbb{R}_{\geq 0}$ notamos $I_x = \lbrack 0, x \rbrack$, definimos
+
+$$C = I_{c(e_1)} \times I_{c(e_2)} \times \cdots \times I_{c(e_m)} \subseteq \mathbb{R}^m$$
+
+Se observa que $C$ es compacto (cerrado y acotado en $\mathbb{R}^m$). Queda claro que cada flujo $f$ corresponde a un elemento de $C$,
+específicamente el dado por $f \mapsto (f(e_1), \cdots, f(e_m))$.
+
+La recíproca no es cierta ya que no todo elemento de $C$ corresponde a un flujo válido: Esto se debe a que puede fallar la segunda restricción
+de flujo válido, es decir, para un cierto elemento de $C$, el ``flujo'' asociado puede acumular (o quitar) flujo de un nodo intermedio distinto
+de $S$ o $T$. Si llamamos:
+
+$$A_i = \left \{(c_1, \cdots, c_m) \in \mathbb{R}^m   \left | \sum_{j \in v_i^+}{c_j} = \sum_{j \in v_i^-}{c_j} \right .  \right  \}$$
+
+Donde con $v_i^+$ hemos notado al conjunto de los índices de las aristas que salen de $v_i$, y análogamente $v_i^-$ para las entrantes.
+Claramente, cada $A_i \subseteq \mathbb{R}^m$ es cerrado porque es preimagen de un cerrado (un punto) por una función continua. Luego la intersección
+
+$$C' = C \cap \bigcap_{v_i \neq S,T}{A_i}$$
+
+Es cerrado (porque intersección de cerrados es cerrado) y acotado (porque $C$ lo es), luego es compacto. Además es claro ahora que cada flujo
+válido se corresponde exactamente con un elemento de $C'$. Luego si consideramos la función $v: C' \rightarrow \mathbb{R}$ dada por:
+
+$$v(c_1, \cdots, c_m) = \sum_{j \in S^+}{c_j} - \sum_{j \in S^-}{c_j}$$
+
+Es claro que $v$ tiene un máximo en $C'$, porque toda función continua en un compacto alcanza un máximo y un mínimo en el compacto. Como
+$v$ manda claramente a cada representación de un flujo al valor del flujo correspondiente, queda claro que un máximo de $v$ determina un
+flujo máximo en la red, como queríamos.
+
+Insisto en que no es necesario entender esta parte para apreciar todo lo otro: Sepan simplemente que el flujo máximo existe siempre. Total,
+el caso importante, de redes enteras, quedará demostrado claramente a partir de lo que haremos prontito (Ford Fulkerson + Red Residual), de
+forma constructiva (daremos un algoritmo para calcular el máximo flujo, de gran importancia práctica).
+
+\subsubsection{Corte}
+
+Definiremos ahora otra noción sobre una red de flujo: La noción de corte.
+
+Dada una red de flujo $(G,c,S,T)$, un \textit{corte} en dicha red es un conjunto $C \subseteq E$, de tal manera que el grafo que resulta de quitar
+las aristas de $C$ de $G$ (es decir, el grafo con los mismos vértices que $G$ pero aristas $E \setminus C$) no contiene ningún camino de $S$ a $T$.
+En otras palabras, un corte consiste en ``cortar'' aristas del grafo para que no se pueda llegar a $S$ a $T$.
+
+La capacidad de un corte se define simplemente como $c(C) = \sum_{e \in C}{c(e)}$, es decir, la suma de las capacidades de las aristas en $C$.
+
+Cabe destacar que existe otra definicion muy usada de corte, que es esencialmente equivalente a esta, pero que me resulta más incómoda para los
+fines particulares perseguidos en este apunte, así que voy a dar esta.
+
+Notemos que siempre existe un corte mínimo (corte de mínima capacidad). Esto es trivial porque solo existen finitos cortes (ya que hay finitas aristas,
+luego finitos conjuntos de aristas). Buscar el corte mínimo es un problema de interés práctico (además de que es una pregunta mucho más intersante
+que buscar un corte máximo).
+
+\subsection{Maxflow-Mincut}
+
+Listas todas las definiciones anteriores, ya estamos en condiciones de encarar la demostración del teorema de Maxflow-Mincut. Pronto lo enunciaremos
+y demostraremos. Este teorema tiene una gran importancia en teoría de grafos y como veremos permite probar rápidamente una variedad de resultados
+muy interesantes. Además la íntima relación entre corte y flujo permite aplicar los algoritmos de cálculo de flujo máximo para calcular cortes mínimos
+y resolver otros problemas similares.
+
+\subsubsection{Relación entre un flujo y un corte}
+
+En una determinada red de flujo $(G,c,S,T)$, sea $C$ un corte y sea $f$ un flujo. Entonces vale:
+
+$$v(f) \leq c(C)$$
+
+Es decir, el valor de cualquier flujo es menor o igual que la capacidad de cualquier corte. En efecto,
+el corte $C$ separa al grafo en dos conjuntos de vértices $A$ y $B$: $A$ es el conjunto de vértices alcanzables desde $S$
+luego de quitar las aristas del corte, y $B$ son el resto (claramente $S \in A$ y $T \in B$ por ser $C$ un corte).
+
+Notaremos con $\overrightarrow{AB}$ al conjunto de aristas de $E$ que salen de un vértice en $A$ y llegan a un vértice en $B$,
+y análogamente $\overrightarrow{BA}$ al conjunto de aristas de $E$ que salen de un vértice en $B$ y llegan a un vértice en $A$.
+
+Notemos que claramente $\overrightarrow{AB} \subseteq C$, pues si el corte no quitara una cierta $e \in \overrightarrow{AB}$,
+resultaría que desde $S$ se podría llegar a un vértice de $B$. En virtud de esto podemos notar:
+
+$$v(f) = \sum_{e \in S^+}{f(e)} - \sum_{e \in S^-}{f(e)} = \sum_{e \in S^+}{f(e)} - \sum_{e \in S^-}{f(e)} + 
+\sum_{v \in A \setminus \{S\}}{\left (\sum_{e \in v^+}{f(e)} - \sum_{e \in v^-}{f(e)}\right )} =$$
+
+$$= \sum_{v \in A }{\left (\sum_{e \in v^+}{f(e)} - \sum_{e \in v^-}{f(e)}\right )} = 
+\sum_{e \in \overrightarrow{AB}}{f(e)} - \sum_{e \in \overrightarrow{BA}}{f(e)} \leq
+\sum_{e \in \overrightarrow{AB}}{f(e)} \leq c(C)$$
+
+La primera igualdad por definición, la segunda porque los términos que agregamos son 0 por ser un flujo válido, las siguientes dos
+son simplemente reacomodar términos, y las desigualdades son claras ya que $\overrightarrow{AB} \subseteq C$.
+
+La intuición detrás de las cuentitas anteriores es notar que si partimos el grafo en dos conjuntos de nodos $A$ y $B$, uno con $S$ y el otro con $T$,
+como el flujo no se pierde, el valor del flujo, que es la cantidad de flujo que sale de $S$, es también la cantidad de flujo que ``cruza''
+del conjunto $A$ al $B$. Y luego por la definición de nuestros $A$ y $B$, la cantidad de flujo que cruza entre los conjuntos nunca puede
+superar la capacidad del corte.
+
+Es interesante preguntarse, siempre que tenemos probada una desigualdad, bajo que condiciones se produce la igualdad. En nuestro caso,
+notemos que si un flujo $f$ y un corte $C$ son tales que $v(f) = c(C)$, ciertamente, cualquier otro flujo ha de tener menor o igual valor que $f$
+(pues ha de tener menor o igual valor que $c(C) = v(f)$), y similarmente, cualquier otro corte ha de tener mayor o igual capacidad de $C$,
+(pues ha de tener mayor o igual capacidad que $v(f) = c(C)$). En otras palabras: Si el valor de un cierto flujo es igual a la capacidad
+de un cierto corte, el flujo debe ser máximo, y el corte debe ser mínimo. Cabe entonces preguntarse si esto siempre ha de ser así: es decir,
+si el flujo máximo tiene siempre igual valor que la capacidad del mínimo corte. Esto es así en efecto, y eso es lo que dice el teorema de
+Maxflow-Mincut.
+
+Nos dirigimos entonces a demostrar este importante teorema. Para ello bastará con mostrar, para un flujo máximo, como construir un corte
+con capacidad igual al valor del flujo, y entonces resultará inmediatamente que el corte es mínimo, y por lo tanto vale el teorema.
+
+\subsubsection{Red residual}
+
+Dada una red de flujo $(G,c,S,T)$ y un flujo $f$ en dicha red, llamamos la \textit{red residual} de dicha red, a la red de flujo
+$(G', c', S, T)$ tal que $G'$ tiene los mismos vertices que $G$, y las aristas de $G'$ son de exactamente dos tipos:
+
+1) Por cada arista $e \in E(G)$ desde $u$ hasta $v$, tal que $f(e) < c(e)$, en $G'$ hay una arista $e'$ desde $u$ hasta $v$ y tal que
+$c(e') = c(e) - f(e)$
+
+2) Por cada arista $e \in E(G)$ desde $u$ hasta $v$, tal que $f(e) > 0$, en $G'$ hay una arista $e'$ desde $v$ hasta $u$ y tal que
+$c(e') = f(e)$
+
+(Notar como curiosidad que la red residual puede tener multiejes aun cuando la red original no los tiene, pero eso no nos molesta para nada).
+
+La intuicion detras de esto es que la red residual indica el flujo que todavia podemos mandar, considerando que ya estamos mandando el flujo
+$f$. En este sentido, las aristas de tipo 1) son claras: Si una arista de $u$ a $v$ no está saturada ($f(e) < c(e)$), entonces podemos mandar todavía
+$c(e) - f(e)$ unidades de flujo desde $u$ hasta $v$ usando dicha arista.
+
+Menos obvio es el caso de las aristas tipo 2): Lo que expresan es que si queremos ahora mandar flujo desde $v$ hasta $u$, y ya estamos mandando
+$f(e)$ flujo desde $u$ hasta $v$, podemos mandar hasta $f(e)$ flujo de $v$ a $u$ simplemente ``arrepintiendonos'' de enviar el flujo de
+$u$ a $v$. En efecto, es claro que si imaginamos que mandamos de alguna manera (digamos por una nueva tubería imaginaria) $k <= f(e)$
+unidades de flujo desde $v$ hasta $u$, tenemos entonces que hay $k$ unidades de flujo que viajan de $u$ a $v$ (parte de las $f(e)$ totales),
+y las $k$ ya mencionadas que viajan desde $v$ hasta $u$. Este mini ciclo de flujo que circula entre $u$ y $v$ sin ir a ningun lado tiene un
+efecto nulo, ya que claramente no mueve flujo: en otras palabras, podemos eliminar el mini ciclo obteniendo otro flujo válido del mismo valor,
+y con la ventaja que este no usa la tubería imaginaria, ya que lo único que hemos hecho es reducir la cantidad de flujo desde $u$ hacia $v$.
+
+En virtud de todo esto, estamos en condiciones de definir la importantisima nocion de camino de aumento.
+
+\subsubsection{Camino de aumento}
+
+En una red de flujo como las que venimos viendo, para un cierto flujo $f$, definimos un \textit{camino de aumento} como un camino simple de $S$ a $T$ en la red residual.
+La definición es simplícima, pero sus implicacias son importantísimas, gracias a la siguiente observación:
+
+Si $P$ es un camino de aumento, y $\epsilon = \min_{e \in P}{c(e)}$ (notar que las capacidades se toman sobre la red residual, donde vive $P$, y
+que por definición de red residual siempre será $\epsilon > 0$),
+entonces podemos construir a partir de él un nuevo flujo $f'$, tal que $v(f') = v(f) + \epsilon$
+
+En efecto, si el camino es $P = v_1, \cdots, v_n$, para cada $1 \leq i < n$ hacemos:
+
+Si la arista $(i,i+1)$ en $g(P)$ es de tipo 1), entonces cambiamos $f(e)$ por $f(e) + \epsilon$, siendo $e$ la correspondiente arista en el grafo original
+(claramente no nos pasamos de la capacidad por la definicion de epsilon)
+
+Si la arista $(i,i+1)$ en $g(P)$ es de tipo 2), entonces cambiamos $f(e)$ por $f(e) - \epsilon$, siendo $e$ la correspondiente arista en el grafo original, que va en dirección contraria (claramente el flujo propuesto queda no negativo por la definición de épsilon)
+
+Queda claro entonces que estos cambios siguen respetando las restricciones de capacidad, y además en cada nodo intermedio del camino,
+la cantidad de flujo que entra y sale se mantiene (ya que el cambio que hicimos con la arista anterior es claro que aumenta en $\epsilon$ el
+flujo neto que entra, y la siguiente lo disminuye en $\epsilon$, sin importar el tipo de arista). Además, claramente el valor del flujo en
+sí aumenta en $\epsilon$ porque con el cambio hecho en la primer arista del camino hemos aumentado el flujo neto que sale de $S$ (y con la
+última el flujo neto que entra a $T$).
+
+Notemos entonces que un flujo máximo da lugar a una red residual sin camino de aumento (pues sino se podría aumentar el flujo y no sería máximo).
+A continuación demostraremos el teorema de maxflow-mincut, y eso nos llevará a que un flujo es máximo si y solo si la red residual no tiene
+camino de aumento.
+
+\subsubsection{Max flow min cut}
+
+\begin{teorema}[Maxflow-Mincut]
+    En una red de flujo cualquiera, el valor del maximo flujo es igual a la capacidad del minimo corte.
+\end{teorema}
+\begin{proof}
+
+En efecto, lo que veremos es que si un flujo da lugar a una red residual sin camino de aumento, entonces podemos construir explícitamente un
+corte de igual capacidad que el valor del flujo. Esto implica inmediatamente que el flujo era máximo y el corte mínimo. Como el flujo máximo
+siempre existe (y no tiene caminos de aumento), esto además implicará que el máximo flujo siempre es igual al mínimo corte.
+
+Consideremos entonces un flujo que da lugar a una red residual sin camino de aumento. Consideremos ahora el conjunto $A$ de los vértices de
+$G$ alcanzables desde $S$ en la red residual, y $B$ los demás. Claramente forman una partición de $V$, con $A \in S$ y $T \in B$ (pues sino,
+$T$ sería alcanzable desde $S$ en la red residual y habría camino de aumento). Si consideramos ahora el conjunto $\overrightarrow{AB}$ de
+aristas del grafo original que cruzan de $A$ a $B$, notemos que es un corte en la red de flujo, ya que si las quitamos, será imposible
+alcanzar los vértices de $B$ desde $S$, en particular será imposible llegar de $S$ a $T$.
+
+Por otra parte, por la definición de $A$ y $B$, todas las aristas de $\overrightarrow{AB}$ deben estar saturadas por el flujo, pues si no
+lo estuvieran, entonces habría una arista de $A$ a $B$ en la red residual, en contradicción con la definición de $A$ y $B$. Por el mismo
+motivo, todas las aristas de $B$ a $A$ en el grafo original están vacías de flujo, pues si se enviara flujo por alguna de ellas, aparecería
+nuevamente una arista de $A$ a $B$ en la red residual, que no podría ser.
+
+Pero entonces el valor del flujo es:
+
+$$v(f) = \sum_{e \in \overrightarrow{AB}}{f(e)} - \sum_{e \in \overrightarrow{BA}}{f(e)} = c(\overrightarrow{AB})$$
+
+Como queríamos. 
+\end{proof}
+
+Notar que la construcción del corte mínimo dado el flujo máximo es completamente explícita y realizable por un algoritmo:
+armamos la red residual, nos fijamos los vértices alcanzables $A$ y los no alcanzables $B$, y las aristas que cruzan de $A$ a $B$ son un
+corte mínimo.
+
+Entonces nos queda claro en particular que son equivalentes:
+
+1) $f$ es flujo máximo.
+
+2) $f$ induce una red residual sin camino de aumento
+
+3) $f$ es igual a un corte (que resulta mínimo)
+
+\subsubsection{Método de Ford-Fulkerson}
+
+Con lo anterior ya hemos demostrado max-flow min cut. No obstante, lo hicimos de manera no totalmente constructiva,
+en el sentido de que partimos de un flujo máximo ya dado y construímos a partir de él un corte mínimo (o sea que no es
+totalmente no constructiva tampoco). Ahora lo que daremos será un método para calcular efectivamente un flujo máximo
+(y por lo tanto, un corte mínimo, usando simplemente la construcción anterior de la red residual y mirando el corte que
+induce un flujo máximo). 
+
+Nos limitaremos al caso de redes enteras, y de nuestro algoritmo se desprenderán dos hechos:
+el primero es que en toda red entera, existe el flujo máximo. Esto ya lo vimos para flujos en general pero usando argumentos
+que quizá lectores que no conocen nada de análisis no entiendan, con lo cual en el caso de redes enteras nuestra construcción
+explícita de un flujo máximo (equivalentemente, de un flujo cuya red residual no tiene caminos de aumento, y por lo tanto
+resulta igual a un corte) servirá para mostrar que efectivamente el flujo máximo existe. 
+
+El segundo es que además, existe un flujo máximo que es un flujo entero, ya que el método en todo momento opera con enteros.
+Esto es un resultado nuevo que nos será útil, y que por supuesto requiere limitarse a redes enteras.
+
+El método es sencillísimo. Empezamos con el flujo vacío (es decir, $f(e) = 0 \forall e \in E$). Construímos la red residual, y
+buscamos un camino de aumento. Si lo hay, construímos un nuevo flujo mayor con el procedimiento ya mencionado en la demostración
+de maxflow-mincut, y sino el flujo ya es mínimo. Construímos nuevamente la red residual del nuevo flujo, buscamos camino de aumento,
+si lo hay aumentamos y sino es máximo. Y así seguimos.
+
+Notar que como todas las capacidades son enteras, los $\epsilon$ y los flujos que vamos armando siempre son enteros, luego el flujo
+aumenta en al menos una unidad en cada paso. Luego como el flujo está acotado claramente por la suma de las capacidades de las aristas
+salientes de $S$, no puede pasar que siempre sigamos encontrando caminos de aumento. Luego nuestro algoritmo en algún momento termina,
+y obtenemos un flujo máximo entero.
+
+Con lo cual hemos probado que en una red entera existe el flujo máximo, y no solo eso, que existe un flujo máximo entero (o sea que usar
+flujos no enteros en una red entera no nos da más poder, en el sentido de que no lograremos enviar más flujo que si nos restringimos a
+flujos enteros).
+
+\textbf{Comentario:} Así como está, el método de ford-fulkerson no es un algoritmo bien definido porque faltaría especificar como hacemos
+para buscar un camino de aumento. En particular, la estrategia usada impacta en la complejidad del algoritmo resultante. Si el flujo
+máximo es $F$, siempre se hacen a lo sumo $F$ búsquedas de camino de aumento, con lo cual si se usa por ejemplo dfs o bfs la complejidad
+resulta $O(F(V+E))$. 
+
+Sin embargo, conviene usar algoritmo de edmond-karp, que es ford fulkerson usando bfs: En ese caso, la complejidad
+es fuertemente polinomial: $O(VE^2)$ (esto es un análisis de peor caso, en muchas redes es mucho más rápido).
+Usando dfs, en general para una cantidad de vértices y aristas dada, no está acotado el tiempo de
+ejecución (Hay redes de muy poquitos nodos que cambiando los pesos adecuadamente, se puede despistar a un dfs para tardar un tiempo
+arbitrariariamente grande, agrandando el flujo lo suficiente).
+
+Hay muchas mejoras posibles a este algoritmo: Uno de los más bellos, altamente útil y muy eficiente sobre todo en grafos ralos y en redes
+bipartitas de gran importancia para problemas de matching y variantes, es el algoritmo de Dinitz. El lector interesado puede investigar sobre el mismo.
+
+\subsubsection{Problema 6}
+
+Podemos aprovechar la idea de que una red de flujo modela una situacion en la que tenemos que repartir cosas de un lugar a otro con
+ciertas restricciones. Lo que repartiremos en este caso sera puntos.
+
+Consideremos una red de flujo armada de la siguiente manera: Una fuente $S$ y un sumidero $T$, vertices $v_1, \cdots, v_m$ correspondientes
+a cada partido restante, y $u_1, \cdots, u_n$ correspondientes a cada rival. Agregamos una arista de $S$ a $v_i$ para cada $1 \leq i \leq m$, con capacidad
+1, una arista de $u_i$ a $T$ con capacidad $T - s_i$ para cada $1 \leq i \leq n$, y por cada partido $v_i$ entre los jugadores $u_j$ y $u_k$,
+agregamos aristas de $v_i$ a $u_j$ y de $v_i$ a $u_k$ con capacidad $m + 1$.
+
+Es claro que un corte minimo en esta red no puede usar las aristas entre los $v_i$ y los $u_j$, ya que esas implican una capacidad de al menos
+$m+1$, pero hay un corte trivial de capacidad $m$ (cortar todas las aristas que salen de $S$). Por otra parte, es inmediato verificar que
+un conjunto de aristas que no usan aristas como las mencionadas, formado por las aristas de la pinta $(S,v_i)$ y las $(u_j,T)$ con
+$i \in A$ y $j \in B$, para cierto $A \subseteq \{ 1, \cdots , m \}$, $B \subseteq \{ 1, \cdots, n \}$, es un corte si y solo si $(A,B)$ es
+un par bueno (En efecto, que para cada partido o bien se corte la arista que lleva al partido, o bien se corten las dos aristas que salen
+de los jugadores involucrados en el partido, es la condicion necesaria y suficiente para lograr un corte en la red armada).
+
+La capacidad de uno de estos cortes es claramente $|A| + \sum_{i \in B}{T - s_i}$, luego como existe un flujo de valor $m$, el flujo
+maximo en la red es $m$ si y solo si para todo par bueno $(A,B)$ se cumple la condicion del enunciado. Luego basta ver que Bob Marley
+puede salir campeon del torneo exactamente cuando existe un flujo de valor $m$.
+
+Si tal flujo existe, existe un flujo de valor $m$ donde en cada arista se pasa una cantidad de flujo multiplo entero de $\frac{1}{2}$ (si multiplicamos
+todo por 2 queda una red entera que tiene flujo entero, luego la nuestra tiene un flujo ``semientero''). Es claro que dicho flujo muestra
+una serie de resultados en las cuales ningun rival logra mas puntos que Bob Marley, luego puede salir campeon. De manera analoga, una
+serie de resultados que lo hagan campeon claramente determinan un flujo valido (semientero) de valor $m$.
+
+\subsubsection{Problema 7}
+
+En primer lugar, notemos que si a cada numero $x$ le restamos $\lfloor x \rfloor$, obtenemos un nuevo problema donde todos los numeros
+pertenecen a $[0,1)$, las filas y columnas siguen sumando una cantidad entera, y claramente es posible cumplir lo pedido en este nuevo
+tablero si y solo si se podia en el original. Veamos entonces que es posible cuando los numeros estan en el $[0,1)$, y por lo tanto
+lo unico que se puede hacer es cambiarlos por 0 o 1 (salvo que ya sean 0 en cuyo caso se los debe dejar asi).
+
+Para un tablero de $n \times m$, armamos una red de flujo de la siguiente manera: una fuente $S$, un sumidero $T$, $n$ nodos $f_i$ para cada
+fila, $m$ nodos $c_j$ para cada columna. Para cada $i,j$ \textbf{ tal que el elemento del tablero en la fila $i$ y columna $j$ no sea 0}, 
+una arista de $f_i$ a $c_j$ con capacidad 1. Para cada fila $i$, una arista de
+$S$ a $f_i$ con capacidad igual a la suma de los elementos de dicha fila en el tablero. Analogamente para cada columna $j$, 
+una arista de $f_j$ a $T$ con capacidad igual a la suma de los elementos de dicha columna en el tablero.
+
+Notemos ahora que si tomamos un flujo tal que por la arista entre $f_i$ y $c_j$ manda una cantidad de flujo igual al valor del elemento
+del tablero en la fila $i$ y columna $j$, obtenemos un flujo valido que satura todas las aristas que tocan $S$ o $T$. Ademas como la red es entera,
+existe un flujo maximo entero. Si cambiamos cada elemento del tablero acorde al nuevo flujo pasado por su arista correspondiente en el flujo
+entero, es inmediato observar que se mantienen las sumas en cada fila y columna (ya que el flujo entero sigue saturando todas las aristas
+que tocan $S$ o $T$, y que se corresponden con dichas sumas). Ademas cada elemento se cambio por 0 o 1, salvo los 0 que estamos seguros que
+siguen siendo 0 porque no los incluimos en la construccion. Luego queda probado que es posible lo que queriamos.
+
+
+\subsection{Teorema de Menger}
+
+El teorema de Menger es un resultado clásico de teoría de grafos. Se demostró en 1927, mientras que maxflow-mincut se demostró recién en 1956.
+La demostración que veremos con maxflow-mincut es muy directa, y hereda las propiedades de ser constructiva de maxflow-mincut.
+
+El teorema tiene dos versiones análogas: La versión sobre aristas, y la versión sobre vértices:
+
+\begin{teorema}[Menger para aristas]
+Sea $G$ un grafo no dirigido, $x,y \in V$ vértices distintos. Entonces, la mínima cantidad de \textbf{aristas} que se debe quitar para que no exista
+un camino entre $x$ e $y$, es igual a la máxima cantidad de caminos disjuntos en \textbf{aristas} entre $x$ e $y$.
+\end{teorema}
+\begin{proof}
+Supongamos que $C$ es un conjunto de aristas minimo que separa $x$ de $y$. Consideremos la siguiente red de flujo: Usamos los vértices $V$ de $G$, $x$ como fuente, $y$ como sumidero, y por cada arista no dirigida $e = \{ v_1,v_2 \} \in E$
+de $G$, ponemos en la red dos aristas con capacidad 1: una de $v_1$ a $v_2$ y otra de $v_2$ a $v_1$. Es claro que un conjunto de aristas
+mínimo a quitar para separar $x$ e $y$ en el grafo original tiene la misma cardinalidad que la capacidad de un corte mínimo en esta red.
+En efecto, dado un corte cualquiera en la red de flujo, quitar todas las aristas asociadas al corte en $G$ separa $x$ de $y$,
+y reciprocamente, por cada conjunto de aristas que separa $x$ de $y$ en $G$, si cortamos la arista dirigida que se aleja de $x$ (esta bien definida gracias
+a que el conjunto separa), obtenemos un corte en la red de flujo.
+
+Luego por maxflow-mincut, existe un flujo máximo (entero) de valor igual a $|C|$. Pero es claro también que en una red con todas las capacidades iguales a 1,
+cada conjunto de caminos disjuntos en aristas corresponde a un flujo de valor igual a la cantidad de caminos (basta usarlos como camino de aumento),
+y recíprocamente, todo flujo de valor $k$ puede verse como el resultado de aplicar $k$ caminos de aumento disjuntos en aristas
+(Esto es claro porque si consideramos el subgrafo formado por todas las aristas usadas en el flujo, y le agregamos $k$ aristas dirigidas
+de $y$ hasta $x$, el grafo resultante es claramente euleriano, luego las aristas del flujo se pueden partir en $k$ caminos disjuntos en
+aristas).
+
+En virtud de esto queda inmediatamente probado el teorema, como caso particular de maxflow-mincut. Notar que ademas esto nos da un algoritmo
+para encontrar un conjunto maximo de caminos disjuntos en aristas entre $x$ e $y$ (basta buscar el flujo maximo en la red asociada, y partirlo
+en caminitos).
+\end{proof}
+
+\begin{teorema}[Menger para vértices]
+Sea $G$ un grafo no dirigido, $x,y \in V$ vértices distintos no adyacentes. Entonces, la minima cantidad de \textbf{vertices} distintos de $x$ e $y$ que se debe quitar para que no exista
+un camino entre $x$ e $y$, es igual a la maxima cantidad de caminos disjuntos en \textbf{vertices} entre $x$ e $y$.
+\end{teorema}
+\begin{proof}
+La demostracion es extremadamente similar al caso anterior, pero tenemos que ajustar un poco la construccion porque querriamos poner capacidades en
+los vertices, asi que tendremos que devolver esas capacidades a las aristas (donde corresponden). En particular la red que formaremos para este
+ejemplo sera mas general, y podriamos haberla usado en el ejemplo anterior tranquilamente (en particular esta red permite modelar mas restricciones
+mas especificas, al separar las cosas mas claramente).
+
+Nuestra red tendra entonces $2|V|$ vertices: por cada $v \in V$, la red tendra dos vertices, $v_{in}$  y $v_{out}$. La idea es que estos representan
+la ``llegada'' y la ``salida'' del vertice. Para eso, el mapeo de un grafo dirigido general en nuestra red se haria colocando, por cada arista
+$(u,v)$ con capacidad $c$, una arista de $u_{out}$ a $v_{in}$ con capacidad $c$. Ademas, debemos usar una arista de $v_{in}$ a $v_{out}$ por
+cada $v$, y fijando la capacidad de esta arista logramos fijar la capacidad del vertice.
+
+Para nuestros fines, colocamos las capacidades de los vertices todas en 1, y las capacidades de las aristas a un numero muy alto
+(como $V$ por ejemplo, algo que asegure que dichas aristas no pueden estar en un corte minimo). Tomamos $x_{out}$ como fuente y
+$y_{in}$ como sumidero. Es claro entonces que un corte minimo en esta red corresponde exactamente con una eleccion minima de vertices
+a quitar de manera de separar $x$ de $y$ (ya que las aristas candidatas para un corte minimo son unicamente las que cortan el paso por
+un vertice, y un conjunto de ellas es un corte si y solo si quitar los vertices correspondientes separa $x$ de $y$ en $G$).
+
+Por otra parte, por maxflow-mincut tendremos entonces un flujo maximo del valor deseado $k$, y como en el flujo todas las aristas se usan
+para pasar 0 o 1 unidades de flujo (si se pasase mas en cualquier arista, como $x$ e $y$ no estan conectados necesariamente esto violaria
+la restriccion de flujo en alguno de los dos vertices de esa arista), como ya hemos argumentado antes podemos extraerle $k$ caminos
+independientes en aristas. Pero notar que los caminos independientes en aristas en la red, gracias a nuestra restriccion, inducen claramente
+caminos independientes en vertices en el grafo original. Luego queda probada esta version del teorema.
+\end{proof}
+
+\subsection{Teorema de König}
+
+A continuación enunciaremos el teorema de König, cuyo enunciado y demostración serán de gran utilidad para el cálculo práctico del
+matching máximo y vertex cover mínimo en un grafo bipartito.
+
+\begin{definicion}
+Un grafo $G$ se dice \textbf{bipartito}, si el conjunto de sus vertices se escribe $V = A \cup B$, con $A \cap B = \emptyset$, y tales que toda arista
+del grafo une un vértice de $A$ con uno de $B$
+\end{definicion}
+
+\begin{definicion}
+Un \textbf{matching} en un grafo bipartito $G$, es un conjunto $M \subseteq E$ de \textbf{aristas} tales que no hay dos que incidan en un mismo vértice.
+Un matching se dice máximo si no hay otro con mayor cantidad de aristas.
+\end{definicion}
+
+\begin{definicion}
+Un \textbf{vertex cover} en un grafo bipartito $G$, es un conjunto $C \subseteq V$ de \textbf{vértices} tales que toda arista incide al menos en
+un vértice de $C$. Un vertex cover se dice mínimo si no hay otro con menor cantidad de vértices.
+\end{definicion}
+
+Las nociones son muy intuitivas: Un matching arma parejitas de vértices, restringido a las parejitas ``aceptables'' que vienen dadas en el grafo
+original. Un vertex cover ``cubre'' las aristas el grafo pintando vértices. Una relación interesante entre ambos conceptos viene dada por el teorema
+que nos interesa en esta sección:
+
+\begin{teorema}[König]
+En un grafo bipartito, la cantidad de aristas en un matching máximo es igual a la cantidad de vértices en un mínimo vertex cover.
+\end{teorema}
+\begin{proof}
+Esto es un caso particular de maxflow-mincut. En efecto, consideremos la red de flujo dada de la siguiente manera: Una fuente $S$, un
+sumidero $T$, y luego un vértice por cada $v \in V = A \cap B$. Para cada vértice $v \in A$, ponemos una arista de capacidad 1 desde
+$S$ hasta $v$. De manera similar, por cada $u \in B$ ponemos una arista de capacidad 1 desde $u$ hasta $T$. Finalmente, por cada arista
+del grafo original que una $v \in A$ con $u \in B$, ponemos una arista con capacidad $|V|+1$ desde $v$ hasta $u$.
+
+Es claro que un corte minimo no usa aristas desde $A$ hasta $B$, pues usar una sola de ellas ya da una capacidad de $|V|+1$ y es en esta red
+es claro que existe un corte de a lo mas $|V|$ de capacidad. Consideremos ahora los cortes que no usan aristas desde $A$ hasta $B$, que
+llamaremos cortes candidatos. Es claro que un conjunto de aristas que no usa aristas de $A$ hasta $B$ forma un corte candidato si y solo si
+los vertices asociados en $A$ y $B$ forman un vertex cover del grafo original, y la capacidad del corte coincide con la cardinalidad del vertex
+cover.
+
+Por otra parte, si consideramos los flujos enteros en esta red, es tambien claro que estos se corresponden en forma biunivoca con los matchings
+en el grafo original (la condicion de ser un flujo exige en esta red que no se usen dos aristas del medio si se tocan en un vertice, y tambien
+es claro que cada matching da un flujo con solo agregar el flujo necesario para llegar y salir de las aristas del medio). Tambien es claro
+que el valor del flujo se corresponde con la cardinalidad del matching.
+
+En virtud de esto, maxflow-mincut implica inmediatamente König.
+
+\end{proof}
+
+\textbf{Comentario}: Notar que en un grafo general, calcular el minimum vertex cover es NP-completo, y por lo tanto un problema computacionalmente difícil. Por otra
+parte, calcular el matching máximo en un grafo general, si bien puede hacerse en tiempo polinomial, es notoriamente más complicado. König y
+la demostración que vimos nos muestran una forma simple de calcular ambas cosas en un grafo bipartito: Basta buscar un matching máximo (o un corte
+mínimo) en la red de flujo asociada.
+
+\subsection{Teorema de Hall}
+
+El teorema de Hall es un resultado clásico de combinatoria, que podemos demostrar fácilmente a partir del teorema de König.
+
+\begin{definicion}
+En un grafo bipartito con $V = A \cup B, A \cap B = \emptyset$, decimos que un matching es \textbf{perfecto} si para todo $v \in A$, existe
+una arista del matching que incide en $v$. Equivalentemente, no deja vértices en $A$ sin matchear.
+Dado un $S \subseteq A$, definimos $span(S) = \{ u \in B | \mbox{ existe una arista que une un vertice de $S$ con $u$ } \}$
+\end{definicion}
+
+\begin{teorema}[Hall]
+Un grafo bipartito $G$ tiene un matching perfecto si y solo si, para todo $S \subseteq A$, vale: $$|span(S)| \geq |S|$$
+\end{teorema}
+\begin{proof}
+Que la condicion es necesaria es trivial porque un matching induce una funcion inyectiva de $S$ en $span(S)$. Veamos ahora que es suficiente.
+Supongamos entonces que para cualquier $S \subseteq A$, $|span(S)| \geq |S|$, y veamos que existe un matching perfecto. Por König, basta
+probar que cualquier vertex cover tiene al menos $|A|$ vértices.
+
+Sea entonces $C = A' \cup  B'$ un vertex cover, con $A' \subseteq A$, $B' \subseteq B$. Es claro que por ser vertex cover, debe ser
+$span(A \setminus A') \subseteq B'$. Pero entonces:
+
+$$ |B'| \geq |span(A \setminus A')| \geq |A \setminus A'| = |A| - |A'|$$
+
+$$ |C| = |A'| + |B'| \geq |A|$$
+
+\end{proof}
+
+\subsubsection{Problema 5}
+
+Para el problema 5, basta notar que si armamos un grafo bipartito con los $n$ países de una hoja por un lado y los $n$ de la otra hoja por otro,
+y ponemos una arista entre países que se tocan al superponer las hojas (es decir, por países que pueden atravesarse por un alfiler simultáneamente)
+se satisface la condición de Hall, ya que si miramos $k$ países, estos tienen una cierta área $kA$, y por lo tanto como el conjunto de países
+que estos tocan debe cubrir enteramente dicho área, si tal conjunto tiene $l$ países debe ser $lA \geq kA \Rightarrow l \geq k$.
+Entonces por Hall existe el matching perfecto.
+
+\subsection{Minimo cubrimiento por caminos en un DAG}
+
+\begin{definicion}
+Definimos un DAG (Directed Acyclic Graph) como un grafo dirigido acíclico, es decir, un grafo dirigido sin ciclos.
+\end{definicion}
+
+Si $G$ es un DAG, la pregunta que nos va a interesar en esta sección es: ¿Cuál es la mínima cantidad de caminos necesarios para cubrir $G$?
+\footnote{En un grafo general, este problema es NP-completo (entendiendo camino como ``camino simple'', nociones que coinciden en un DAG)}
+
+Más precisamente, diremos que un conjunto de caminos en $G$ es un \textbf{cubrimiento por caminos} de $G$, si todo vértice pertenece a
+al menos un camino. Llamaremos una \textbf{partición en caminos} de $G$ a un cubrimiento por caminos en el que todo vértice pertenece a
+exactamente un camino. Notemos que todo grafo tiene una partición en caminos (podemos tomar $|V|$ caminos de longitud 0).
+
+Nos interesa dar alguna forma práctica de calcular en base a lo que ya sabemos, una partición en caminos (o cubrimiento por caminos) mínimos,
+es decir, con una cantidad de caminos lo más chica posible. También estamos apuntando a dar una construcción que
+nos permita demostrar Dilworth rápidamente, pero esto lo veremos recién en la próxima sección.
+
+Para esto entonces definimos:
+
+\begin{definicion}
+Dado un DAG $G$, definimos $\phi(G)$ como el grafo no dirigido bipartito que se construye de la siguiente manera:
+
+$2n$ vértices, $A = \{v_1, \cdots, v_n \}$ de un lado y $B = \{ u_1, \cdots, u_n \}$ del otro.
+
+Por cada arista desde el vertice $i$ hasta el $j$ en el grafo original, ponemos una arista entre $v_i$ y $u_j$ en $\phi(G)$. Decimos que
+tal arista en $\phi(G)$ es la arista asociada de la arista del vértice $i$ al $j$ en $G$.
+
+\end{definicion}
+
+La gracia de la definición de $\phi(G)$ consiste en que existe una biyección natural entre las particiones en caminos de $G$, y los
+matchings en $\phi(G)$. No es difícil ver de hecho que la función que dada una partición en caminos, elige las aristas de $\phi(G)$
+asociadas a las aristas usadas en los caminos de la partición, es una biyección entre las particiones y los matchings.
+
+En efecto, es claro que el mapeo manda una partición en caminos a un matching, ya que de cada vértice puede salir a lo más una arista,
+y puede entrar a lo más una arista. Además, todo matching viene de una partición en caminos: En efecto, si consideramos el conjunto
+de aristas de $G$ asociadas a las aristas de un matching $M$ en $\phi(G)$, no pueden llegar dos a un mismo vértice ni salir dos de un mismo
+vértice por ser $M$ un matching, luego tales aristas forman una partición de $G$ en caminos.
+
+Ahora bien, es claro también que en esta biyección, la cantidad de vértices no matcheados en el matching es exactamente el doble de la cantidad
+de caminos de la partición, ya que por cada camino, se tienen sin matchear el vértice $u_j$ correspondiente al nodo final del camino, y el $v_i$
+correspondiente al nodo inicial. Luego es evidente que un matching máximo se corresponde exactamente con una partición en caminos mínima,
+con lo cual hemos completado nuestro objetivo. Más precisamente, la mínima partición en caminos de $G$ tiene $|V| - m$ caminos, siendo $m$
+la cantidad de aristas del máximo matching en $\phi(G)$.
+
+Si en lugar de la partición en caminos mínima queremos el cubrimiento por caminos mínimo, basta notar que este se corresponde con
+la mínima partición en caminos de la clausura transitiva de $G$. Luego podemos aplicar yo ya hecho luego de tomar la clausura transitiva.
+También podemos notar de esto que en un DAG transitivo, ambas nociones coinciden.
+
+\subsection{Teorema de Dilworth}
+
+A continuación nos mandamos a demostrar el teorema de Dilworth. Para eso definimos:
+
+\begin{definicion}
+Una \textbf{anti-chain} en un DAG transitivo, es un conjunto de vértices tales que no existe una arista entre ningún par de ellos.
+\end{definicion}
+
+Si interpretamos naturalmente la relación dada por el grafo como un orden estricto, lo cual es válido por ser DAG transitivo, una
+anti-chain consiste en un conjunto de elementos tales que no hay dos comparables. Es claro que en un DAG transitivo, cualquier
+partición en caminos debe tener al menos tantos caminos como elementos tiene cualquier antichain, ya que un camino no puede pasar
+por dos elementos de una antichain (porque entonces como el DAG es transitivo, habría una arista entre dos de ellos).
+
+La magia de Dilworth es que vale la igualdad:
+
+\begin{teorema}[Dilworth]
+Sea $G$ un DAG transitivo. Sea $A$ una anti-chain de cardinal máximo, y sea $C$ una partición en caminos mínima. Entonces $|A| = |C|$
+\end{teorema}
+\begin{proof}
+Consideremos un matching máximo en $\phi(G)$. Como ya sabemos, este matching tiene $|V| - |C|$ aristas. Por König, el minimum vertex cover
+tiene esa misma cantidad de vértices. Por lo tanto, fijado un cierto minimum vertex cover $H$, es claro que deben existir al menos 
+$|C|$ valores de $i$ tales que $v_i \notin H$, $u_i \notin H$. Pero entonces, no puede haber ninguna arista en el grafo $G$ entre dos
+de los vértices correspondientes a tales $i$, pues sino eso induciría una arista en $\phi(G)$ que no toca ningún vértice de $H$. Por
+lo tanto hemos construído una anti-chain con $|C|$ elementos, y como ya sabemos que $|A| \leq |C|$, resulta $|A| = |C|$.
+\end{proof}
+
+Del teorema de Dilworth podemos sacar un corolario:
+
+\begin{corolario}
+Si $G$ es un DAG transitivo, sea $L$ la longitud del camino más largo en $G$, y sea $A$ la máxima cantidad de elementos en una antichain.
+Entonces $|V| \leq L A$
+\end{corolario}
+\begin{proof}
+Tomemos una partición de $G$ en caminos mínima. Por Dilworth, esta partición usa $A$ caminos. Por otra parte, cada camino tiene a lo más $L$
+elementos, y todos los elementos de $V$ están en exactamente un camino de la partición. Luego es claro que $|V| \leq L A$
+\end{proof}
+
+Notemos que todas las demostraciones dadas son constructivas, y por lo tanto proveen algoritmos practicos (a partir del problema fundamental de
+encontrar un flujo maximo) para calcular las varias construcciones interesantes (minimum vertex covers en bipartitos, minimum path covers
+en DAGs, antichains maximas en un dag transitivo, etc).
+
+\subsubsection{Problema 8}
+
+Consideremos un grafo dirigido que tiene un nodo $v_i$ por cada elemento de la secuencia, ordenados de izquierda a derecha, $1 \leq i \leq n^2+1$.
+Además, ponemos una arista de $v_i$ a $v_j$ cuando $i < j$ y $v_i < v_j$, es decir, cuando la secuencia ``crece''. El grafo resultante es
+claramente un DAG transitivo.
+
+Notemos que si existe una anti-chain de longitud al menos $n+1$, entonces existen $n+1$ elementos tal que para cualquier par de ellos $v_i,v_j$ con
+$i<j$, debe ser $v_i > v_j$, pues sino no seria una antichain porque estaria la arista de $v_i$ a $v_j$. Luego tendriamos una subsecuencia
+decreciente de longitud $n+1$.
+
+Supongamos entonces que no es asi. Entonces la maxima anti-chain mide a lo mas $n$. Si llamamos $L$ a la longitud del camino mas largo
+(que es claro que se corresponde con la subsecuencia creciente mas larga), tenemos por el corolario de Dilworth que
+
+$$n^2+1 \leq LA \leq Ln \Rightarrow L \geq n + \frac{1}{n} \Rightarrow L \geq n+1$$
+
+Como queriamos.
+
+\pagebreak
+
+\section{Planaridad}
+
+\subsection{Advertencia}
+
+Para formalizar posta posta lo que hacemos en esta sección, uno necesita nociones básicas del plano como por ejemplo el teorema de la curva de Jordan
+y topología. Lo que vamos a hacer es tomar el approach de apelar a la intuición geométrica y ya. Después de todo, si el formalismo violara de
+lleno la intuición geométrica, habría que cambiar el formalismo, y no renunciar a nuestro entendimiento geométrico del plano.\footnote{Esto en realidad no es tan asi. A diferencia de la aritmetica sobre los naturales, las nociones geometricas no constituyen un fundamento
+matematico incuestionable, y dan lugar a un debate filosofico mucho mas grande. Le vamos a hacer la vista gorda olimpicamente a tales objeciones.}
+
+En particular es posible que hable de ser ``homeomorfos''. Uso el término riguroso pero no pretendo ser súper formal (por ejemplo no se una
+goma de topología así que uso el término intuitivamente). Dos cosas son homeomorfas si existe un mapeo continuo entre ambas (Más precisamente
+una función continua con inversa continua), o sea si podemos ``deformar sin romper'' una en la otra (aunque podrian pasar cosas raras como
+que la deformacion en si no pueda hacerse continuamente).
+
+En algunos puntos, particularmente cuando hable de sólidos platónicos, voy a usar que la esfera menos un punto es homeomorfa al plano. 
+Esto es fácil de ver
+de la siguiente manera: ``Apoyamos'' la esfera sobre el plano (como apoyamos una esfera de metal sobre una mesa). Tomamos el punto más alto
+de la esfera (el opuesto al plano) y lo quitamos. Si $P$ es el punto que quitamos, mapeamos cada uno de los restantes puntos $Q$ de la esfera
+con el punto del plano donde la recta $PQ$ lo corta. Este mapeo es claramente continuo tanto de ida como de vuelta, así que mapea curvas
+continuas en curvas continuas.
+
+\subsection{Definición de planaridad}
+
+Decimos que un grafo $G$ es planar, si es posible dibujarlo en el plano sin que se corten aristas. Es decir, es posible identificar cada
+vértice con un punto distinto del plano, y cada arista con una curva simple entre los dos puntos asociados a los vértices en los que la arista
+incide, de manera tal que dos curvas de estas no se intersequen más que en los vértices del grafo.
+
+Definimos un \textbf{embedding} de un grafo $G$, como una forma concreta de dibujarlo. Notar que un grafo puede tener múltiples embeddings no
+homeomorfos: Por ejemplo, si tenemos un diamante (Un grafo completo de 4 vértices al que le quitamos una arista), podemos dibujarlo con
+formita de diamante, o como ``dos triángulos'' uno encima del otro, y estos embeddings no son homeomorfos (uno tiene un vertice ``lejos'' de la
+``region'' externa, mientras que en el otro todos los vertices tocan dicha region).
+
+Dado un embedding de un grafo, definimos las \textbf{regiones} o caras del embedding, como las regiones en las que queda dividido el plano
+como consecuencia de dibujar el grafo. Notar que incluímos la (única) región infinita (no acotada) externa. El nombre de ``cara'' proviene de mirar estos
+dibujos sobre la esfera en lugar del plano (como la esfera menos un punto y el plano son homeomorfos, y agregar un punto no nos da más poder
+de dibujar grafos, ``ser dibujable en la esfera'' y ``ser dibujable en el plano'' son equivalentes).
+
+Si bien la formita concreta del grafo dibujado depende del embedding particular, ciertas propiedades de los grafos planares son intrinsecas
+al grafo e independiente de cualquier embedding particular. La mas importante viene dada por la formula de Euler.
+
+Notemos que a la hora de decidir la planaridad de un grafo, podemos restringir de ser necesario nuestra atención a grafos simples: Si un grafo tiene bucles,
+es claro que estos no afectan la planaridad (luego de dibujar todo el resto, dibujamos los buclecitos cerca del punto, siempre habrá lugar).
+De manera similar, podemos ignorar los multiejes (Si pudimos dibujar una linea, podemos dibujar dos lineas muy juntitas).
+
+\subsection{Fórmula de Euler}
+
+\begin{teorema}[Euler]
+Para un grafo planar $G$ (no necesariamente simple) con $n$ vertices , $m$ aristas y $c$ componentes conexas, se tiene que en cualquier embedding
+de $G$ la cantidad de regiones $r$ es tal que vale la formula de Euler:
+
+$$r + n = m + c + 1$$
+
+Es decir, si bien la forma concreta del embedding varía, la cantidad de regiones está fija (notar que $n$,$m$ y $c$ son intrínsecas al grafo,
+sin importar como se lo dibuje).
+\end{teorema}
+
+\begin{proof}
+La demostración es muy fácil por inducción en la cantidad de aristas: Si el grafo no tiene aristas, cualquier embedding tiene una sola región,
+y claramente $c = n$, luego el teorema vale trivialmente. Por otra parte, si tenemos un embedding cualquiera del grafo con una arista menos,
+y le agregamos una arista para formar un embedding de todo el grafo, entonces hay dos casos: 
+
+Si la arista une dos vértices que no estaban
+conectados, estonces es claro que no se puede cerrar una cara, y por lo tanto la cantidad de regiones no cambia, pero la cantidad de componentes
+conexas disminuye en uno, compensando la arista agregada.
+
+Por otra parte, si la arista une dos vértices que estaban conectados, claramente con este camino alternativo entre dichos vértices se parte
+una región existente en dos regiones, y no se modifica la cantidad de componentes conexas, con lo cual también sigue valiendo la fórmula de Euler.
+
+\end{proof}
+
+La fórmula de Euler se puede usar para obtener propiedades importantes de los grafos planares, como veremos a continuación.
+
+\subsubsection{Los grafos planares son ralos}
+
+\begin{teorema}
+Si $G$ es un grafo simple planar con $n \geq 3$, entonces $m \leq 3n - 6$
+\end{teorema}
+\begin{proof}
+Si el grafo tiene menos de 3 aristas, es claramente válido, así que suponemos $m \geq 3$.
+
+Además, podemos suponer el grafo conexo, ya que si no es conexo podemos agregar aristas (preservando la planaridad) hasta que lo sea, y claramente si vale para un grafo
+que sale de agregarle aristas, valía en el original.
+
+Así como hemos definido el grado de un vértice en un grafo, podemos definir el grado de una cara como la cantidad de aristas que tocan la cara
+(con la salvedad de que si una arista es tocada por una sola cara, entonces dicha aparicion de la arista en la cara se cuenta doble, porque
+toca a la cara de los dos lados de la arista. Una forma equivalente de pensarlo es que contamos ``lados de aristas'', como si fueran una
+pared o muralla con dos lados, en lugar de directamente las aristas).
+Es claro entonces que la suma de los grados de todas las caras es $2m$. Por otra parte, como cada cara tiene al menos 3 aristas, es claro que
+cada cara tiene grado al menos 3, pues no es posible cerrar una cara con menos de 3 lados. Luego usando fórmula de Euler:
+
+$$2m \geq 3r = 3(m + 2 - n) = 3m + 6 - 3n$$
+
+$$3n - 6 \geq m$$
+
+Como queríamos. Notar además que de la demostración, se observa que la igualdad se da exactamente cuando todas las caras tienen grado 3,
+es decir, cuando todas las caras son ``triángulos'' (entre comillas porque los lados son curvas).
+
+\end{proof}
+
+Un caso particular de interés lo constituyen los grafos acíclicos (llamados bosques, pues cada componente conexa es un árbol). Es claro que
+todo bosque es planar (es fácil describir un algoritmo para dibujar árboles, basándose en repartir el espacio uniformemente entre los hijos,
+empezando por la raíz), y la cota que podemos dar para las aristas en estos casos es mucho mejor: $m \leq n-1$. 
+
+En efecto, por la fórmula de euler, al ser acíclicos estos grafos deben tener $r = 1$ lo cual implica:
+
+$$n = m + c \Rightarrow m = n - c \leq n - 1$$
+
+\subsubsection{$K_5$ no es planar}
+
+Como primera aplicación, de lo visto demostraremos que el grafo completo de 5 vértices (5 vértices conectados todos contra todos) no es planar.
+Esto es trivial en base a la cota ya mencionada: $K_5$ es un grafo simple con $n = 5$ y $m = 10$, luego no cumple $m \leq 3n - 6$ y por lo
+tanto no puede ser planar.
+
+\subsubsection{$K_{3,3}$ no es planar}
+
+$K_{3,3}$ es el grafo bipartito completo de 3 vértices de un lado y 3 del otro, es decir, el grafo correspondiente al conocido juego de
+unir tres casas con tres servicios sin que se corten las líneas. Como sospecharán todos los que hayan intentado resolver el juego citado,
+$K_{3,3}$ no es planar. Sin embargo, si intentamos demostrarlo valiéndonos de la misma cota usada para $K_5$, nos encontramos con que esta
+vez no alcanza ya que $K_{3,3}$ satisface la cota dada.
+
+Para descartar la planaridad de $K_{3,3}$, mejoraremos la cota propuesta. Para eso introduciremos el concepto de girth.
+
+En un grafo con al menos un ciclo, se define el \textbf{girth} del grafo como la longitud de un ciclo mínimo. Así, notemos que para
+la demostración de la cota dada anteriormente, nos percatamos de que en un grafo planar no acíclico, el girth es al menos 3. Si repetimos
+el argumento de dicha demostración llamando $g$ al girth de $G$, obtenemos con un argumento idéntico que:
+
+$$2m \geq g(m + 2 - n) \Rightarrow m \leq \left ( 1 + \frac{2}{g-2} \right )(n-2)$$
+
+Podemos observar que el coeficiente que acompaña a la $n$ tiende a 1 a medida que el girth crece (y ya sabemos que $m \leq n-1$ cuando el
+grafo es acíclico).
+
+En particular, como $K_{3,3}$ es bipartito, no tiene ciclos impares, en particular no tiene triángulos, luego su girth es 4, y tenemos
+que de ser planar ha de cumplir $m \leq 2(n-2)$, pero esto se reduce a $9 \leq 8$, que no vale. Luego $K_{3,3}$ no es planar.
+
+\subsection{Dualidad}
+
+Exploraremos ahora el concepto de dualidad. La gracia de dualidad es que muchas propiedades de los grafos pueden enunciarse en términos
+de su grafo dual, con lo cual podemos obtener nuevos resultados sobre grafos con solo interpretar resultados conocidos sobre el dual,
+además de enriquecer nuestro entendimiento de las cosas, y poder enunciar la misma propiedad de formas diferentes, alguna de las cuales
+puede resultar más cómoda para un fin específico.
+
+Dado un embedding de un grafo planar $G$, podemos construir un nuevo grafo $G^*$ como sigue: Colocamos un vértice de $G^*$ como un punto en 
+cada una de las regiones de $G$, y unimos los puntos correspondientes a dos vértices de $G^*$, cuando las correspondientes regiones de
+$G$ comparten una arista. Para unirlos, simplemente trazamos un camino que cruce la arista compartida (y no cruce ninguna otra arista).
+
+Es claro que el nuevo grafo construído, que llamaremos el dual, es planar, manda aristas en aristas, vértices en regiones, y regiones en vértices. Además,
+el grafo dual siempre es conexo, y si el grafo original es conexo, es fácil observar que el dual del dual vuelve a ser el grafo de partida $G$. 
+Los ejes puente (ejes que no pertenecen a un ciclo, o equivalentemente, tocan la misma region de ambos lados)
+se transforman en el dual en autoejes, pues inciden en una sola cara ``de los dos lados''. Luego el dual de un grafo simple conexo no tiene
+puentes (aunque puede no ser simple). En particular dualizar manda puentes en autoejes, y autoejes en puentes.
+
+Gracias a esta dualidad, cualquier resultado que involucre contar regiones y vertices puede dualizarse intercambiando vertices y regiones
+en dicho resultado (y dualizando las hipotesis), y similarmente con otros conceptos que dualizan. 
+
+Notar por ejemplo la simetria de $r$ y $n$ en la formula de euler. 
+O por ejemplo, ya hemos visto que en un grafo simple planar con $n \geq 3$, $m \leq 3n-6$. Luego por dualidad resulta que
+en un grafo planar con $r \geq 3$, sin puentes y en el que todo par de regiones tiene a lo mas una arista en comun, 
+$m \leq 3r - 6$ (notar que $G^*$ es simple cuando $G$ no tiene puentes ni regiones que compartan mas de una arista).
+
+Lo que antes definimos como el grado de una cara, por ejemplo, resulta ser ahora el grado del vertice correspondiente en el dual.
+
+Notar que el dual de un grafo no es unico, ya que embeddings distintos pueden dar lugar a duales no isomorfos 
+(grafos esencialmente diferentes: pensar como ejemplo simple en las varias formas de dibujar un grafo de un solo nodo y 3 autoejes, y sus
+correspondientes duales).
+
+\subsubsection{Ejemplo de dualidad}
+
+Probaremos que si $G$ conexo, $G$ es bipartito si y solo $G^*$ es euleriano. Una implicancia es inmediata: Si $G$ es bipartito,
+no tiene ciclos impares, luego no puede tener caras de grado impar (porque las aristas de la cara formarian un ciclo impar en $G$).
+Luego todos los vertices de $G^*$ tienen grado par y es euleriano.
+
+Para ver la otra implicación, notemos primero que podemos suponer sin pérdida de generalidad que cada arista pertenece a dos caras distintas,
+es decir, que $G$ no tiene puentes. Para esto basta tomar cada puente, digamos $(u,v)$, y agregar una arista adicional $(u,v)$, formando
+una nueva region ``isla'' dentro de la otra región. Es claro que esto no altera que $G$ sea bipartito ni que $G^*$ sea euleriano.
+
+Suponemos entonces $G$ libre de puentes y $G^*$ euleriano. Luego toda cara en $G$ tiene una cantidad par de aristas por ser $G^*$ euleriano.
+Consideramos ahora un ciclo en $G$. Consideremos todas las regiones contenidas en este ciclo. Gracias a que cada arista
+toca exactamente 2 regiones, si tomamos la diferencia simetrica de todas esas regiones (entendidas como conjuntos de aristas), obtenemos
+el conjunto de aristas del ciclo impar. Pero todas esas regiones tienen cantidad par de aristas, y la diferencia simetrica de conjuntos
+de cardinal par tiene cardinal par. Luego todos los ciclos de $G$ son pares y por lo tanto es bipartito.
+
+Con esto probamos rapidamente a partir de lo que ya sabemos que todo grafo planar en el que todas las caras
+tengan grado par (en algun embedding) es bipartito. Podemos suponer que es conexo, ya que sino miramos las componentes conexas
+individualmente (todas cumplen la hipotesis porque tienen todas las caras pares, salvo quiza la externa, pero entonces el dual tendria
+solo un vertice impar, asi que tienen que ser todas pares).
+
+Suponiendo ahora que $G$ es conexo con todas las caras pares, eso quiere decir que en el
+dual, todos los vertices tienen grado par. Luego existe un ciclo euleriano en el grafo dual, y por lo visto eso implica que
+$G$ es bipartito.
+
+Otro resultado que sale de esta misma dualidad, es que si un mapa con fronteras conexas se puede pintar de 2 colores,
+entonces se pueden recorrer con un ciclo euleriano todas las fronteras entre países 
+(Es decir, estamos diciendo $G^*$ bipartito $\Rightarrow G$ euleriano).
+
+\subsection{Sólidos platónicos}
+
+Un sólido platónico es un poliedro convexo con todas las caras regulares y congruentes, y tal que en cada vértice inciden la misma cantidad
+de aristas (o equivalentemente, de caras), todas con el mismo ángulo. Estos sólidos se caracterizan por su gran simetría y belleza: Todos los vértices
+son indistinguibles entre sí, así como todas las aristas, y todas las caras.
+
+Observar que si consideramos el grafo de un sólido platónico (poner los vértices como nodos y unir dos cuando hay una arista entre ellos),
+estos grafos han de ser necesariamente planares, ya que son dibujables en la esfera.
+
+Lo que vamos a hacer es demostrar que existen exactamente 5 sólidos platónicos. Para eso vamos a introducir dos números asociados a un sólido
+platónico:
+
+1) $p$, el grado de cada cara del poliedro.
+
+2) $q$, el grado de cada vértice del poliedro.
+
+Es claro que fijados $p$ y $q$, existe un solo sólido platónico: En efecto, $p$ determina la forma de las caras (por ejemplo $p=4$ significaría
+que todas las caras son cuadrados congruentes), y $q$ determina la cantidad de caras que inciden en un vértice: Luego podemos empezar con un
+vértice, y pegarle $q$ caras, que encancharan de una sola forma porque todas deben pegarse con ángulos idénticos. A partir de este primer
+``casquete'', podemos ir extendiendo el poliedro de la misma manera sobre un vertice en el borde del casquete, y asi vamos construyendo
+una ``cascara'', que si cierra correctamente formará un sólido platónico y sino no, pero nunca puede formar más de uno porque la construcción
+está determinada.
+
+Calculemos entonces todos los posibles valores de $p$ y $q$. Buscaremos entonces los grafos planares que satisfacen 1) y 2). Notar que por
+dualidad, si $G$ satisface 1) y 2) con $p,q$, $G^*$ lo satisface con $q,p$. Luego estos grafos vendrán de a pares. Tenemos las condiciones:
+
+$$r+n = m+2$$
+
+$$rp = 2m$$
+
+$$nq = 2m$$
+
+Como $n \geq 3$, de la ultima, usando que $m \leq 3n - 6$, resulta
+
+$$nq \leq 2(3n - 6) \Rightarrow q \leq 2 \left (3 - \frac{6}{n} \right ) < 6$$
+
+$$q \leq 5$$
+
+Como ademas, $r \geq 3$, y nuestro grafo claramente no tiene puentes ni caras que compartan mas de una arista (las caras son poligonos regulares
+congruentes!), vale el argumento dual que concluye:
+
+$$p \leq 5$$
+
+Ademas es claro que debe ser $3 \leq p,q$ porque sino no se podria formar un poliedro. Fijados $p$ y $q$, es facil despejar de las condiciones
+anteriores:
+
+$$r = \frac{8 + 4(q-2)}{4 - (q-2)(p-2)}$$
+
+$$n = \frac{8 + 4(p-2)}{4 - (q-2)(p-2)}$$
+
+$$m = r + n - 2$$
+
+Luego tenemos que probar solo algunos valores de $p,q$ para ver cuales satisfacen las 3 condiciones anteriores. Es facil ver que las unicas
+soluciones son:
+
+$p=q=3$, $n=r=4$, $m=6$, correspondiente al tetraedro. Este solido platonico es su propio dual.
+
+$p=4$,$q=3$,$n=8$,$r=6$,$m=12$, correspondiente al cubo. Su dual es el octaedro.
+
+$p=3$,$q=4$,$n=6$,$r=8$,$m=12$, correspondiente al octaedro. Su dual es el cubo.
+
+$p=5$,$q=3$,$n=20$,$r=12$,$m=30$, correspondiente al dodecaedro. Su dual es el icosaedro.
+
+$p=3$,$q=5$,$n=12$,$r=20$,$m=30$, correspondiente al icosaedro. Su dual es el dodecaedro.
+
+\end{document}

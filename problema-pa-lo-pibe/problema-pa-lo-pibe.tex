@@ -1,0 +1,109 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{Brevísima lista de problema' pa' lo' pibe'}
+\author{Agustín Gutiérrez}
+\date{}
+
+\makeindex
+
+\newtheorem{problema}{{\sc Problema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+%Macros mágicas.
+\newcommand{\Left}{\textbf{Left}\xspace}
+\newcommand{\Right}{\textbf{Right}\xspace}
+\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+\begin{document}
+
+\maketitle
+
+\begin{problema}[Teorema de la galería de arte]
+Sea $P$ un polígono simple en el plano de $n$ lados. Un conjunto de puntos $S \subseteq P$ se dice que vigila $P$ si para cualquier
+$p \in P$ se tiene que existe un $q \in S$ tal que $\overline{pq} \subseteq P$.
+
+Demostrar que existe un $S$ que vigila a $P$ y tal que $|S| \leq \left \lfloor \frac{n}{3} \right \rfloor$
+
+Aclaraciones: $P$ se entiende como el conjunto de puntos del polígono, tanto el interior como la frontera. Un polígono simple
+en el plano es un polígono sin agujeros tal que sus lados no se intersecan, salvo lados consecutivos en sus extremos.
+\end{problema}
+
+\begin{problema}
+Una hoja de papel rectangular se divide en $n$ regiones, todas de igual área. Otra hoja de papel de idénticas dimensiones
+se divide también en $n$ regiones de igual área, aunque no necesariamente de la misma forma que la anterior.
+
+Demostrar que es posible superponer una hoja sobre la otra, y pinchar $n$ alfileres a través de ellas, de manera que
+cada alfiler atraviese exactamente un país en cada hoja, y cada país sea atravesado por exactamente un alfiler.
+\end{problema}
+
+\begin{problema}[Teorema de Fáry]
+Sea $G$ un grafo simple planar. Demostrar que es posible dibujar $G$ en el plano de forma que todas las aristas se representen
+por segmentos de recta.
+
+Comentario: Es un problema abierto si lo anterior es posible pidiendo además que las longitudes de las aristas sean enteras. 
+Está demostrado que sí es posible para el caso particular de grafos cúbicos.
+\end{problema}
+
+\begin{problema}
+Demostrar que todo polígono simple en el plano admite una triangulación. Una triangulación de un polígono simple en el plano
+es una partición del polígono en triángulos con vértices en vértices del polígono.
+\end{problema}
+
+\begin{problema}[Google CodeJam 2010]
+Carolina y Ariel juegan al siguiente juego:
+
+En el pizarrón se encuentran escritos los números $A$ y $B$, enteros positivos. Empieza Carolina y juegan una vez cada uno.
+En su turno, un jugador debe elegir un $k$ entero positivo, y cambiar $A$ por $A - kB$, o bien cambiar $B$ por $B - kA$.
+El primer jugador que escribe un número negativo o cero pierde.
+
+Decidir para cada $A$ y $B$ quien tiene estrategia ganadora.
+\end{problema}
+
+\begin{problema}[``El algoritmo RSA funciona'']
+Para cada $n,d$ enteros positivos, definimos $f_n^d : \mathbb{Z}_n \rightarrow \mathbb{Z}_n$ por $f_n^d(x) \equiv x^d (mod\ n)$
+Dado un número $n$ entero positivo, decimos que $n$ es piola si vale la siguiente propiedad:
+
+Para todo $d$ entero positivo, $d$ es coprimo con $\phi(n) \Leftrightarrow f_n^d$ es biyectiva.
+
+Hallar todos los números piolas.
+\end{problema}
+
+\begin{problema}[Google CodeJam Africa 2010]
+$N$ personas participan de la Code Jam Africa 2010, en la cual se les presentan $K$ problemas para resolver.
+El problema $1$ fue resuelto por $S_1$ participantes, el $2$ por $S_2$, y en general el $i$ por $S_i$ con $1 \leq i \leq K$.
+
+Demostrar que:
+
+1) Si cada persona resolvió al menos $C$ problemas, $0 \leq C \leq K$, entonces para cada $I \subseteq \{1,2,\cdots,K\}$, con $|I| = t$ se tiene que:
+
+$$N (K-t) + \sum_{i \in I}{S_i} \geq N C$$
+
+2) Dado un $C$ tal que $0 \leq C \leq K$, si para todo $I \subseteq \{1,2,\cdots,K\}$ se verifica la desigualdad de 1), 
+entonces es posible que cada persona haya resuelto al menos $C$ problemas 
+(en el sentido de que existe una asignación de cuáles problemas resolvió cada persona que verifica todo lo enunciado y en la que esto ocurre).
+\end{problema}
+
+\end{document}

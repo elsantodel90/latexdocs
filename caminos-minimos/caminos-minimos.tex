@@ -1,0 +1,233 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{Sobre algunos algoritmos de camino mínimo en toda su generalidad}
+\author{Agustín Gutiérrez}
+\date{}
+
+\makeindex
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+%Macros mágicas.
+%\newcommand{\Left}{\textbf{Left}\xspace}
+%\newcommand{\Right}{\textbf{Right}\xspace}
+%\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+%\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\section{Introducción}
+
+La intención de este artículo es explicar los algoritmos fundamentales para camino mínimo en grafos.
+Sin embargo, el enfoque pretende fundamentalmente dejar explícitadas todas las hipótesis que necesita
+cada uno de los algoritmos (e idealmente, solo ellas, es decir, no forzar hipótesis innecesarias), de
+tal forma que sea posible aplicarlos en toda su generalidad.
+
+Esta visión resulta útil al encarar problemas.
+
+\section{Definiciones fundamentales}
+
+Sea $G$ un grafo dirigido y sea $E$ su conjunto de arcos. Sea $D$ un conjunto de distancias totalmente ordenado por $\leq$, y sea $0 \in D$ un
+elemento destacado particular de $D$. Además, pediremos que $D$ contenga un máximo, que llamaremos $+\infty$
+(notar que esta restricción no es grave, pues siempre se puede agregar tal elemento extendiendo el orden de $D$), y un
+mínimo que llamaremos $-\infty$.
+Pediremos además que $D$ sea completo (En el sentido de que se pueda tomar ínfimo de un conjunto no vacío).
+Sea $F : D \times E \rightarrow D$ una \textbf{función acumuladora}. Dado un camino $P = (e_1,\cdots,e_n)$ en $G$
+entre $v_0$ y $v_n$, que pasa por $v_1, \cdots, v_{n-1}$, donde los $e_i \in E$ son los arcos del camino,
+definiremos la \textbf{longitud} de $P$ como:
+
+$$l(P) = F(F(F(F(F(0,e_1),e_2),e_3),\cdots),e_{n-1}),e_n)$$
+
+Diremos que un camino $P$ entre $v_0$ y $v_n$ es \textbf{mínimo} si no existe otro camino entre $v_0$ y $v_n$ de menor
+longitud. Llamaremos \textbf{distancia} entre $v_0$ y $v_n$, y la notaremos $d(v_0,v_n)$, al ínfimo de las longitudes
+de caminos entre $v_0$ y $v_n$. Si no existe ningún camino entre $v_0$ y $v_n$, diremos que la distancia entre ellos es $+\infty$.
+
+Notar que con esta definición, un camino es mínimo si y solo sí su longitud es igual a la distancia entre el punto
+de origen y el punto de llegada, y que la distancia entre todo par de vértices siempre está definida y no es
+necesariamente simétrica. Notar además que no necesariamente existe un camino mínimo, y en caso de existir, no
+necesariamente este es único.
+
+El problema del que nos ocuparemos es, entonces, computar distancias y caminos mínimos entre pares de puntos en un grafo. Cada
+algoritmo le impondrá ciertas restricciones a la función acumuladora para su correcto funcionamiento.
+
+\section{Algoritmo de Dijkstra}
+
+El algoritmo de Dijkstra supone:
+
+1) No negatividad : `` Caminar más nunca es bueno ''
+
+$$F(d,e) \geq d \ \ \ \  \forall d \in D, e \in E$$
+
+2) Principio del óptimo : `` Siempre conviene llegar antes a un nodo intermedio del camino ''
+
+$$d_1 \leq d_2 \Rightarrow F(d_1,e) \leq F(d_2,e) \ \ \ \  \forall d_1,d_2 \in D, e \in E$$
+
+Cualquier función que cumpla estas dos condiciones puede ser utilizada con el algoritmo de Dijkstra, que
+computa las distancias y caminos mínimos desde un nodo origen $v_0$ a todos los demás.
+
+\begin{proof}
+
+Veamos que para el conjunto de vértices que Dijkstra marca como ``finalizados'', la distancia al origen es correcta.
+Inicialmente, esto vale, pues se marca solamente $v_0$ con distancia $0$. Por la no negatividad, la
+longitud de cualquier camino de $v_0$ a $v_0$ ha de ser $l(P) \geq 0$, luego la distancia es correcta y el camino trivial (que
+no contiene ejes) resulta un camino mínimo.
+
+En un paso dado del algoritmo, se toma el nodo $v$ no finalizado con la menor marca de distancia, y se lo finaliza. Veamos
+que esto es correcto. Es claro que existe un camino $P$ entre $v_0$ y $v$ que realiza dicha distancia, y por lo tanto basta con probar
+que cualquier otro camino es igual o más largo que $P$ para mostra que $P$ es camino mínimo. Para esto, sea $P'$ un camino
+entre $v_0$ y $v$, y consideremos el primer nodo $u$ no finalizado que recorre $P'$. Si $u=v$, entonces es
+inmediato por la no negatividad que $l(P') \geq l(P)$. Si $u \neq v$, por la elección de $v$, y como $u$ no está
+finalizado, debe ser la marca de distancia de $u$ mayor o igual a la de $v$. Del principio del óptimo y la no
+negatividad resulta $l(P') \geq l(P)$.
+
+\end{proof}
+
+Notar por lo tanto, que como dijkstra guarda durante su ejecución un camino que realiza la distancia, resulta
+que para cualquier función que cumpla las condiciones 1) y 2), existen caminos mínimos entre todo par de nodos
+(siempre y cuando exista al menos un camino). Otra forma de ver esto es que la no negatividad asegura que de
+cualquier camino no simple se puede extraer un camino simple igual o más corto, luego se puede restringir la
+atención a caminos simples, que son finitos, y por lo tanto el camino mínimo estará bien definido. Notar que
+para este último argumento solo hemos necesitado 1), luego la no negatividad alcanza para garantizar la
+existencia de caminos mínimos (siempre y cuando exista al menos un camino).
+
+\subsection{Algoritmo basado en relajar nodos por orden creciente de distancias / programación dinámica.}
+
+Notar que lo único relevante para el correcto funcionamiento del algoritmo de Dijkstra es el hecho de que va
+finalizando los nodos en orden creciente de distancias al origen. Por lo tanto, cualquier algoritmo que de alguna
+manera se garantice finalizar los nodos en orden creciente de distancias al origen (BFS, BFS con cola de dos puntas,
+BFS multicolas, etc etc etc) será correcto bajo las mismas hipótesis que el algoritmo de Dijkstra.
+
+De hecho, es fácil pensar el algoritmo de Dijkstra como un algoritmo de programación dinámica si uno ya sabe el
+orden de distancias al origen de los nodos: la distancia en cada nodo será el mínimo sobre los ``padres'' del
+nodo de la distancia del padre más la longitud del arco del padre al nodo. En este caso, los ``padres'' son los
+nodos a menor distancia que son antecesores directos en el grafo. Se cumple principio del óptimo y
+superposición de subproblemas, características distintivas de la programación dinámica.
+
+\subsection{Algoritmo de programación dinámica en DAGs.}
+
+Con exactamente la misma idea del apartado anterior, en un DAG es posible dar un algoritmo de programación dinámica
+para calcular caminos mínimos. En este caso, es posible prescindir de la condición 1), aunque claramente necesitamos
+que valga el principio del óptimo. Este uso es típico por ejemplo en el problema del tablerito de $n \times m$
+que hay que ir de una esquina a la otra yendo solo para abajo y para la derecha.
+
+\section{Algoritmo de Bellman - Ford}
+
+El algoritmo de Bellman-Ford asume el principio del óptimo. Es una programación dinámica, que llena una tablita
+que mapea pares (cantidad de aristas en el camino, $nodo$) \texttt{->} distancia del origen a $nodo$. Es claro que con
+la tablita para caminos con $k$ aristas se computa fácilmente la tablita para $k+1$ aristas. Notar que estos
+valores estan perfectamente definidos por estar fijada la cantidad de aristas, habiendo así finitos caminos
+para cada caso.
+
+De esta manera, el algoritmo computa en $O(mL)$ las longitudes de los caminos mas cortos del origen a todos los
+demas nodos, cuya longitud sea $l \in {0,\cdots, L}$. Por lo tanto, si se puede acotar la longitud del camino
+buscado, este algoritmo es una opcion posible.
+
+\section{Algoritmo de Floyd}
+
+El algoritmo de Floyd asume una versión fuerte del principio del óptimo, y una estructura particular sobre la
+función acumuladora. Específicamente, asume que $D$ es un monoide con elemento neutro $0$ bajo la operación
+dada por $\cdot$, que existe una $g : E \rightarrow D$ tal que $F(d,e) = d \cdot g(e)$ para $d \in D, e \in E$, y
+que el monoide es compatible con el orden de $D$, es decir, 
+$d_1 \leq d_2 \Rightarrow d_1 \cdot d \leq d_2 \cdot d$ y $d \cdot d_1 \leq d \cdot d_2$.
+
+El hecho de que este monoide sea compatible con el orden de $D$ implica una versión fuerte del principio del óptimo
+en el siguiente sentido: La primer condición $d_1 \cdot d \leq d_2 \cdot d$ implica $F(d_1,e) \leq F(d_2,e)$, la
+versión simple del ya mencionado principio del óptimo (`` Siempre conviene llegar antes a un nodo intermedio del camino '').
+
+La segunda condición, $d \cdot d_1 \leq d \cdot d_2$, dice algo nuevo: Implica que además, sin importar cómo sea
+que uno llega a un nodo dado, la relación entre qué subcaminos de dicho nodo al nodo destino producirán un camino
+total más corto es siempre la misma. En particular, si uno tiene un camino mínimo de $a$ a $b$, y un camino mínimo
+de $b$ a $c$, y los concatena, obtiene un camino mínimo de $a$ a $c$.
+
+La expresión vulgarmente conocida de este algoritmo sería (para vértices numerados de 1 a $n$):
+
+\begin{verbatim}
+
+Para cada k <- [1..n]
+Para cada i <- [1..n]
+Para cada j <- [1..n]
+           dist[i][j] = min(dist[i][j], dist[i][k] * dist[k][j] )
+
+\end{verbatim}
+
+Donde con el \texttt{*} denotamos la operación $\cdot$ ya introducida.
+
+No obstante, esta no sería la versión ``completa'' del algoritmo en toda su totalidad, que mostraremos a continuación.
+
+El algoritmo es un algoritmo de programación dinámica que computa una tabla \texttt{dp[k][i][j]}, que indica el
+ínfimo de las longitudes de caminos entre $i$ y $j$, \textbf{que utilizan como nodos intermedios únicamente nodos
+del conjunto \texttt{[1..k]}}.
+
+Para $k=0$, no puede haber nodos intermedios, por lo tanto \texttt{dp[k][i][j]}
+con $i \neq j$ indica el mínimo $F(0,e) = g(e)$, siendo $e$ arista entre $i$ y $j$, $\infty$ si no existe tal arista.
+\texttt{dp[k][i][i]} indica el mínimo entre $0$ y $F(0,e) = g(e)$ con $e$ autoeje de $i$. Estos números pueden computarse
+directamente, y forman el caso base de la programación dinámica.
+
+Veamos como computar la tabla para $k$ a partir de la tabla para $k-1$. Llamamos por comodidad:
+
+$$d(i,j) = dp[k-1][i][j]$$
+$$d'(i,j) = dp[k][i][j]$$
+
+Por definición, $d'(i,j)$ es el ínfimo de las longitudes de caminos de $i$ a $j$ que utilizan como nodos
+intermedios nodos del conjunto \texttt{[1..k]}. Dado que en $d(i,j)$ ya tenemos considerados los caminos de $i$ a $j$ que
+utilizan nodos intermedios del conjunto \texttt{[1..k-1]}, solo nos falta considerar el uso del nodo $k$.
+
+Es fácil ver entonces que:
+
+$$d'(i,j) = \min(d(i,j), I)$$
+$$I = \inf \left \{d(i,k) \cdot d(k,k)^i  \cdot d(k,j) | i \in \mathbb{Z}_{\geq 0} \right \}$$
+
+Por supuesto, en una implementacion no es posible calcular $I$ aplicando directamente su definición pues involucra
+un conjunto infinito, sino que se debe utilizar alguna expresión analítica usando la forma particular del problema.
+En muchos casos lo que ocurre es que tal ínfimo se reduce simplemente a su elemento con $i=0$, es decir,
+$I = d(i,k) \cdot d(k,j)$, dando lugar de esta manera al algoritmo descrito anteriormente.
+
+Notar que el algoritmo de Floyd cambiando $\min$ por la suma y $\inf$ por una sumatoria infinita, 
+tomando como $0 \in D$ al $1$, $D = \mathbb{Z}_{\geq 0} U \{ +\infty \}$,
+usando como $\cdot$ el producto usual, y tomando $g(e) = 1$ para todo $e \in E$, resulta un algoritmo
+para calcular la cantidad de caminos entre cada par de nodos (posiblemente infinitos). Notar que en
+este caso, $I$ se calcula fácilmente pues si alguno de $d(i,k)$,$d(k,k)$,$d(k,j)$ es cero, la suma
+se calcula muy fácilmente evaluando finitos términos, y sino será $I= +\infty$.
+
+Ocurrira lo mismo con Bellman - Ford y el algoritmo para exponenciacion de matrices.
+
+CHE ESTOY ASUMIENDO ESTO QUE HAY QUE VER SI VALE O QUE HIPOTESIS PONER:
+
+$$\inf (S \cdot T) = \inf \{ s \cdot t | s \in S, t \in T \} = \inf (S) \cdot \inf (T)$$
+
+\section{Algoritmo de Dantzig}
+
+\section{Algoritmo basado en exponenciación de matrices}
+
+\end{document}

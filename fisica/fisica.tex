@@ -1,0 +1,852 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath,amsfonts}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{lmodern}
+\usepackage[per-mode=fraction]{siunitx}
+
+\newlength\longest
+
+\usepackage{titling}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\def\rev{$\mathbb{R} \mbox{-espacio vectorial } $}
+\def\qev{$\mathbb{Q} \mbox{-espacio vectorial } $}
+
+% Dimensiones
+\def\Dimensions{\mathcal D}
+\def\Quantities{\mathcal Q}
+\def\masa{\mathsf M}
+\def\longitud{\mathsf L}
+\def\tiempo{\mathsf T}
+\def\carga{\mathsf Q}
+\def\temperatura{\mathsf \Theta}
+
+
+
+\title{\huge Física}
+\author{Agustín Santiago Gutiérrez}
+\date{}
+
+\makeindex
+
+\newtheorem{teorema}{{\sc Teorema}}
+\newtheorem{definicion}{{\sc Definición}}
+\newtheorem{corolario}{{\sc Corolario}}
+\newtheorem{lema}{{\sc Lema}}
+
+%Ejemplos de macros
+%\newcommand{\Left}{\textbf{Left}\xspace}
+%\newcommand{\Right}{\textbf{Right}\xspace}
+%\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+%\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+{
+
+\thispagestyle{empty}
+\null\vfill
+
+\settowidth\longest{\large\itshape escrito por un Licenciado en Ciencias de la Computación,}
+
+\centering
+\parbox{\longest}{%
+  \raggedright{\large\itshape%
+   Un libro de física,   \\ 
+  escrito por un Licenciado en Ciencias de la Computación, \\
+  con énfasis en la formalidad matemática. \\ 
+  ¿Qué puede salir mal?\par\bigskip
+  }   
+}
+
+
+\vfill\vfill
+
+}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\section{Prefacio}
+
+\subsection{Objetivo del libro}
+
+Este libro lo escribo para mí. La intención es recopilar lo que aprendo y estudio en forma de libro, en un estilo particular (muy 
+formal y preciso, probablemente demasiado)
+relativamente inusual en la presentación de la física. Por esto y por el énfasis en formalidad matemática, es que este libro
+no resultará de lo más didáctico y recomendable para alguien que aborda muchos de los conceptos por primera vez. No obstante,
+espero que sea de ayuda a alguien, y que alguien le pueda sacar tanto jugo como yo le saqué al escribirlo.
+
+Si yo tuviera que enseñarle estos temas a alguien por primera vez, definitivamente no lo haría como lo hace este libro, que
+apunta más a ir derecho al grano y a los bifes desde las definiciones lógicamente simples, pero invocadas como galerazos desconectados; sino
+que propondría un programa basado fuertemente en experimentos, en la construcción gradual de un entendimiento en bases a leyes
+parciales tangibles en casos particulares, para solo después, luego de haber trabajado mucho con los conceptos, llegar a las
+definiciones y conceptos generales abstractos. Hacerlo de otra manera (por ejemplo como este libro lo hace) sería enseñar un modelo
+matemático preciso de manera formal, pero no sería enseñar física, es decir, no sería una manera efectiva de ayudar a alguien a entender
+el universo.
+
+Esto último creo que es un problema que se encuentra bastante en la enseñanza de la matemática, donde muchas veces no es percibido
+como un problema, porque total la matemática en sí es abstracta y no necesita motivaciones e intuiciones previas posiblemente erradas
+o inferiores. Si bien eso es cierto de la matemática pura en sí misma, no es cierto que los humanos seamos máquinas abstractas desprovistas
+de motivaciones, y por lo tanto un enfoque formalista radical en esas líneas es perjudicial para la educación matemática de los alumnos
+\footnote{Lo cual no implica de ninguna manera que deba enseñarse la matemática de manera informal y falta de rigor, pues eso
+ya dejaría de ser matemática para ser filosofía, divulgación de la ciencia, o alguna variante similar según el enfoque puntual.}.
+
+Por último, luego de decir para qué no me parece útil este libro, me atrevo a decir para qué sí me parece de utilidad: Me parece de
+utilidad como material de referencia, para consultar resultados y teoremas. También resulta de utilidad para alguien que quiera profundizar
+o repasar los conceptos abordados, que no tenga miedo a la formalidad matemática, pero que ya tenga un cierto manejo de tales conceptos.
+Finalmente, también puede servir para que alguien se haga una idea de cómo podría formalizarse la física, al menos en principio. Aunque
+los temas de este libro son un resultado parcial, y están lejísimo de la imposible tarea (por la cantidad de trabajo necesario,
+sin un beneficio claro e inmediato) de formalizar toda la física. Para los interesados en este último tema, recomiendo leer las opiniones de
+Hilbert al respecto, y particularmente sobre su famoso sexto problema.
+
+Otra advertencia que vale la pena hacer de antemano consiste en la terminología: Mi formación física es fuertemente autodidacta,
+recopilando información de las más variadas fuentes principalmente en inglés. El resultado puede ser terminología o traducciones inusuales,
+e incluso quizá ``incorrecta'' respecto de las convenciones aceptadas en algún caso (que esperemos sean los menos, ya
+que no estoy enterado de ninguno).
+
+En cuanto a su contenido, la presentación de los temas se hace en un orden inusual, basado en la formalidad matemática en
+un sentido lógico. Se comienza con cantidades físicas, unidades y magnitudes, conceptos fundamentales para construir sobre ellos el análisis físico cuantitativo.
+Luego se definen las nociones fundamentales del espaciotiempo, que nos proveerán un marco para las ideas que seguirán. Aquí se
+comentan sutilezas y cuestiones varias sobre relatividad, para finalmente quedarnos con un espaciotiempo estilo física clásica,
+deduciendo las transformaciones entre observadores inerciales a partir de las nociones básicas de simultaneidad y longitud absolutas.
+
+Una vez que tenemos establecido sólidamente el espaciotiempo clásico, procedemos a construir la mecánica clásica, empezando
+con cuestiones fundamentales sobre partículas, para luego estudiar el caso clásico de cuerpo rígido, fluidos, etc.
+
+\subsection{Visión de la física}
+
+¿Qué es la física? En realidad no es muy fácil responder satisfactoriamente a esta pregunta.
+
+Hay varias maneras de concebir la física. Según wikipedia, la física consiste en el análisis general de la naturaleza,
+llevado a cabo con el propósito de entender el comportamiento del universo. Esta es quizás la visión más acertada, porque
+se centra en el propósito de la física. Y por lo tanto, explica por qué un físico puede hacer caso omiso a críticas de un matemático
+cuando se dan diálogos como
+``Esa demostración no está completa'', ``Es verdad... Sería mucho mejor si la completáramos, ojalá podamos algún día, pero por
+ahora no se contradice con los experimentos, el argumento parece razonablemente convincente, y nuestra prioridad es entender
+el universo, y este teorema sí que nos ayuda a entenderlo''.
+
+Dicho esto, la matemática es una herramienta fundamental para entender el universo. Esto es, si se quiere, un accidente
+\footnote{Aunque en realidad no lo es. Al estar nosotros, los seres humanos mismos que hacen física y matemática, inmersos en el universo,
+la matemática que construímos y que nos interesa resulta naturalmente ser una herramienta importante para el estudio del universo.}, que algunos filósofos
+llaman ``La irrazonable eficacia de las matemáticas''. Si hacemos abstracción, y suponemos que en efecto la física va a
+proponer modelos matemáticos del universo con el afán de entenderlo entendiendo en su lugar esos modelos, podemos tomar
+una visión extremadamente simplista de la física.
+
+En efecto, podemos pensar que la física consiste de dos partes: En primer lugar, la física se encarga de proponer un modelo matemático
+del universo, que capture su comportamiento. Para esto debe nutrirse de la observación y la experimentación, jueces últimos de
+cualquier modelo, ya que si hay dos teorías en pugna y una se ajusta a los experimentos y la otra no, debemos quedarnos en física
+con la que se ajusta a las observaciones y experimentos, aunque la otra sea mucho más linda, o esté mejor formulada matemáticamente,
+o tenga cualquier otra ventaja aparente \footnote{Esto no quita que la teoría bonita pero errada no pueda servir como una excelente y muy útil
+aproximación a la otra teoría mejor, de manera que siga valiendo la pena estudiarla. Pero esto debe estar justificado por la experiencia y
+por las características matemáticas de las teorías. Por ejemplo, la teoría de Newton es matemáticamente una excelente aproximación
+a la teoría de la relatividad especial, mientras no se manejen grandes velocidades. Como la teoría de la relatividad especial se
+considera mejor por ajustarse bien a los experimentos, y la de Newton es una excelente aproximación a la misma cuando no hay
+velocidades enormes, se considera útil y adecuada la teoría de Newton bajo estas hipótesis, y su estudio sigue ayudando muchísimo
+a la compresión del universo, que es el objetivo final de la física.}.
+
+En segundo lugar, la física consiste en el estudio matemático de estos modelos. Esta parte de la física no tiene ninguna diferencia
+esencial con la matemática, y se puede decir directamente que es matemática. La única diferencia entre la matemática y la física
+(o entre un físico y un matemático) en esta parte, consiste en el propósito con el cual lleva a cabo su actividad, y en
+el tipo de objetos matemáticos que le interesarán estudiar (los cuales están fuertemente ligados al propósito por el cual llevan
+adelante el mencionado estudio matemático).
+
+Esta visión simplista de la física es la que tomaremos nosotros. En este sentido, construiremos matemáticamente esos modelos
+de los que hablamos. Notar que al entender cuál es el objetivo de la física, queda claro por qué no le resulta importante a un físico
+formalizar completamente y ser extremadamente precisos en la definición de estos modelos: Lo importante es entender el universo,
+y cualquier esfuerzo de formalización adicional que no aporte a la comprensión del universo es desde un punto de vista físico tiempo
+perdido, o al menos, es tiempo no utilizado en hacer física, y por lo tanto es una tarea que es mejor dejarle a los matemáticos.
+A esto se suma la dificultad enorme de formalizar algo como el universo: Muchos modelos son solo descripciones parciales, a veces
+distintos modelos son incompatibles entre sí, y por lo tanto es imposible obtener una formalización consistente que incorpore todos
+esos modelos. Pero se puede pensar no obstante que este sería el fin último, el santo grial de la física: Obtener un modelo matemático
+preciso que describa perfectamente el comportamiento del universo.
+
+\pagebreak
+
+\section{Magnitudes, Dimensiones, Cantidades y Unidades}
+
+\subsection{Intuición inicial}
+
+Daremos por entendido el concepto de magnitud, ya que no necesitaremos formalizarlo ni nos importará mucho, y será principalmente de uso
+conceptual. Basta saber
+que una magnitud es algo que puede ser medido cuantitativamente (tiempo, distancia, posición, presión, velocidad, humedad relativa, etc).
+Y justamente una medición concreta de un valor para una magnitud se corresponde con una cantidad física específica, que
+normalmente expresamos como un número y una unidad (al menos para el caso simple de magnitudes escalares), como por ejemplo
+cosas de la pinta $\SI{3}{\meter}$ o $\SI{4,5}{\meter \per \second}$. Es decir, una magnitud será un aspecto de la realidad que se
+puede medir cuantitativamente, y esas mediciones se corresponderán con objetos matemáticos precisos (escalares, vectores, matrices,
+tensores, etc).
+
+Las cantidades físicas son fundamentales en la física clásica. Básicamente constituyen la expresión de una magnitud escalar,
+algo que se puede medir y caracterizar adecuadamente con un número real (teniendo fijado un sistema de unidades adecuado).
+A continuación nos propondremos caracterizar este comportamiento de cantidades físicas, pero antes de eso empezaremos mostrando
+un ejemplo concreto para entender intuitivamente a qué nos referimos luego. Considere el lector entonces lo siguiente como
+una introducción informal, importante para interpretar más fácilmente las definiciones posteriores, pero lógicamente prescindible.
+
+Consideremos por ejemplo tres \textit{dimensiones} básicas: \textit{masa}, \textit{longitud} y \textit{tiempo}. Tomaremos como unidades
+las unidades del \textbf{SI} (\textbf{S}istema \textbf{I}nternacional de unidades) utilizadas para medirlas: El \textit{kilogramo} (``kilo'' para los amigos), notado como $\si{\kilogram}$,
+para medir masa; el \textit{metro}, notado $\si{\meter}$, para medir longitud; y finalmente el \textit{segundo}, notado $\si{\second}$, para medir tiempo. Notar
+que es convención estilística ampliamente aceptada escribir las unidades siempre en letra imprenta, al estilo mostrado, para no confundirlas con variables en ecuaciones
+(por ejemplo, $3m$ puede referirse a algo como ``el triple de la masa $m$'', pero no puede ser ``tres metros'', que sería $\SI{3}{\meter}$).
+
+El lector podrá ir a la verdulería y pedir $\SI{3}{\kilogram}$ de bananas, y le darán sus bananas, así que estará familiarizado con esto.
+Lo mismo para longitudes y tiempos, uno sabe lo que significa que un corredor haga los $\SI{100}{\meter}$ en menos de $\SI{10}{\second}$.
+Pero con solo medir masas, tiempos y longitudes no nos alcanza. Necesitaremos \textit{dimensiones derivadas}, que se obtengan a
+partir de estas. Sin ir más lejos, el ejemplo del corredor invita claramente al concepto de \textit{velocidad}. El lector se dará cuenta de
+que si el corredor corriese a velocidad constante, su velocidad sería de $\SI{10}{\meter\per\second}$ (que se lee ``diez metros por segundo'', dado que
+\textit{por cada} segundo, el corredor \textit{recorre diez metros}). Y aquí nos encontramos
+con una nueva dimensión, la velocidad, que resulta ser el cociente de la longitud y el tiempo, es decir es una dimensión derivada,
+y su unidad, $\si{\meter \per \second}$, resulta obtenerse a partir de las unidades básicas $\si{\meter}$ y $\si{\second}$,
+correspondientes a la longitud y al tiempo respectivamente.
+
+Sin esforzarse mucho, el lector entenderá ahora que generalizando este ejemplo, podremos obtener cantidades para magnitudes derivadas de la pinta
+$k \ \si{\meter}^{e_1}\si{\kilogram}^{e_2}\si{\second}^{e_3}$, con $k \in \mathbb{R}$ y $e_1,e_2,e_3 \in \mathbb{Q}$. El
+ejemplo de $\SI{10}{\meter\per\second}$ corresponde a $k=10$, $e_1=1$, $e_2=0$ y $e_3=-1$.
+
+El álgebra de unidades que pretendemos construir es muy intuitiva y sencilla. Solo podemos sumar o restar dos cantidades cuando sus
+unidades resultan \textit{compatibles}, es decir, de la misma dimensión. De esta manera por ejemplo, sabiendo que
+$\SI{100}{\centi \meter} = \SI{1}{\meter}$, tenemos que $\SI{2}{\meter}$ y $\SI{25}{\centi \meter}$ son cantidades compatibles, y su suma
+será $\SI{2,25}{\meter}$ o equivalentemente, $\SI{225}{\centi \meter}$. En cambio no podemos sumar $\SI{3}{\meter}$ y $\SI{2}{\second}$,
+ya que así como no podemos comparar (ni sumar) peras con roqueforts, no podemos mezclar un tiempo y una longitud de esta manera, ya
+que son dimensiones diferentes y no hay una equivalencia entre ellas\footnote{En realidad se puede establecer una relación entre ellas,
+pero esto no resta importancia al estudio de las unidades. Ver la sección que habla sobre sistemas de unidades naturales.}.
+
+En cambio, es notable que siempre podemos multiplicar o dividir\footnote{Salvo el caso de la división por cero.} dos cantidades.
+Simplemente multiplicamos los números y las unidades por separado de la manera obvia: 
+$\SI{2}{\second} \cdot \SI{10}{\meter\per\second} = \SI{20}{\meter}$. Este ejemplo sencillo corresponde a una cuenta muy simple
+que el lector debe ser capaz de hacer solito sin necesidad de saber un pomo de física: Una persona que cada segundo que pasa
+recorre diez metros, si corre durante dos segundos recorre un total de veinte metros.
+
+El ejemplo anterior mostraba una división: $\frac{\SI{100}{\meter}}{\SI{10}{\second}} = \SI{10}{\meter\per\second}$, con la
+interpretación intuitiva antes mencionada. Como vemos, multiplicar y dividir cantidades no trae problemas, sean cuales sean
+las unidades. El caso general se comportaría según la regla totalmente esperada:
+
+$$k_1 \ \si{\meter}^{a_1}\si{\kilogram}^{a_2}\si{\second}^{a_3} \cdot k_2 \ \si{\meter}^{b_1}\si{\kilogram}^{b_2}\si{\second}^{b_3} =
+ (k_1 \cdot k_2) \ \si{\meter}^{a_1 + b_1}\si{\kilogram}^{a_2+b_2}\si{\second}^{a_3+b_3}$$
+
+Además, observe el lector que como dijimos antes, está bien definido cuándo una cantidad es mayor que otra siempre y cuando tengan
+la misma dimensión, y en particular cuando una es positiva (mayor que cero). Entendido perfectamente todo esto, el lector ya entiende en un
+sentido práctico lo que son las unidades y qué pretendemos hacer con ellas. Es esta estructura intuitiva la que vamos a formalizar
+en la sección que sigue.
+
+\subsection{Descripción de las dimensiones físicas}
+
+\begin{definicion}
+    Un \textbf{espacio de dimensiones} es una tupla $(\Dimensions,\cdot_d, \circ, \cdot_q)$ que cumple todo lo siguiente:
+    
+    1) Cada elemento de $\Dimensions$ es un \rev de dimensión $1$ (con una operación suma que notamos con $+$) que llamaremos una dimensión, y son todos disjuntos. Si $D \in \Dimensions$, $v \in D$, diremos que $D$ es la dimensión de $v$,
+    y lo notaremos $d(v) = D$
+    
+    2) $(\Dimensions, \cdot_d, \circ)$ es un \qev, con suma de vectores $\cdot_d$ y acción de $\mathbb{Q}$ en $\Dimensions$ dada por $\circ$.
+    Al vector cero de $\Dimensions$ lo llamamos la dimensión adimensional\footnote{Es un nombre un tanto contradictorio, pero como veremos esta dimensión representa simples reales sin una unidad, un número y ya, o sea, una cantidad adimensional.}.
+     
+    3) Notamos $\Quantities$ al conjunto unión de todos los elementos de $\Dimensions$. A los elementos de $\Quantities$ los llamaremos cantidades físicas. $(\Quantities, \cdot_q)$ es un monoide conmutativo
+    sin divisores de $0$, y compatible con la estructura de de $\Dimensions$. Más precisamente, esto último significa:
+    
+    $$d(a \cdot_q b) = d(a) \cdot_d d(b) \ \  \forall a,b \in \Quantities$$
+    
+    $$(a+b) \cdot_q c = a \cdot_q c + b \cdot_q c \ \  \forall a,b \in D \in \Dimensions, \ c \in D' \in \Dimensions$$
+    
+    $$(\lambda a) \cdot_q b = \lambda (a \cdot_q b) \ \ \forall \lambda \in \mathbb{R}, \ a,b \in \Quantities$$
+    
+    $$a \cdot_q b = 0 \Rightarrow a = 0 \lor b = 0 \ \ \forall a,b \in \Quantities$$
+    
+\end{definicion}
+
+Notemos que a la acción $\circ$ la notamos simplemente con la yuxtaposición, como es usual para la acción de un escalar sobre un vector.
+Interpretemos rápidamente esta definición en términos de la intuición dada previamente. 
+
+Usamos notación multiplicativa para la suma de vectores en $\Dimensions$, ya que esta suma de vectores corresponde a
+multiplicar dimensiones, y la acción es elevar una dimensión a un racional. Por otro lado los elementos de $\Quantities$ son
+justamente todas las \textit{cantidades físicas} posibles, y para cada una de ellas $q \in \Quantities$, $d(q) \in \Dimensions$
+es su dimensión correspondiente. 
+
+La suma de vectores en $D \in \Dimensions$ es simplemente sumar cantidades físicas, lo cual
+solo tiene sentido como vimos antes, si estamos sumando cantidades de una misma dimensión. El producto $\cdot_q$ corresponde
+al producto de cantidades físicas (esas que damos con número y unidad), y el $\cdot_d$ corresponde al producto de dimensiones,
+o sea, eso que hacemos cuando decimos que multiplicar una velocidad por un tiempo da por resultado una longitud.
+
+De ahí resulta que la primer condición que pedimos al monoide $(\Quantities, \cdot_q)$ expresa que la dimensión del producto
+de cantidades es el producto de las dimensiones correspondientes, o sea que las dimensiones se pueden manejar por un lado
+independientemente del valor exacto de la cantidad, cosa que es fácil observar en los ejemplos anteriores intuitivos. Notar
+que gracias a esta condición, en la segunda expresión resulta que el lado derecho está bien definido, pues la suma es
+entre cantidades de la misma dimensión ($a \cdot_q c$ y $b \cdot_q c$ tienen la misma dimensión, pues ambas tienen dimensión
+$D \cdot_d D'$ en virtud de la primer propiedad).
+
+Por otra parte, las segundas dos condiciones expresan que $f_{D,a} : D \rightarrow d(a) \cdot_d D$, dada por 
+$f(b) = a \cdot_q b$ es una transformación lineal (homomorfismo)
+de $D$ en $d(a) \cdot_d D$, para cada $D \in \Dimensions$ y $a \in \Quantities$. En este sentido el producto preserva la estructura de espacio
+vectorial de las cantidades, y al ser espacios de dimensión $1$, multiplicar por una cantidad fija termina siendo esencialmente
+como multiplicar por una constante (la matriz en cualesquiera bases de $f_{D,a}$ es una matriz de $1 \times 1$).
+
+Todas estas observaciones deberían ayudar a ir entendiendo como esta definición formal captura la intuición del ejemplo de la sección anterior.
+Estudiaremos ahora algunas propiedades de esta estructura, y finalmente veremos que en efecto se corresponde perfectamente con la intuición anterior.
+En lo sucesivo notaremos a $\cdot_d$ y a $\cdot_q$ simplemente con $\cdot$. Esto no generará confusión ya que se puede deducir cuál
+de ellos aplicamos de acuerdo a los elementos a los que lo aplicamos (uno opera con cantidades físicas y el otro con dimensiones), y hemos venido distinguiéndolos solo para mantener una
+prolijidad inicial hasta entrar en confianza. Eventualmente, directamente dejaremos de utilizar el $\cdot$ para reemplazarlo
+por la simple yuxtaposición de los factores involucrados (aunque por unos párrafos más, usaremos yuxtaposición para la acción de $\mathbb{R}$ en una dimensión y
+el $\cdot$ para los productos en $\Dimensions$ y $\Quantities$).
+
+Notemos en primer lugar que el elemento neutro del monoide $1 \in \Quantities$, es una cantidad adimensional, es decir, $d(1) = 1$
+(entendiendo el segundo $1$ como el vector nulo en $\Dimensions$).
+En efecto, $d(1) = d(1 \cdot 1) = d(1) \cdot d(1)$, y recordando que $(\Dimensions, \cdot)$ es un grupo (por ser los vectores de un \qev),
+podemos cancelar y resulta $d(1) = 1$. Además no puede ser $1 = 0$ (siendo el segundo el $0$ de la dimensión adimensional), pues
+sería $v = 1 \cdot v = 0 \cdot v = (0 0) \cdot v = 0 (0 \cdot v) = 0$ para cualquier $v \in \Quantities$, un claro absurdo.
+
+Notemos ahora que $(\lambda 1) \cdot v = \lambda (1 \cdot v) = \lambda v$, de manera que si identificamos a $\lambda 1$ con $\lambda \in \mathbb{R}$,
+la acción $\lambda v$ resulta equivalente al producto del asociado $(\lambda 1) \cdot v$. Luego es natural identificar estos elementos
+entre sí, de manera que consideramos a $\mathbb{R}$ como la dimensión adimensional, y entonces las cantidades físicas resultan
+extender y generalizar el cuerpo de los reales. Vemos que como habíamos dicho, las cantidades adimensionales resultan ser números
+reales comunes, sin ninguna unidad asociada. Es claro además que con esta identificación, el producto usual en $\mathbb{R}$ coincide
+con la restricción de nuestro $\cdot$ al caso adimensional, pues $(a 1) \cdot (b 1) =  (ab)1$, así que tanto la suma como el producto
+en $\Quantities$ extienden a los respectivos de $\mathbb{R}$, y la acción de $\mathbb{R}$ sobre elementos de $\Quantities$ coincide
+con el producto extendido.
+
+Miremos ahora los ceros por un momento. Notemos que no hay \textit{un} cero, sino muchos ceros, uno por cada dimensión, y son
+elementos diferentes de $\Quantities$. Venimos usando el mismo símbolo $0$ para referirnos a todos ellos, pero esto no debería
+generar confusión, ya que allí donde hay un $0$ se interpreta como un $0$ de la dimensión adecuada al contexto.
+
+Otra propiedad sencilla pero importante es que $a \cdot b = 0 \Leftrightarrow a = 0 \lor b = 0$. Esto equivale a que
+$f_{D,a}$ es la transformación lineal nula exactamente cuando $a = 0$ (recordar que como la dimensión de los espacios es $1$,
+si no es nula es inversible). Ya hemos mostrado que $a = 0 \Rightarrow f_{D,a} = 0$. La vuelta es exactamente nuestra
+hipótesis de que el monoide $(\Quantities, \cdot_q)$ no tiene divisores de $0$. En particular el producto de elementos no nulos
+resulta en elementos no nulos.
+
+Gracias a esta propiedad podemos demostrar que los elementos no nulos de nuestro monoide forman en realidad un grupo con el producto, es decir
+que habrá inversos y por lo tanto podemos dividir además de multiplicar, siempre que no dividamos por cero. Para esto basta notar
+que si tenemos una cantidad no nula $q \in \Quantities$ con $d(q) = D \in \Dimensions$, aprovechando la estructura de \qev de $\Dimensions$
+existe una $D^{-1} \in \Dimensions$, y si tomamos un $q' \in D^{-1}$ no nulo se tiene que $d(q q') = 1$, es decir
+$q q' = \lambda \in \mathbb{R}$ con $\lambda \neq 0$ (pues $q$ y $q'$ son no nulos). De ahí que $\frac{1}{\lambda} q'$ es un
+inverso para $q$.
+
+Recapitulando, tenemos entonces un conjunto de cantidades físicas $\Quantities$, con suma y producto bien definidos y particionado
+según $\Dimensions$, de forma que solo podemos sumar y restar cantidades de una misma dimensión, pero siempre podemos multiplicar
+dos cantidades o dividir por una cantidad no nula, y además $\mathbb{R} \subseteq \Quantities$ y las operaciones en $\Quantities$
+extienden naturalmente las operaciones respectivas en $\mathbb{R}$. 
+
+Nos falta definir ahora una noción de orden, es decir,
+queremos comparar cantidades de la misma magnitud. Como cada espacio vectorial de dimensión $1$ tiene dos ordenaciones posibles
+compatibles con la estructura de \rev, bastará fijar los elementos positivos. Para ello definimos que un elemento
+$q \in \Quantities$ es no negativo, y lo notamos $q \geq 0$, si es un cuadrado, o sea existe $q' \in \Quantities$ tal que
+$q = q'^2$. Decimos que $q$ es positivo, $q > 0$, si es no negativo y no nulo.
+
+Notemos en primer lugar que la positividad induce un orden en cada dimensión. En efecto, dada una dimensión $D \in \Dimensions$,
+aprovechando la estructura de \qev de $\Dimensions$ tenemos que para que $u^2 \in D$, debe ser necesariamente $u \in D^{\frac{1}{2}}$,
+y tomando un $u \in D^{\frac{1}{2}}$ no nulo, resulta que los cuadrados de $D$ son exactamente los
+$(\lambda u)^2 = \lambda^2 u^2$. Como $u^2 \in D$ no es nulo, estos elementos corresponden a una semirrecta en $D$.
+Es claro que la relación en $D$ dada por $v \geq w \Leftrightarrow  v - w \geq 0$ es una relación de orden, y es la única
+posible si pretendemos que los cuadrados sean positivos. Luego ya tenemos definida una relación de orden con la que podemos
+comparar elementos de una misma dimensión.
+
+Notemos que el producto satisface la regla de los signos: Si multiplicamos positivos obtenemos positivos, pues es claro que
+al multiplicar cuadrados no nulos obtenemos cuadrados no nulos. El resto de las reglas salen de esta, por ejemplo,
+un negativo por un positivo da un negativo, ya que un negativo es, por definición, el inverso aditivo de un positivo,
+luego tal producto resulta ser el inverso aditivo de un producto de positivos, y por lo tanto negativo. Similarmente
+con dos negativos tendremos el inverso del inverso, que será el valor positivo inicial.
+
+De estas propiedades también surgen inmediatamente las usuales para desigualdades respecto del producto, es decir,
+multiplicar una desigualdad por un positivo a ambos lados preserva la desigualdad, y multiplicarla por un negativo
+la invierte. Las propiedades de las desigualdades respecto de la suma son las usuales inmediatamente, pues cada
+\rev con el orden resulta isomorfo a $\mathbb{R}$ (con la salvedad de que no hay un elemento ``$1$'' destacado, pero
+esto no es importante para el orden).
+
+Para finalizar, nos queda por definir la noción de elevar una cantidad positiva a un número racional. Usando un argumento
+análogo al que utilizamos para definir las cantidades positivas como los cuadrados, y sabiendo que en $\mathbb{R^+}$ podemos tomar
+raíces enésimas, es fácil ver que para cada $q \in \Quantities$
+positivo, existe un único $q' \in \Quantities$ positivo y tal que $q'^n = q$, para cada natural $n$, es decir, podemos tomar
+raíces enésimas a cantidades positivas. Podemos definir así $q^{\frac{p}{n}} = q'^p$ y $q^{-\frac{p}{n}} = \left (\frac{1}{q'} \right)^p$. Es fácil ver que esta potenciación
+está bien definida (representaciones distintas del exponente $r = \frac{p}{n}$ dan lugar al mismo valor $q^r$),
+distribuye con el producto, que encadenar potenciaciones equivale a multiplicar los exponentes, que
+$d(q^r) = d(q)^r$, etc, ya que todas estas demostraciones son análogas a lo que se hace cuando se define la exponenciación
+de un real positivo a un valor racional.
+
+Con esto ya tenemos definidas las nociones fundamentales para trabajar con dimensiones, que, como vemos, no es más que
+capturar la noción intuitiva de hacer cuentitas con unidades en una estructura matemática que lo refleje.
+
+\subsection{Descripción constructiva de las dimensiones: Unidades}
+
+La sección anterior no es constructiva para nada. Definimos una noción de espacio de dimensiones a partir de unas propiedades
+básicas, y luego vemos que tiene
+una estructura muy prolija que nos agrada, pero ni siquiera hemos mostrado un modelo de tal espacio de dimensiones, con
+lo cual a priori ni siquiera tenemos probada la consistencia de tal noción. Además, no tenemos una idea concreta de como
+operar con cantidades a partir de su definición. Eso pretendemos hacer en esta sección: Unificar la definición teórica,
+abstracta, general, de la sección anterior, con la noción concreta de ``numerito $+$ unidad'' que venimos manejando
+intuitivamente.
+
+Para ello vamos a definir el siguiente concepto fundamental:
+
+\begin{definicion}
+Un \textbf{conjunto de dimensiones fundamentales} para un espacio de dimensiones es una base del \qev $(D, \cdot)$.
+\end{definicion}
+
+Esta definición es sencilla pero encierra un concepto sutil...
+
+Volvamos al ejemplo inicial intuitivo, en el cual considerábamos las cantidades de la pinta
+$k \ \si{\meter}^{e_1}\si{\kilogram}^{e_2}\si{\second}^{e_3}$, con $k \in \mathbb{R}$ y $e_1,e_2,e_3 \in \mathbb{Q}$.
+Tenemos que una dimensión es para nosotros una combinación de tiempo, longitud, y masa. Claramente estas tres forman una base
+del espacio de dimensiones que manejamos en este ejemplo, y resultan ser lo que acabamos de llamar un conjunto de dimensiones
+fundamentales. Ahora bien, la noción de base en un espacio viene de la mano de la noción de \textit{cambio de base}: ¿Se
+podrán tomar otras dimensiones fundamentales en el ejemplo?
+
+La respuesta resulta ser que sí. Por ejemplo podemos tomar como base, longitud, velocidad y masa. Así, tiempo ahora no es
+una dimensión fundamental sino que se obtiene como longitud sobre velocidad. Sin ir más lejos podemos imaginarnos que
+tomamos como unidades al $\si{\meter}$, al $\si{\meter\per\second}$ y al $\si{\kilogram}$ y tendremos cantidades de la
+pinta
+$k \ \si{\meter}^{e_1}\si{\kilogram}^{e_2}\si{\meter\per\second}^{e_3}$, con $k \in \mathbb{R}$ y $e_1,e_2,e_3 \in \mathbb{Q}$.
+El isomorfismo (cambio de base) entre esta representación y la anterior es claro y resulta de hacer una simple cuentita
+con los $e_1, e_2, e_3$.
+
+Este ejemplo muy sencillo da cuenta de un concepto muy importante, que es que la elección de dimensiones fundamentales
+es completamente arbitraria. El SI determina usar masa, tiempo y longitud como unidades fundamentales, pero por ejemplo
+el sistema técnico es un sistema alternativo que toma como dimensiones fundamentales del mismo espacio al tiempo,
+la longitud y la fuerza, es decir, reemplaza masa por fuerza. Ambos son completamente equivalentes y se corresponden
+por medio de un sencillo cambio de base.
+
+Recapitulando, un conjunto de dimensiones fundamentales nos permitirá expresar cada dimensión como un producto de las dimensiones
+fundamentales elevadas a exponentes racionales adecuados, de forma única. ¿Podremos obtener una expresión similar para cantidades
+físicas?
+
+\begin{definicion}
+Un \textbf{sistema de unidades fundamentales} para un espacio de dimensiones es un conjunto $U \subseteq \Quantities$ de cantidades positivas, de manera que
+no haya dos de la misma dimensión y el conjunto $\{d(u) | u \in U \}$ sea un conjunto de dimensiones fundamentales para el mismo espacio
+de dimensiones.
+\end{definicion}
+
+En otras palabras, un sistema de unidades fundamentales se obtiene tomando una cantidad positiva de cada una de de las dimensiones
+de un conjunto de dimensiones fundamentales. Así como vimos la total arbitrariedad del conjunto de dimensiones fundamentales,
+queda evidentemente claro que el sistema de unidades fundamentales es igualmente arbitrario. 
+
+La importancia de los sistemas de unidades radica en el siguiente
+
+\begin{teorema}
+Dado un sistema de unidades fundamentales $U$, para cada elemento $q \in \Quantities$ existen un único $U' \subseteq U$ finito,
+una única función $e : U' \rightarrow \mathbb{Q} \setminus \{0\}$ y $k \in \mathbb{R}$ de manera que
+$$q = k \prod_{u \in U'}{u^{e(u)}}$$
+\end{teorema}
+
+\begin{proof}
+Tomando dimensiones queda claro que debe ser $d(q) = \prod_{u \in U'}{d(u)^{e(u)}}$. Como los $d(u)$ forman un conjunto de 
+dimensiones fundamentales, existen únicos $U'$ finito y $e$ que cumplen esto (recordar que formar un conjunto de dimensiones
+fundamentales es simplemente ser una base del espacio de las dimensiones). Como los $u \in U$ son positivos, esto determina
+que $\prod_{u \in U'}{u^{e(u)}}$ está bien definido, es positivo y tiene la dimensión correcta, luego existe un único
+$\lambda$ que cumple lo pedido (ya que al ser no nulo, tal valor resulta ser una base de $d(q)$).
+\end{proof}
+
+La importancia de este teorema radica en que nos caracteriza completamente la forma de los elementos de $\Quantities$, y
+nos asegura que al fin y al cabo, cualquier espacio de dimensiones resulta isomorfo al ejemplo intuitivo que dimos antes.
+
+Dicho sea de paso, es fácil verificar que tales expresiones constituyen un ejemplo de espacio de dimensiones ya que cumplen
+todos los axiomas de la definición, luego son los únicos. Particularmente se desprende que dos espacios de dimensiones cualesquiera
+tienen esta pinta, y por lo tanto son isomorfos siempre y cuando los $\Dimensions$ correspondientes tengan la misma dimensión
+como \qev.
+
+Otra consecuencia importante del teorema es que nos provee una representación práctica, en el sentido de que es muy fácil operar
+con expresiones representadas en un sistema de unidades prefijado. Concretamente, es inmediato verificar que la expresión de
+un producto resulta de sumar exponentes y multiplicar los escalares: Y la expresión de la suma resulta simplemente de sumar
+los escalares, y la suma está definida exactamente cuando los exponentes coinciden, ya que los exponentes determinan completamente
+la dimensión de la cantidad en cuestión.
+
+La elegancia de construir de esta manera axiomática los espacios de dimensiones en lugar de partir de un conjunto de unidades
+fundamentales prefijado radica justamente, en que tales unidades son arbitrarias, y tal arbitrariedad queda clarísima con
+nuestra definición, mientras que si hubiéramos partido de un conjunto de unidades prefijado y construído directamente
+el conjunto de las cantidades, no sería tan claro que esas unidades particulares elegidas no tienen un rol privilegiado.
+
+Si bien hemos hablado de ``un'' espacio de dimensiones, en el sentido de definición matemática general y suponiendo que puede haber
+muchos (y los hay, ya que hemos explicado como construírlos explícitamente), lo cierto es que para nuestro estudio físico nunca
+trabajaremos con varios a la vez. En particular, nos conformaremos con pensar que ya existe allí un (``el'') espacio de dimensiones, con
+tantas dimensiones como necesitemos, y en todo el libro trabajaremos con él. Cuando necesitemos una dimensión nueva la introduciremos,
+y esto no trae problemas pues podemos pensar que siempre estuvo allí en nuestro espacio de dimensiones, solo que nunca la habíamos
+mencionado antes.
+
+De esta manera, cuando hablemos de una dimensión, o una cantidad física, se entenderá que nos referimos a los elementos de
+$\Dimensions$ o de $\Quantities$, conjuntos que están fijos a lo largo de todo el libro y corresponden a un espacio de dimensiones
+existente y adecuado para la descripción de la física que haremos (o sea, que tenga todas las dimensiones que vayamos a usar).
+
+\subsection{Espacio vectorial dimensional}
+
+Con esto que hemos construído tenemos las cantidades físicas escalares bien representadas,
+pero ¿Qué hay de los vectores? Concretamente, nos gustaría
+poder manejar expresiones como
+
+$$\SI{5}{\kilogram \per \meter} (\SI{3}{\meter}, \SI{2}{\meter}, \SI{-4}{\meter} ) = (\SI{15}{\kilogram}, \SI{10}{\kilogram}, \SI{-20}{\kilogram} )$$
+
+Además, no queremos tener que hacer una construcción particular fijando bases con cada espacio vectorial con el que queramos trabajar, así que para
+ello definiremos las siguientes nociones destinadas a capturar el comportamiento de las dimensiones en lo que a vectores respecta.
+
+\begin{definicion}
+Un \textbf{$\mathbb{R}$-espacio vectorial dimensional} es una tupla $(\mathcal{V_D}, \circ)$ que cumple todo lo siguiente:
+
+1) $\mathcal{V_D}$ es un conjunto de $\mathbb{R}$-EV disjuntos, de manera que $\mathcal{V_D}$ sea un $\mathbb{Q}$-espacio afín cuyo espacio vectorial asociado sea $\Dimensions$.
+     Dado $V \in \mathcal{V_D}$ y $D \in \Dimensions$, notamos $D \cdot V$ a la traslación correspondiente en $\mathcal{V_D}$, que traslada al punto $V$ según el vector $D$.
+
+2) Llamamos $\mathcal{V}$ a la unión de todos los elementos de $\mathcal{V_D}$. Dado un $v \in V \in \mathcal{V_D}$, notaremos como
+$e(v) = V$.
+
+3) $\circ : \Quantities \times \mathcal{V} \rightarrow \mathcal{V}$ es una acción compatible con la estructura de $\mathcal{V}$, o sea:
+
+   $$ e(qv) = d(q) \cdot e(v) \ \ \forall q \in \Quantities, v \in \mathcal{V} $$
+
+   $$ q(v+w) = qv + qw  \ \ \forall q \in \Quantities, v,w \in V \in \mathcal{V_D}$$
+   
+   $$ (q+q')v = qv + q'v  \ \ \forall q,q' \in D \in \Dimensions, v \in \mathcal{V}$$
+   
+   $$ (qq')v = q'(qv)  \ \ \forall q,q' \in \Quantities, v \in \mathcal{V}$$
+
+   $$ \circ \mbox { coincide con la acción de } \mathbb{R} \mbox{ en } V \ \ \forall V \in \mathcal{V_D}$$
+
+\end{definicion}
+
+La intuición es cada cada elemento $V \in \mathcal{V_D}$ es un espacio vectorial de vectores con una dimensión diferente,
+de manera que al multiplicar una cantidad por un vector, obtenemos un nuevo vector pero que puede caer en otro espacio
+vectorial, si cambia la dimensión. Si la cantidad física era adimensional no cambiará la dimensión, porque la última
+condición nos garantiza que en ese caso el efecto es el mismo que la acción normal cuando la cantidad se considera como
+un número real.
+
+Caractericemos rápidamente la estructura de esta extensión que hemos hecho para ver que la hemos hecho bien.
+Notemos que lo que hemos pedido es muy razonable: que $\circ$ extienda la acción de $\mathbb{R}$ en cualquiera de los $V$, a una
+acción general de $\Quantities$ en $\mathcal{V}$ que cumpla con las propiedades usuales de la acción de un escalar sobre un espacio
+vectorial y respete las dimensiones.
+
+Observemos que la primer condición, que se respeten las dimensiones, garantiza que las sumas en las otras expresiones están todas
+bien definidas (son sumas entre entidades de la misma dimensión, que en el caso de los vectores se entiende como que son parte del mismo
+espacio vectorial, y por lo tanto se pueden sumar).
+
+Consideremos, similarmente a como hicimos antes, la $f_{V,q} : V \rightarrow d(q) V$, dada por 
+$f(v) = qv$, donde $V \in \mathcal{V_D}$ y $q \in \Quantities$. De las últimas dos propiedades se
+deduce que $f_{V,q}$ saca afuera escalares, y de la segunda que se distribuye sobre la suma. Por lo
+tanto $f_{V,q}$ resulta ser siempre una transformación lineal. Además de la anteúltima propiedad se
+deduce que si $q \neq 0$, $f_{V,q}$ y $f_{d(q) V, q^{-1}}$ son inversas, por lo tanto cuando elegimos
+un $q$ no nulo la $f$ resulta isomorfismo, y cuando $q = 0$ resulta $f_{V,q} = 0$.
+
+Notemos que hemos probado la existencia de un isomorfismo entre cualquier par de elementos $V_1, V_2 \in \mathcal{V_D}$.
+(concretamente, dado cualquier $q \in \frac{V_2}{V_1}$ no nulo, $f_{V_1, q}$ resulta ser isomorfismo entre $V_1$ y $V_2$.
+El cociente entre $V_2$ y $V_1$ se entiende según nuestra notación como la resta de puntos en el espacio afín, que da
+un vector del espacio asociado, es decir, un elemento de $\Dimensions$).
+En particular existe un cardinal $n$ tal que $dim(V) = n$ para todos los $V \in \mathcal{V_D}$.
+
+En general esta estructura se porta como esperaríamos: Igual que un espacio vectorial común, pero con unidades. Una salvedad
+es que, aunque pueda parecerlo, no tenemos que $\mathcal{V}$ sea un $\Quantities$-espacio vectorial, ya que eso no tiene sentido
+al no tener $\Quantities$ una suma definida siempre. Ni siquiera se puede decir que $\mathcal{V}$ sea un $\mathbb{R}$ espacio vectorial,
+ya que la suma en $\mathcal{V}$ tampoco está definida para cualquier par de vectores. Esto implica en particular que no tendremos
+una base de $\mathcal{V}$ en el sentido usual... Pero casi.
+
+Notemos para esto que en un espacio vectorial dimensional $\mathcal{V}$, no hay ningún elemento $V$ privilegiado,
+y no podemos hablar de la dimensión exacta que tienen los elementos de un $V$. Solo podemos hablar de la dimensión del
+``cociente'' entre dos elementos, gracias a la estructura afín. En otras palabras, si tenemos un cierto vector de un espacio,
+y lo multiplicamos por una cantidada $q$ de dimensión $D$, sabemos que irá a parar a un elemento de $D \cdot V$, con lo cual
+el cociente de dimensiones entre esos espacios es $D$, pero no hablamos a priori de la dimensión de un elemento $V$ en forma absoluta.
+Esto nos permite inmediatamente sumergir a cualquier espacio vectorial que tengamos en un espacio vectorial dimensional,
+pues todos los elementos del mismo son indistinguibles. En particular, si tenemos vectores, podemos multiplicarlos por
+cantidades físicas sin problema, y sabemos de lo que estamos hablando, pues podemos pensar que hemos sumergido el
+espacio vectorial original en esta estructura.
+
+Un caso particular de interés resulta cuando sí podemos asignar dimensiones concretas a los elementos de $\mathcal{V_D}$. Esto
+se corresponde a fijar un origen en la estructura afín de $\mathcal{V_D}$, que jugará el rol de los vectores adimensionales.
+Cuando así sea, diremos que estamos ante un espacio vectorial dimensional \textit{con dimensiones}. De cualquier manera,
+damos nombres a estas definiciones formales por completitud, pero no tendremos que mencionarlas en la práctica, ya que su
+valor radica en garantizar la validez y el marco formal para expresiones como la que hemos propuesto antes, donde multiplicamos
+escalares y vectores.
+
+En el caso de un espacio vectorial dimensional con dimensiones, notamos $V_1$, al unico elemento adimensional de $\mathcal{V_D}$,
+correspondiente a los ``vectores adimensionales'', es decir, al origen que hemos fijado en la estructura afín. Esto asigna una dimensión concreta
+a cada elemento de $\mathcal{V_D}$, correspondiente al vector desde el origen a tal punto en la estructura afín. De esta manera, notamos
+$V_D$ al punto con vector desde el origen $D$, o sea los $v$ de la forma $q v$, con $d(q) = Q$ y $v \in V_1$. Además
+podemos hablar de la dimensión de un $v \in V_D \in \mathcal{V_D}$, siendo esta $d(v) = D$, la dimensión de su espacio contenedor.
+
+La conveniencia del caso en que tenemos fijado el $V_1$ radica en el siguiente
+
+\begin{teorema}
+Si $B$ es una base de $V_1$, entonces para cada $v \in \mathcal{V}$, existen un único $S \subseteq B$ finito y una $f : S \rightarrow d(v) \setminus \{0\}$ tales que:
+
+$$ v = \sum_{u \in S}{f(u) u} $$
+\end{teorema}
+\begin{proof}
+Llamamos $D = d(v)$, y tomamos $q \in D$ no nulo. Basta probar que existe una única escritura de la forma
+$$ v = \sum_{u \in S}{f'(u) (qu)} \ \ f' : S \rightarrow d(1) \setminus \{0\}$$
+
+Ya que multiplicando o dividiendo por $q$ a traves de la transformación $f(u) = qf'(u)$,
+podemos biyectar ambos tipos de expresiones de $v$.
+
+Consideramos la $f_{V_1, q}$. Como es isomorfismo, envía la base $B$ de $V_1$ a una base $B'$ de $V_D$. Luego es inmediato que
+existe una única forma de expresar $v$ como combinación lineal de los $qu$, como queríamos.
+\end{proof}
+
+Luego esto nos da una forma concreta de expresar y manipular los elementos de $\mathcal{V}$. Si por ejemplo tuviéramos una
+base de $V_1$, $B = {v_1,v_2,v_3}$, entonces podríamos expresar de manera única cada elemento a través de sus coordenadas, es decir,
+tenemos identificado $\mathcal{V}$ con los elementos de $\Quantities^3$ tales que todas sus componentes tienen la misma dimensión.
+Así podríamos manipular vectores de la manera intuitiva con expresiones como
+$\frac{2}{\SI{3}{\meter \second}}(\SI{3}{\meter},0,\SI{2}{\meter}) + 
+  (\SI{2}{ \per \second },\SI{3}{ \per \second },\SI{4}{ \per \second }) = (\SI{4}{ \per \second },\SI{3}{ \per \second } ,\frac{16}{3}\si{ \per \second })$.
+Notar que al igual que pasaba con los espacios de dimensiones, dos espacios vectoriales dimensionales son isomorfos, fijada la dimensión de sus espacios,
+dado que todos ellos resultan isomorfo a una construcción como en el caso de $\Quantities^n$ que hemos mostrado, construcción que es
+fácil ver que cumple todas las hipótesis para ser un espacio vectorial dimensional \footnote{Más precisamente un espacio vectorial dimensional con dimensiones, pero esta distinción entre el caso afín y el espacio vectorial no presenta dificultades, y es simplemente fijar dimensiones concretas para los vectores cuando así interesa hacerlo}.
+
+En particular, como los espacios vectoriales dimensionales en los que puede estar embebido un espacio vectorial son únicos salvo isomorfismo, podemos considerar que extendemos
+un espacio vectorial cuando queramos, así podemos trabajar multiplicando cantidades físicas por vectores libremente, tal y como habíamos prometido hace algunos párrafos.
+La gracia es que siempre que tengamos un $\mathbb{R}$-espacio vectorial $V$ y queramos extender su acción a una acción de $\Quantities$ en
+$V$, podemos hacerlo obteniendo un nuevo espacio más grande, de manera de poder interpretar adecuadamente el producto resultante.
+Cuando además sea de utilidad fijar bases y computar con coordenadas, con solo fijar cuál es la dimensión que tienen los vectores de $V$,
+quedará determinada una estructura de espacio vectorial dimensional con dimensiones, y podremos usar la construcción con coordenadas
+fijando una base de $V_1$ como hemos mostrado.
+
+\subsection{Espacio vectorial dimensional con producto interno}
+
+Lo que hemos hecho hasta ahora es formalizar cómo trabajar con unidades en el caso de espacios vectoriales o afines. Ahora bien,
+como en física es fundamental la noción de longitud, y la estructura geométrica del espacio (o más en general del espaciotiempo),
+tiene sentido que queramos trabajar con espacios vectoriales con producto interno. Entonces simplemente definimos:
+
+\begin{definicion}
+Un \textbf{espacio vectorial dimensional con producto interno} es un espacio vectorial dimensional con dimensiones, en el cual
+existe una operacion de producto interno $\cdot : \mathcal{V} \times \mathcal{V} \rightarrow \Quantities$, con las siguientes caracteristicas:
+
+$$v \cdot w \in \mathbb{R} \ \ \forall v,w \in V_1$$
+$$(kv) \cdot w = k (v \cdot w) \ \ \forall k \in \Quantities \ \forall v,w \in \mathcal{V}$$
+$$v \cdot w = w \cdot v \ \ \forall v,w \in \mathcal{V}$$
+$$(u+v) \cdot w = u \cdot w + v \cdot w  \ \ \forall u,v \in V_D \in \mathcal{V_D} \ \forall w \in \mathcal{V}$$
+$$v \neq 0 \Rightarrow v \cdot v > 0 \ \ \forall v \in \mathcal{V}$$
+\end{definicion}
+
+Es decir, es una generalización natural de la noción de espacio vectorial con producto interno común, para que tenga dimensiones.
+En efecto, la primer condición asegura que el producto interno de dos vectores adimensionales es un simple real (una cantidad
+adimensional), con lo cual $V_1$ con $\cdot$ formará un espacio vectorial con producto interno en el sentido común.
+
+A su vez, esta condición junto a la segunda, garantiza que $d(v \cdot w) = d(v) d(w)$ (recordar el teorema de escritura en una
+base de la sección anterior). Esto garantiza la suma en el miembro derecho de la cuarta ecuación está bien definida, pues
+coinciden las dimensiones de los sumandos.
+
+La última ecuación permite definir la norma de un vector: $||v|| = \sqrt{v \cdot v}$, y notar que de lo ya mencionado
+se deduce que $d(||v||) = d(v)$. Una \textbf{base ortonormal} del espacio vectorial dimensional con producto interno,
+es una base ortonormal de $V_1$ en el sentido usual. Notar que de las propiedades dadas se puede deducir que dada la
+escritura en una tal base de dos vectores, su producto interno (en el sentido extendido con dimensiones) se calcula
+como se calcula el usual, simplemente sumando los productos de las componentes correspondientes.
+
+Así el cálculo es como siempre, y por ejemplo $(\SI{3}{\meter}, \SI{2}{\meter}) \cdot (\SI{-1}{\per \second}, \SI{2}{\per \second}) = \SI{1}{\meter \per \second}$
+
+Si nos interesa el estudio de alguna geometría más exótica que la euclídea (por ejemplo, para estudiar relatividada especial),
+podemos hacer la misma definición pero obviando la exigencia de que la forma bilineal dada por $\cdot$ sea definida positiva (última ecuación).
+Todo funciona de la misma manera, y obtenemos un espacio vectorial con dimensiones y una forma bilineal asociada. Nociones como
+la signatura de la forma bilineal no se ven alteradas (en particular, restringido a $V_1$ la forma bilineal no tiene nada de nuevo,
+y extenderla no cambia la signatura).
+
+\subsection{Análisis dimensional}
+
+El fin del análisis dimensional consiste simplemente en analizar las dimensiones involucradas en ecuaciones físicas, y asegurarse
+que las operaciones con cantidades físicas respetan las
+dimensiones. Así, el uso más básico de análisis dimensional consiste simplemente en calcular las dimensiones a ambos lados de
+una ecuación y verificar que coincidan (ya que de no ser así, tendríamos una expresión sinsentido), y similarmente, verificar
+que las operaciones tengan sentido (Por ejemplo tomar logaritmo a una longitud no tiene sentido al no tener una unidad fija,
+solo podemos tomar logaritmo a números reales. Similarmente, si sumamos o restamos dos cantidades debemos asegurarnos que
+sus dimensiones coincidan). Este uso del análisis dimensional funciona a modo de ``chequeo de sanidad'', como una red de seguridad
+para incrementar la confianza de que nuestros cálculos están bien y no hemos cometido algún error en el camino. Algo similar
+al sistema de tipos de un lenguaje de programación.
+
+Otro uso más sofisticado consiste en analizar las dimensiones de las cantidades involucradas para deducir propiedades físicas.
+Como pequeño ejemplo, supongamos que vamos a tratar de hallar una expresión para el tiempo $t$ que tarda en caer al suelo un objeto
+soltado desde una altura $h$ en el planeta tierra, y supongamos además que sabemos (o quizá conjeturamos) que las únicas
+cantidades físicas que pueden afectar el valor de $t$ son $h$, la masa $m$ del objeto, su volumen $V$ y la aceleración de la
+gravedad $g$. Bajo estas hipótesis, notaremos que las dimensiones correspondientes a $h,m,V,g$ son $\longitud,\masa,\longitud^3,\frac{\longitud}{\tiempo^2}$.
+Luego si suponemos además que la ecuación para $t$ tiene la siguiente pinta general\footnote{Tarea: Piense cuántas leyes físicas que conozca no tienen esa pinta}:
+
+$t = C h^am^bV^cg^d$
+
+Siendo $C,a,b,c,d$ constantes. Podemos cambiar a dimensiones para verificar la validez de la misma:
+
+$\tiempo = \longitud^a\masa^b(\longitud^3)^c(\frac{\longitud}{\tiempo^2})^d$
+
+Pero de aquí es inmediato que debe ser $b=0, d = -\frac{1}{2}$. De aquí resulta que en estas condiciones, el tiempo que tarda
+en caer un cuerpo deberá ser independiente de la masa, y, fijados los demás parámetros, inversamente proporcional a la raíz de la aceleración
+de la gravedad. Ambas cosas son ciertas, y las deduciremos por consideraciones dinámicas más adelante en el libro, pero notemos
+que sin saber absolutamente nada de la naturaleza del sistema físico en cuestión, hemos logrado realizar afirmaciones no triviales
+sobre su comportamiento basados en el análisis dimensional (También hemos necesitado ciertas asunciones sobre qué factores pueden afectar al fenómeno
+bajo estudio).
+
+Estas ideas pueden formalizarse a través del Teorema Buckingham $\Pi$, teorema central del análisis dimensional. Se invita
+al lector interesado a investigar más en wikipedia, internet en general o por qué no, una biblioteca. Nosotros no daremos
+mucha importancia al análisis dimensional en este sentido, limitándonos al uso para revisar la validez de nuestras expresiones
+y asegurarnos de que las dimensiones son adecuadas.
+
+Un uso intermedio del análisis dimensional consiste en utilizarlo de manera similar al ejemplo para conjeturar leyes plausibles, y luego
+experimentar y plantear teorías y deducciones matemáticas que justifiquen las conjeturas. Es decir, se lo puede usar como una valiosa
+ayuda a la intuición.
+
+\subsection{La matemática con unidades}
+
+\subsubsection{El análisis dimensional en la matemática}
+
+La matemática usual, en la forma en que la ve y presenta típicamente un matemático, prescinde de las dimensiones por completo.
+Esto no trae problemas formales ni de expresividad, ya que es esencialmente equivalente a trabajar con un sistema de unidades
+básicas fijo todo el tiempo, y entonces siempre que se hagan cuentas válidas en el sentido del análisis dimensional no habrá
+diferencia. Más aún, pueden permitirse cuentas inválidas según nuestro criterio usual usando un sistema de unidades natural (ver
+más adelante).
+
+Es de alguna manera un poco triste, a mi entender, que en la práctica usual algunos estudiantes de matemática
+ignoren las cuestiones de dimensionalidad subyacentes en todas estas operaciones fundamentales. Mueve números para
+todos lados, pero al no tener en cuenta que si derivamos una función de espacio en términos de tiempo, el resultado
+tendrá dimensiones de velocidad, perdemos capacidad de razonar intuitivamente e interpretar geométricamente y físicamente
+los conceptos y resultados del análisis.
+
+Un primer ejemplo concreto de ello son los espacios vectoriales, particularmente los espacios vectoriales con producto interno.
+Ya hemos mostrado como podemos extender la definición natural para pensar en términos de unidades, de manera que la norma de un
+vector no siempre será un mero escalar adimensional: Si el vector es un desplazamiento espacial, su norma tendrá dimension de
+longitud, es decir, tiene sentido decir que nos movemos $\SI{3}{\meter}$, pero no tiene sentido decir que nos movemos $28$.
+
+\subsubsection{Derivadas}
+
+La derivada afecta la dimensión al dividir por la dimensión del dominio. La definición de derivada es:
+
+$$f'(x) = \lim_{h \rightarrow 0}{\frac{f(x+h) - f(x)}{h}}$$
+
+Por lo tanto si $f : D_1 \rightarrow D_2$ es una función entre dos dimensiones, la expresión del límite tiene dimensión $\frac{D_2}{D_1}$.
+De ahí que si derivamos una función que va de $\tiempo$ en $\longitud$, su derivada tiene dimensión de velocidad, es decir, $\longitud \tiempo^{-1}$
+
+\subsubsection{Integrales}
+
+Similarmente, la integral multiplica por la dimensión del dominio. 
+
+Algo similar ocurre si no se visualiza la integral como el limite de una suma. Justamente, visto el $dx$ ahi multiplicando,
+esta claro que aporta a la dimension del resultado y no puede ser tomado a la ligera.
+
+Si $f : D_1 \rightarrow D_2$ como en el ejemplo anterior, $\int_{a}^{b}{f(x) dx}$ se puede ver como el límite de las sumas
+de Riemann, $\sum_{i=1}^{n}{f(a + i \Delta x) \Delta x}$, siendo $\Delta x = \frac{b-a}{n}$. Esta visión de la integral como
+el límite de una suma, es extremadamente importante en física. Muchos resultados son muy intuitivos y fáciles de entender
+cuando se piensa a la integral como el límite de una suma de estas características, como por ejemplo el teorema de la divergencia
+en varias variables.
+
+Notar en nuestro ejemplo, que la expresión del límite tiene ahora unidades $D_1 D_2$. Esto es totalmente coherente además, con el
+hecho de que la derivación y la integración son operaciones inversas.
+
+\subsection{Sobre la arbitrariedad de la elección de dimensiones}
+
+Acá contar sobre sistemas de unidades naturales y sarasa. O sea, ya dijimos y mostramos claramente que cuáles
+dimensiones tomamos como fundamentales y cuales como derivadas es arbitrario (conviene enfatizarlo aquí igualmente).
+Pero aquí la idea es ejemplificar que qué dimensiones existen, también es arbitrario. Las dimensiones no son más
+que un objeto matemático que nos ha resultado extremadamente útil para razonar, pero que no es imprescindible para describir el
+universo (y un poco podría servirle como defensa a los matemáticos que se cagan en las unidades en su trabajo, suponiendo
+todo adimensional).
+
+Empezamos con el ejemplo concreto de los grados, y mostramos como los grados pueden ser considerados una unidad para una dimensión
+diferente en sí, la extensión de un ángulo. Así, ecuaciones como velocidad angular * radio para conseguir la velocidad lineal asociada,
+ahora tendrían una constante física metida en el medio (probablemente, la constante que indica en ángulo correspondiente a una circunferencia
+entera). Tendríamos una unidad extra, pero todo sería matemáticamente equivalente. Ahora bien, como nos dimos cuenta de que se puede
+medir los ángulos de manera *natural* directamente haciendo arco / radio, es una dimensión que no usamos, y eso redunda en que desaparecen
+constantes físicas. O sea que esas constantes físicas en realidad no son tales, no son parámetros del universo que uno podría mover
+libremente a su antojo, sino que resultan de la elección de dimensiones nuestra. En una elección de dimensiones diferente, en una
+elección *natural*, desaparecerían.
+
+Bueno, después de eso mostrar el ejemplito de la velocidada de la luz, que te hace desaparecer tiempo / longitud (te las pegotea en una sola).
+
+Y luego comentar que se puede hacer lo mismo en física hasta hacer desaparecer todas las dimensiones, cargándones varias constantes físicas
+en el medio, como la constante de Planck y G. Ahora no hay dimensiones y todo se mide con numeritos adimensionales.
+
+Comentar que esto genera ambigüedad más fácil que antes ("5", está hablando de un tiempo o una longitud?), además de que las unidades
+naturales en general no resultan prácticas (unidades de planck, muy chiquitas :P).
+
+\pagebreak
+
+\section{El espaciotiempo}
+
+\subsection{Estructura afín del espacio tiempo}
+
+El espaciotiempo se puede ver de dos maneras: El espacio vectorial de saltos o desplazamientos espaciotemporales, o
+el espacio afin de eventos (cuyo espacio vectorial de traslaciones asociado es justamente uno de los primeros).
+
+\subsection{Comentario sobre relatividad general}
+
+Esta noción nos servirá para física clásica y para relatividad especial, pero en relatividad general se va todo al carajo
+porque el espacio tiempo ahora es curvo (y con una curvatura que depende de las masas que lo habitan), con lo cual será
+una variedad diferencial que localmente se parece a un espaciotiempo de Minkowski. No vamos a tratar en este libro
+relatividad general.
+
+\subsection{Introducción a los observadores inerciales, y discusión sobre su importancia}
+
+Vamos a comentar una vez explicado más o menos eso ahora que va a haber una noción importante que es la de "observador inercial".
+
+Un observador inercial es un sistema de coordenadas afín del espacio tiempo, pero no uno cualquiera: es justamente uno
+en el cual las leyes de la fisica toman su expresion más simple. La geometria del espacio tiempo medio que
+vendra dada justamente por las transformaciones bajo las cuales las leyes de la fisica no varian (algo así
+como que el espacio tiempo es más que un espacio vectorial y ya, tiene una ``geometría'' y cualquier automorfismo
+del espaciotiempo que preserve esa geometría deja invariante las leyes de la física... Esa geometría puede ser
+el producto interno o similares, o como en relatividad, una forma bilineal simétrica de signatura +++-).
+
+Dadas las leyes de la física para un observador inercial, las transformaciones de coordenadas entre observadores inerciales
+se deducen de las leyes de la física, ya que un observador inercial es justamente un sist. de coordenadas en el cual
+las leyes de la física toman esa misma forma (o sea, es físicamente indistinguible de nuestro observador de partida).
+Nosotros las deduciremos a partir de algunos axiomas básicos sobre las leyes de la física, y luego entonces lo que pediremos
+será que todas las leyes sean invariantes respecto a los sistemas así definidos, ya que si no fuera así, tendremos que
+modificar nuestras nociones de observadores inerciales y revisar los axiomas (por ejemplo, lo haremos al pasar de física
+clásica a relatividad especial).
+
+En realidad podríamos ignorar la geometría del espaciotiempo y trabajar con leyes más complicadas, que resulten
+modelar solitas esa geometría, pero serían leyes chuecas inmanejables en lugar de leyes mucho más sencillas aprovechando
+la geometría. Además
+la noción de observador resulta ser fundamental en la práctica, ya se corresponde con un experimentador tomando
+medidas en un sistema de referencia determinado, y por lo tanto es esencial poder transformar entre observadores.
+Además las transformaciones son importantes porque permiten deducir propiedades físicas y hacer predicciones no triviales
+relativas al tiempo y al espacio
+sin conocer las leyes físicas concretas involucradas (lo que sabremos es que son invariantes entre sistemas inerciales, es decir,
+al aplicar transformaciones de coordenadas entre sistemas inerciales).
+
+Finalmente, es importante hablar de observadores desde temprano ya que si bien para ciertas cosas conviene tener una visión
+global del espacio tiempo, para la mayor parte de la física planteamos todas las leyes y pensamos directamente en términos
+de observadores (más precisamente, planteamos las leyes usando las coordenadas correspondientes a un observador),
+ya que las leyes resultantes tienen una forma mucho más manejable e intuitiva. Por ejemplo el concepto de energía cinética
+(o energía en general) no es absoluto y depende del observador. Así una partícula con masa puede tener en un instante dado
+cualquier cantidad de energía cinética, dependiendo del observador en cuestión, de manera que ``la energía cinética de una
+partícula'', en abstracto sin conocer el observador respecto al cual medimos, es algo vacío de significado. Sin embargo
+la energía es un concepto clave, absolutamente esencial y conveniente en la física, y no podemos darnos el lujo de ignorarlo para
+trabajar solo con conceptos absolutos (o al menos hacerlo no sería práctico ni útil ni elegante). Otro ejemplo de esto
+es que en mecánica siempre estudiaremos la posición de un cuerpo como función del tiempo, algo natural y súper práctico.
+Ahora bien, en términos absolutos si miramos una trayectoria en el espaciotiempo, no es claro a qué llamar ``tiempo'',
+y con lo cual expresiones como la ecuación diferencial de un péndulo se vuelven un enjambre indescriptible y completamente
+carente de intuición.
+
+Por todo esto es que hablaremos de observadores inerciales y cambios de coordenadas entre ellos desde temprano, junto al
+estudio del espaciotiempo mismo. De esta manera entonces, construiremos los observadores de manera particular
+y distinta para la física clásica y para relatividad especial, ya que ambos enfoques describen espaciotiempos con geometrías
+diferentes: pero en ambos casos los observadores se corresponderán en la práctica con la idea de tomar un sistema dado por un
+cuerpo rígido moviéndose libre por el espaciotiempo, sin interactuar con nada (es decir, librado a su inercia y nada más).
+
+\subsection{Observadores inerciales en física clásica}
+
+Acá vamos a deducir las transformaciones de coordenadas entre observadores inerciales para el caso de la física clásica,
+a partir de las hipótesis de que la distancia temporal y la distancia espacial (de eventos simultáneos) son valores
+absolutos que no dependen del observador (o sea que dos observadores cualesquiera están de acuerdo sobre estos valores).
+
+\pagebreak
+
+\section{Mecánica clásica del punto}
+
+AL CARAJO, PARA LOS ESPACIOS VECTORIALES, HABLAREMOS DE MULTIPLICARLOS POR UNA CANTIDAD SOLO CUANDO SEAN ESPACIOS
+CON PRODUCTO INTERNO (O AL MENOS CON UNA FORMA BILINEAL ASOCIADA...)
+
+De esta manera se puede hablar del espacio "soporte" digamo'. Cosas como el producto cruz y blah van a estar
+definidas sobre espacios con el mismo soporte.
+
+
+
+
+\end{document}

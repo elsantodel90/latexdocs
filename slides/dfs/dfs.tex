@@ -1,0 +1,292 @@
+\documentclass[compress]{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  % or ...
+	\useoutertheme{infolines}
+    \usecolortheme{spruce}
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+\usepackage{multicol}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Grafos II] % (optional, use only with long paper titles)
+{Grafos}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA FCEN] % (optional, but mostly needed)
+{
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[TC 2014] % (optional, should be abbreviation of conference name)
+{Training Camp 2014}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+
+  \begin{frame}<beamer>{Contenidos}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+	
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Contenidos}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\section{DFS}
+
+\begin{frame}{DFS}
+\begin{itemize}
+\item ``\textit{Depth-first search yields valuable information about the structure of a graph.}'' \\ \hfill Introduction to Algorithms, Cormen et al.
+\item A diferencia del BFS, que suele utilizarse con la misión específica de resolver el problema de caminos mínimos desde un origen $s$,
+el algoritmo de DFS suele usarse para obtener información útil sobre el grafo en sí, que puede ser luego utilizada por algoritmos posteriores.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Idea general}
+\begin{itemize}
+\item La idea del DFS consiste en recorrer el grafo caminando por las aristas, utilizando siempre las aristas disponibles (aún no utilizadas) del
+último nodo descubierto.
+\item Para visualizar más fácil la ejecución del algoritmo, es conveniente pensar en que los nodos se pintan de tres colores: \textbf{Blanco, Gris y Negro}.
+\item Los nodos inician todos pintados de blanco.
+\item Al descubrir un nodo y comenzar a procesarlo, se lo pinta de \textbf{gris}. Mientras haya nodos \textbf{blancos}, se hace una exploración de DFS desde cualquier nodo \textbf{blanco}.
+\item Desde el nodo actual en procesamiento, se exploran las aristas salientes, y si alguna llega a un nodo \textbf{blanco} nuevo, se pinta de \textbf{gris} y se sigue explorando desde allí recursivamente.
+\item Luego de considerar y eventualmente recorrer todas las aristas de un nodo, se completa su procesamiento y se pinta de \textbf{negro}, volviendo la recursión a su \textbf{padre}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ejemplo}
+\includegraphics[scale=0.45]{cormen-dfs.png}
+\end{frame}
+
+\begin{frame}{Paréntesis}
+\begin{itemize}
+\item Además, es muy útil para razonar sobre el algoritmo, y para utilizar en algoritmos posteriores, asociar a cada nodo dos  ``timestamps'':
+\item Un primer timestamp $d[i]$, que para cada nodo $i$, indica el tiempo en que fue \textbf{descubierto} (se pintó de gris).
+\item Un segundo timestamp $f[i]$, que para cada nodo $i$, indica el tiempo en que fue \textbf{terminado} (se pintó de negro).
+\item El timestamp es simplemente una variable global, por ejemplo que comienza en $0$ y se incrementa hasta $2n$ durante la ejecución del algoritmo.
+\item Nos permite ordenar los $2n$ eventos de descubrimiento y finalización de un nodo de manera total en el tiempo.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Paréntesis (continuado)}
+\begin{itemize}
+\item Una propiedad muy importante y útil para razonar, es que los tiempos de finalización y terminación de los distintos nodos presentan \textbf{estructura de paréntesis}.
+\item Es decir, si armamos un string de longitud $2n$ con paréntesis que abren en las posiciones $d[i]$ y paréntesis que cierran en las $f[i]$, tendremos una cadena bien parenteseada.
+\item Por ejemplo, una propiedad muy importante es que un descendiente de un nodo en un arbol de dfs, necesariamente tiene sus parentesis contenidos en el de su ancestro.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Clasificación de las aristas}
+El algoritmo de DFS nos induce una clasificacion de aristas en 4 tipos:
+\begin{itemize}
+\item \textbf{Tree edge} 
+    \begin{itemize} 
+        \item Viaja a un nodo blanco
+        \item Es con la que se descubre un nodo por primera vez
+        \item Viaja al \textbf{hijo} del nodo actual en un árbol de DFS
+    \end{itemize}
+\item \textbf{Back edge} 
+    \begin{itemize} 
+        \item Viaja a un nodo gris
+        \item Viaja a un \textbf{ancestro} del nodo actual
+    \end{itemize}
+\item \textbf{Forward edge}
+\begin{itemize} 
+    \item Viaja a un nodo negro con descubrimiento posterior al nodo actual
+    \item Viaja a un \textbf{descendiente} (no hijo) del nodo actual
+    \item \textit{Solo aparece en grafos dirigidos}
+\end{itemize} 
+\item \textbf{Cross edge} 
+    \begin{itemize} 
+        \item Viaja a un nodo negro que finaliza antes que el descubrimiento del nodo actual
+        \item No viaja ni a un ancestro ni a un descendiente
+        \item \textit{Solo aparece en dirigidos}
+    \end{itemize} 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Observaciones útiles}
+\begin{itemize}
+    \item Los descendientes de un nodo $x$ serán exactamente los nodos blancos alcanzables por un camino de nodos blancos con origen en $x$, en el instante en que se descubre (\textit{white-path-theorem}).
+    \item Un grafo es acíclico (dirigido o no) si y solo si un recorrido de DFS no encuentra ninguna back-edge.
+    \item El dfs genera un spanning forest (dfs-forest), donde cada árbol está formado por las tree-edges.
+    \item Si el grafo es no dirigido, el DFS construye un dfs-forest con un spanning tree de cada componente conexa.
+    \item Si el grafo es dirigido, no hay una relación clara entre los árboles del dfs-forest y las ``componentes'' del grafo original.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Observaciones útiles (¡Más!)}
+\begin{itemize}
+    \item Las back-edges siempre están involucradas en un ciclo (concretamente, el que se completa con las tree edges que bajan en sentido inverso)
+    \item Las cross-edges forman un subgrafo acíclico (ya que por definición, siempre van de un nodo a otro con un tiempo de finalización menor)
+    \item Topological sort: Es tomar los vertices en orden inverso de finalizacion, gracias a que:
+    $$a \rightarrow b \Rightarrow f[a] > f[b]$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Problema atacable con DFS}
+\begin{itemize}
+    \item Un grafo dirigido es \textit{singly-connected} si existe a lo sumo un camino entre cada par de nodos. Dar un algoritmo $O(|V| |E|)$ para decidir si un grafo es \textit{singly-connected}.
+    \pause
+    \invisible<1>{
+    \item Solución: Un grafo es \textit{singly-connected} si y solo sí al correr un dfs desde cada nodo, nunca aparecen \textbf{forward edges} ni \textbf{cross edges} (dentro de un mismo DFS-tree).
+    }
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tarea}
+Para pensar en el hogar:
+\begin{itemize}
+\item En un grafo dirigido, dar el vertice mas chico alcanzable por cada vertice, en tiempo lineal, es decir, $O(|V|+|E|)$.
+\end{itemize}
+\end{frame}
+
+\section{Puentes y puntos de articulación}
+
+\begin{frame}{Definiciones}
+\begin{itemize}
+\item En un grafo no dirigido, un \textbf{punto de articulación} es un \textbf{nodo} tal que al removerlo del grafo, la cantidad de componentes conexas aumenta.
+\item En un grafo no dirigido, un \textbf{puente} es un \textbf{eje} tal que al removerlo del grafo, la cantidad de componentes conexas aumenta.
+\item Un grafo no dirigido es \textbf{biconexo} si es conexo y no tiene puntos de articulación.
+\item En un grafo no dirigido, una \textbf{componente biconexa} es un subgrafo biconexo maximal.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dibujito}
+\ \ \ \ \ \ \ \ \includegraphics[scale=0.5]{biconexas.png}
+\end{frame}
+
+
+\begin{frame}{Observaciones}
+\begin{itemize}
+\item Los puentes vienen a ser componentes biconexas de 2 nodos.
+\item Las componentes biconexas \textbf{no particionan los nodos} (a diferencia de las componentes conexas).
+\item Las componentes biconexas \textbf{particionan las aristas} de grafo.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cálculo mediante DFS}
+\begin{itemize}
+\item La idea central es computar mediante recursión durante el recorrido del DFS, un valor $low[i]$ que para cada nodo, indique
+       la menor distancia de la raíz del árbol de DFS actual a la que es posible saltar, desde alguna parte del sub-arbol de DFS con raíz en $i$.
+\item Este valor puede computarse simplemente como el mínimo entre el $low$ de los hijos del nodo actual, y la profundidad mínima a la que llega
+       una back-edge que sale del nodo actual.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Cálculo mediante DFS (puentes)}
+\begin{itemize}
+\item Observación: Un tree-edge del nodo $k$ a uno de sus hijos $x$ es puente si y solo sí, $low[x] >= depth[x]$, es decir, no existe ningún back-edge
+       que permita salir del subarbol con raíz en $x$.
+\item Observación: Un back-edge nunca puede ser puente.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cálculo mediante DFS (nodos)}
+\begin{itemize}
+\item Observación: La raíz de un árbol de DFS es un punto de articulación si y solo sí tiene más de un hijo.
+\item Observación: Un nodo $x$ distinto de la raíz es punto de articulación, si y solo sí, para alguno de sus hijos $y$, se cumple $low[y] >= depth[x]$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cálculo mediante DFS (componentes biconexas)}
+\begin{itemize}
+\item Para calcular las componentes biconexas, basta agregar una pila al DFS anterior:
+\item Cada vez que recorremos una arista, agregarla a la pila.
+\item Cada vez que volvemos de una llamada recursiva por un eje $x,y$, con $x$ padre de $y$, chequeamos si ahí termina una componente biconexa,
+       es decir, $low[y] >= depth[x]$
+\item Si ese es el caso, desapilamos aristas hasta desapilar la arista $x,y$, que fue la primera que pusimos al bajar y marca el comienzo de la
+         componente. Todas esas forman la componente biconexa.
+\end{itemize}
+\end{frame}
+
+
+\section{Referencias}
+
+\begin{frame}{Referencias}
+   \begin{itemize}
+   \item \textit{Introduction to Algorithms, 2nd Edition}. MIT Press. \\ Thomas H. Cormen \\ Charles E. Leiserson \\ Ronald L. Rivest \\ Clifford Stein \\
+   \textbf{Sección 22} (DFS y temas relacionados)
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+
+{\Huge ¿Preguntas?}
+
+\includegraphics[scale=0.135]{batman.jpg}
+
+\end{center}
+\end{frame}
+
+\end{document}
