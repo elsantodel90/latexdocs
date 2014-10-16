@@ -1,0 +1,409 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[AED3: Práctica 3]{Algoritmos y Estructuras de Datos 3: Práctica 3}  % (optional, use only with long paper titles)
+
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[Octubre 2014] % (optional, should be abbreviation of conference name)
+{Octubre 2014}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}{Objetivo de la práctica}
+	En la primer parte de la materia, se explican varias \textbf{técnicas algorítmicas generales}:
+   \pause
+  \begin{itemize}
+   \item Recursión
+   \item Divide and Conquer
+   \item Algoritmos golosos
+   \item Programación dinámica
+   \item Backtracking
+  \end{itemize}
+   \pause
+    Objetivos de la práctica: 
+  \begin{itemize}
+     \item Ejercitar el uso de las técnicas en la formulación de algoritmos.
+     \item Ejercitar el análisis de los mismos.
+        \begin{itemize}
+           \item Correctitud
+           \item Complejidad
+        \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{División}
+	No hay secciones marcadas explícitamente, pero los ejercicios se dividen claramente de acuerdo a las técnicas algorítmicas mencionadas:
+  \begin{itemize}
+   \item Recursión, 1 y 2
+   \item Divide and Conquer, 3 y 4
+   \item Algoritmos golosos, 5 y 6
+   \item Programación dinámica, 7 al 13
+   \item Backtracking, 14 al 16
+  \end{itemize}
+    Finalmente, 17 y 18 son ejercicios generales donde se pide analizar
+    los algoritmos anteriores (de esta y otras prácticas).
+  
+\end{frame}
+
+\begin{frame}{Recursión}
+    \begin{itemize}
+	\item Muchos algoritmos útiles son recursivos: 
+       \begin{itemize} \item Usan soluciones a subproblemas íntimamente relacionados. 
+                       \item De la misma naturaleza que el problema principal.
+       \end{itemize}	
+	\item Varias de las técnicas algorítmicas estudiadas utilizan la recursión.
+       \begin{itemize}
+          \item Divide and Conquer
+          \item Programación Dinámica
+          \item Backtracking
+       \end{itemize}
+	\item Por eso es importante que el alumno entienda la recursión en sí misma antes intentar utilizar técnicas particulares más complejas que hagan uso de la recursión.
+    \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Recursión: Ejercicios 1 y 2}
+    \begin{itemize}
+    \item Ejercicio 1: Cálculo de los números de Fibonacci.
+           \begin{itemize}
+              \item Recursiva
+              \item Iterativa
+              \item Comparar ambas (complejidades)
+           \end{itemize} 
+    \item Ejercicio 2: Escribir un algoritmo para resolver problema de las torres de Hanoi recursivamente. 
+           \begin{itemize}
+              \item Ejercita el pensamiento recursivo.
+              \item Analizar complejidad.
+              \item Demostrar correctitud.
+           \end{itemize} 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Divide and Conquer}
+    \begin{itemize}
+    
+
+	\item Muchos algoritmos \textbf{recursivos} responden a un esquema general de divide and conquer
+       \begin{itemize}
+          \item El problema original es \textit{dividido en subproblemas independientes}.
+          \item Estos se resuelven \textbf{recursivamente}.
+          \item Y luego \textit{se combinan las soluciones} para resolver el original.
+       \end{itemize}
+	\item Técnica fuertemente basada en la \textbf{recursión}.
+    \item Es natural el paso de ejercicios sobre recursión a ejercicios sobre divide and conquer.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Divide and Conquer: Ejercicio 3}
+    \begin{itemize}
+    \item Este ejercicio pide dar un algoritmo recursivo para encontrar el par de puntos más cercano de un conjunto de puntos en el plano.
+	\item Está marcado con asterisco
+         \begin{itemize}
+             \item Ejercicio opcional.
+             \item Geometría computacional.
+             \item Mayor dificultad que la mayoría de la práctica.
+         \end{itemize}
+    \item Solución guiada mediante sugerencias paso a paso.
+    \item Se pide complejidad: Teorema Maestro de AED2
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Divide and Conquer: Ejercicio 4}
+    Se pide armar un fixture para un torneo de $n$ jugadores que se enfrentan todos contra todos una vez.
+    \begin{itemize}
+    \item Parte a) resolver el caso $n = 2^k$  (división en subproblemas independientes facilitada).
+    \item Parte b) extender el algoritmo de a) para cualquier valor de $n$
+    \item La diferencia entre a) y b) es una temática usual en divide and conquer (Ejemplo, algoritmo de Strassen)
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Algoritmos golosos}
+    \begin{itemize}
+    \item En general son fáciles de entender conceptualmente.
+        \begin{itemize}
+           \item Mantienen un único estado actual (solución en construcción).
+           \item En cada paso utilizan algún criterio para elegir de manera golosa un candidato.
+           \item La solución se modifica de acuerdo a la elección y se repiten estos pasos.
+         \end{itemize}
+    \item Por eso conviene colocarlos antes que programación dinámica.
+        \begin{itemize}
+            \item Además veremos que algunos ejercicios de programación dinámica referencian ejercicios de secciones anteriores.
+        \end{itemize}
+    \item No es tan fácil demostrar su correctitud.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Algoritmos golosos: Ejercicios 5 y 6}
+    \begin{itemize}
+	\item Ejercicio 5: Se pide analizar tres estrategias golosas posibles de ordenamiento de los programas en una cinta para minimizar el tiempo promedio de carga del programa.
+    \item Ejercicio 6: Problema de dar el vuelto con mínima cantidad de monedas (será revisitado con Programación Dinámica).
+    \item En ambos se ejercita:
+        \begin{itemize}
+        \item Mostrar con contraejemplos que ciertas estrategias pueden dar resultados muy lejanos al óptimo.
+        \item Demostrar la optimalidad de una estrategia correcta.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Programación Dinámica}
+    \begin{itemize}
+	\item Muy similar a divide and conquer, pero \textbf{memorizando} resultados de subproblemas para poder reutilizarlos.
+    \item Aprovecha \textbf{superposición de subproblemas}.
+    \item Permite eliminar algunas complejidades exponenciales en recursiones (fibonacci).
+    \item Resulta generalmente más difícil de entender que las anteriores:
+         \begin{itemize}
+              \item Se debe plantear el espacio de estados (subproblemas) posibles.
+              \item Establecer una relación de recurrencia que permita calcular el resultado de unos estados en función de estados anteriores.
+              \item Estos estados o subproblemas no siempre se desprenden fácilmente del enunciado del problema en sí.
+              \item Se debe incorporar información intermedia propia de la solución que se quiere construir.
+         \end{itemize}
+    \end{itemize}    
+	 
+\end{frame}
+
+\begin{frame}{Programación Dinámica : Ejercicios 7,8 y 9}
+    \begin{itemize}
+    \item Ejercicio 7: Cálculo de coeficientes binomiales (triángulo de Pascal).
+       \begin{itemize}
+         \item Ilustra superposición de subproblemas.
+         \item Se sugiere repensar el ejercicio de Fibonacci usando esta idea.
+       \end{itemize}
+    \item Ejercicio 8: Camino mínimo cruzando una matriz de esquina a esquina.
+       \begin{itemize}
+         \item También ilustra superposición de subproblemas.
+         \item Primer ejemplo de uso del \textbf{principio del óptimo}.
+         \item Se ejercita reconstrucción del camino, además del valor.
+       \end{itemize}
+    \item Ejercicio 9: Encontrar una secuencia de operaciones para obtener un resultado fijo (si es posible).
+       \begin{itemize}
+          \item Mismos objetivos que el ejercicio anterior.
+          \item Ejemplo más complejo: la elección del espacio de subproblemas es más difícil y menos evidente del enunciado.
+       \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Programación Dinámica : Ejercicio 10}
+    \small
+    \begin{itemize}
+    \item Problema de optimización en una fábrica de radios, con muchas restricciones.
+    \end{itemize}
+	Este ejercicio está marcado con un asterisco (ejercicio opcional).
+     \begin{itemize}
+     \item Mismos objetivos que los anteriores.
+     \item Pero tiene más complejidad debido a que hay mucha información en juego
+     \item Más parámetros en los subproblemas, y muchos conjuntos de valores en la entrada:
+         \begin{itemize}
+              \item Los subproblemas involucran el mes que se está considerando actualmente y la cantidad de radios actualmente en stock.
+              \item Hay que considerar \textbf{todas} las posibles cantidades de radios a fabricar durante el mes actual a la hora de escribir la relacion de
+               recurrencia.
+              \item Para esto último entran en juego la cantidad de radios pedidas en el mes actual, el costo de producir en el mes actual,
+                el costo de stock y el costo fijo de iniciar producción.
+         \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Programación Dinámica : Ejercicios 11, 12 y 13}
+    \begin{itemize}
+	\item Ejercicio 11: Problema de dar el vuelto con la menor cantidad de monedas. 
+       \begin{itemize}
+        \item Se pide resolver el problema y comparar la solución con el goloso del ejercicio 6.
+       \end{itemize}
+    \item Ejercicio 12: Distancia de edición entre dos palabras.
+       \begin{itemize}
+        \item Suele explicarse en la teórica (o bien \textit{máxima subsecuencia común}, que es un problema similar).
+        \item Aquí se pide dar el algoritmo preciso y analizarlo, incluyendo la reconstrucción de la secuencia de operaciones.
+       \end{itemize}
+    \item Ejercicio 13: Ejercicio teórico sobre programación dinámica (por eso al final, luego de resolver ejercicios concretos)
+       \begin{itemize}
+        \item Se pide dar ejemplos donde \textbf{no} valga el principio de optimalidad.
+        \item Esto sirve para apreciar cómo el principio de optimalidad es necesario para poder aplicar la técnica, al ver ejemplos donde no aplica.
+        \item Puente para llegar a backtracking, ya que esta técnica será aplicable en esos casos.
+       \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Backtracking}
+    \begin{itemize}
+	\item Alternativa a la fuerza bruta. 
+    \item En lugar de probar todas las soluciones posibles individualmente,
+	se va construyendo una solución de manera incremental.
+    \item Se detiene el proceso (backtrack) cuando se detecta que esta solución parcial no se va a completar a una solución global.
+    \item Es mucho mejor que la fuerza bruta, y los ejercicios que vienen pretenden mostrar eso.
+    \item Generalmente da lugar a algoritmos exponenciales, y se la usa para tratar problemas computacionalmente difíciles. 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Backtracking (cont)}
+    \begin{itemize}
+    \item No es muy difícil de entender conceptualmente.
+    \item Suele ser difícil implementar buenos algoritmos de backtracking.
+    \item Como generalmente se utiliza recursión en la implementación, requiere un buen manejo de recursión.
+    \item Hay que identificar y mantener consistente la información de la solución que se está construyendo, que va mutando permanentemente.
+    \end{itemize}
+    Teniendo en cuenta esto y que se la suele aplicar a problemas computacionalmente difíciles, es razonable poner esta técnica al final.
+\end{frame}
+
+\begin{frame}{Backtracking : Ejercicios 14, 15 y 16}
+    \begin{itemize}
+	\item Ejercicio 14: Problema de las 8 reinas en un tablero de ajedrez.
+    \item Ejercicio 15: Problema de la mochila. Este problema es un ejemplo de problema NP completo que se verá más adelante en la materia.
+    \item Ejercicio 16: Problema de la suma de subconjuntos, también NP completo.
+    \end{itemize}
+    
+    En todos los casos:
+    \begin{itemize}
+       \item Se pide comparar contra el algoritmo de fuerza bruta.
+       \item Al dar problemas computacionalmente difíciles, se va mostrando que la técnica de backtracking es aplicable a estos problemas.
+       \item Se pide analizar las complejidades, que resultarán exponenciales en estos casos.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejercicios teóricos generales}
+	Finalmente, terminan la práctica dos ejercicios generales para clasificar y analizar los algoritmos ya realizados en ejercicios anteriores.
+\end{frame}
+
+\begin{frame}{Ejercicios teóricos generales : Ejercicio 17}
+    \begin{itemize}
+	\item Se pide decidir cuales de los algoritmos de las prácticas 2 y 3 son:
+        \begin{itemize}
+            \item Divide and conquer.
+            \item Recursivos.
+        \end{itemize}
+    \item Además se pregunta si siempre es mejor usar una implementación recursiva o una iterativa.
+
+	\item En base a las complejidades obtenidas en ejercicios anteriores, el alumno debería poder concluir que no siempre es mejor
+	una versión recursiva, y tampoco es siempre mejor una versión no recursiva (ejemplos, ejercicios 1 y 3 de esta práctica).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejercicios teóricos generales : Ejercicio 18}
+	Este ejercicio pide clasificar todos los ejercicios de esta práctica en ``buenos'' y ``malos''. 
+    \begin{itemize}
+    \item En las teóricas se define un buen algoritmo como un algoritmo de complejidad temporal polinomial.
+    \item Por lo tanto, revisando los análisis de complejidad de los distintos algoritmos ya propuestos, el alumno debería poder realizar esta clasificación.
+    \item Esto va sirviendo de introducción para el posterior estudio de las clases de complejidad P y NP.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejercicio 5: Enunciado}
+	\tiny
+	Sean $P_1, P_2, \cdots, P_n$ programas que se quieren almacenar en una cinta. El programa $P_i$ requiere
+	$s_i$ Kb de memoria. La cinta tiene capacidad para almacenar todos los programas. Se conoce la
+	frecuencia $\pi_i$ con que se usa el programa $P_i$. La densidad de la cinta y la velocidad del drive
+	son constantes.	Después que un programa se carga desde la cinta la misma se rebobina hasta el
+	principio. Si los programas se almacenan en orden $i_1, i_2, \cdots, i_n$ el tiempo promedio de carga de un
+	programa es
+	
+	$$T = c \sum_j{\left ( \pi_{i_j} \sum_{k \leq j}{s_{i_k}} \right )}$$
+	
+	donde la constante $c$ depende de la densidad de grabado y la velocidad del dispositivo. Queremos
+	construir un algoritmo goloso para determinar el orden en que se almacenan los programas que
+	minimice $T$.
+	
+	Analizar las siguientes estrategias de almacenamiento:
+	
+	\begin{itemize}
+		\item[I] en orden no decreciente de los $s_i$
+		\item[II] en orden no creciente de los $\pi_i$
+		\item[III] en orden no creciente de $\frac{\pi_i}{s_i}$
+	\end{itemize}
+	
+	¿Cómo se podría demostrar que la última estrategia es la mejor? (Sugerencia: analizar en cada caso
+	qué ocurre cuando dos elementos contiguos desordenados se ordenan.)
+	
+\end{frame}
+
+\end{document}
