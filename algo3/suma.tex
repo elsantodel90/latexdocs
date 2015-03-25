@@ -1,0 +1,84 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+\newcommand\numberthis{\refstepcounter{equation}\tag{\theequation}}
+
+\title{Ejercicio de suma: repaso de inducción}
+\author{}
+\date{}
+
+\makeindex
+
+\begin{document}
+
+\maketitle
+
+\section{Enunciado}
+
+$$ \mbox{Demostrar que } \forall n \in \mathbb{N} \mbox{ vale que } \sum_{i=1}^{n}{i \cdot 2^i} = (n-1) 2^{n+1} + 2 $$
+
+\section{Demostración por inducción}
+
+Sea $P(n) \equiv \sum_{i=1}^{n}{i \cdot 2^i} = (n-1) 2^{n+1} + 2$. Se nos pide demostrar $(\forall n \in \mathbb{N}) P(n)$. Lo haremos por inducción en $n$.
+
+
+\subsection{Caso base}
+Debemos probar $P(1)$.
+
+Por definición, $P(1) \equiv \sum_{i=1}^{1}{i \cdot 2^i} = (1-1) 2^{1+1} + 2 \Leftrightarrow 1 \cdot 2^1 = 2$, que es trivialmente cierto. Luego queda
+probado $P(1)$, completando el caso base.
+
+\subsection{Paso inductivo}
+Debemos probar $(\forall n \in \mathbb{N}) (P(n) \Rightarrow P(n+1))$.
+
+Supongamos entonces que $n \in \mathbb{N}$ es un natural cualquiera tal que se cumple $P(n)$. Con esta hipótesis inductiva, tenemos que demostrar $P(n+1)$, que por definición es:
+
+\begin{align*}
+\sum_{i=1}^{n+1}{i \cdot 2^i} & = ((n+1)-1) 2^{(n+1)+1} + 2 \Leftrightarrow \\
+\Leftrightarrow (n+1) 2^{n+1} + \sum_{i=1}^{n}{i \cdot 2^i} & = n \cdot 2^{n+2} + 2 \numberthis \label{eq:1}
+\end{align*}
+
+Pero recordemos que estamos suponiendo que vale la hipótesis inductiva, es decir, \\ $P(n) \equiv \sum_{i=1}^{n}{i \cdot 2^i} = (n-1) 2^{n+1} + 2$.
+Reemplazando de esta forma la sumatoria en el lado izquierdo de \ref{eq:1}, lo que tenemos que demostrar queda:
+
+\begin{align*}
+(n+1) 2^{n+1} + (n-1) 2^{n+1} + 2 & =n \cdot 2^{n+2} + 2 \Leftrightarrow \\
+\Leftrightarrow \left( (n+1) + (n-1) \right) 2^{n+1} & =n \cdot 2^{n+2} \Leftrightarrow \\
+\Leftrightarrow 2n \cdot 2^{n+1} & =n \cdot 2^{n+2} \\
+\end{align*}
+
+Lo cual es válido ya que $2 \cdot 2^{n+1} = 2^{n+2}$. Con esto hemos probado lo que queríamos, es decir, $P(n+1)$, partiendo de la suposición de que vale $P(n)$.
+Esto completa el paso inductivo, y con eso la demostración. \qed
+
+\section{Bonus: Demostración alternativa}
+
+Una demostración alternativa ``directa'', sin inducción sería por ejemplo la siguiente:
+
+$$\sum_{i=1}^{n}{i \cdot 2^i} = \sum_{i=1}^{n}\sum_{j=1}^{i}{2^i} = \sum_{j=1}^{n}\sum_{i=j}^{n}{2^i}$$
+
+Usando la fórmula de la suma de la serie geométrica\footnote{$\sum_{i=0}^{n-1}{a_0 \cdot r^i} = a_0 \cdot \frac{r^n-1}{r-1}$. En nuestro caso será $r=2$, $a_0$ es el primer término de la suma, y $n$ la cantidad total de términos.} queda:
+
+$$\sum_{j=1}^{n}{2^j(2^{n-j+1} - 1)} = \sum_{j=1}^{n}{\left(2^{n+1} - 2^j\right)} = \sum_{j=1}^{n}{2^{n+1}} - \sum_{j=1}^{n}{2^j} = n \cdot 2^{n+1} - (2^{n+1} - 2) = (n-1) 2^{n+1} + 2$$
+
+Donde hemos usado nuevamente la fórmula de la suma de la serie geométrica para eliminar la sumatoria. \qed
+
+\end{document}
