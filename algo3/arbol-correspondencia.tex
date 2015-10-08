@@ -1,0 +1,119 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+\newcommand\numberthis{\refstepcounter{equation}\tag{\theequation}}
+
+\title{Ejercicio X2: inducción en árboles}
+\author{}
+\date{}
+
+\makeindex
+
+\begin{document}
+
+\maketitle
+
+\section{Enunciado}
+
+Dado un grafo $G$, un matching en $G$ es un subconjunto de ejes que no comparten vértices. Un matching es perfecto si todo vértice de $G$ es extremo
+de algún eje del matching. Demostrar que un árbol tiene a lo sumo un matching perfecto.
+
+\section{Propiedades vistas en clase que nos serán útiles}
+
+Enumeradas aquí por simplicidad simplemente como A,B,C: Basta con citar correctamente su enunciado para utilizarlas.
+
+\begin{enumerate}
+\item[A] Todo árbol no trivial tiene al menos dos hojas.
+\item[B] Si $T$ es un bosque no trivial, y $v$ un vértice de $T$ entonces $T - v$ es un bosque.
+\item[C] Si $T$ es un árbol y $h$ es una hoja de $T$, entonces $T - h$ es un árbol.
+\end{enumerate}
+
+\section{Demostración (por inducción)}
+
+Sea $P(n) \equiv (\forall T \mbox { árbol de $n$ nodos})(T \mbox { tiene a lo sumo un matching perfecto})$.
+
+Se nos pide demostrar $(\forall n \in \mathbb{N}) P(n)$. Lo haremos por inducción global en $n$, la cantidad de nodos del árbol.
+
+
+\subsection{Caso base: $n = 1$}
+
+$P(1) \equiv \mbox{ todo árbol de $1$ nodo tiene a lo sumo un matching perfecto}$
+
+Existe un único árbol de un nodo, el grafo trivial. Como no existe ningún matching perfecto en este caso, porque no hay arista que pueda cubrir el vértice,
+hay $0 \leq 1$ matchings perfectos, y se verifica $P(1)$.
+
+\subsection{Caso base: $n = 2$}
+
+$P(2) \equiv \mbox{ todo árbol de $2$ nodos tiene a lo sumo un matching perfecto}$
+
+Existen solo dos grafos de 2 nodos (según exista o no la arista que los une). De ellos, solo uno es árbol, y el único conjunto de aristas que funciona como
+matching perfecto es el que contiene a la única arista del grafo. Luego hay exactamente un matching perfecto, y también se verifica $P(2)$.
+
+\subsection{Paso inductivo}
+
+Sea $n \geq 3$. Sabiendo que $(\forall \ 1 \leq n' < n) P(n')$, tenemos que demostrar $P(n)$, es decir, que todo árbol de $n$ nodos
+tiene a lo sumo un matching perfecto, asumiendo que los árboles de menos de $n$ nodos lo cumplen.
+
+Sea entonces $T$ un árbol cualquiera de $n \geq 3$ nodos. Como tenemos que demostrar que tiene a lo sumo un matching perfecto, lo que demostraremos será
+que si tiene uno, entonces este es único.
+
+Supongamos entonces que existe un matching perfecto de $T$. Sea $M \subseteq E(T)$ un matching perfecto cualquiera de $T$. Tenemos que ver que $M$ es único.
+
+Sea $h \in V(T)$ una hoja de $T$, que existe por propiedad A al ser $T$ no trivial. Como $d(h) = 1$, tiene exactamente un vecino en $T$, que llamaremos $u$.
+Llamaremos además $e$ a la arista que une $h$ con $u$. Como $M$ es matching perfecto, debe contener una arista incidente a $h$, pero $d(h) = 1$ y la única
+arista que incide en él es $e$. Luego debe ser $e \in M$.
+
+Además, consideramos las demás aristas incidentes a $u$ que no son $e$: $e_1, e_2, \cdots , e_l$ con $l = d(u) - 1$. Necesariamente $e_i \notin M$ para todo
+$i$, ya que como $e$ incide en $u$ y $e \in M$, si alguna de estas estuviera en $M$, compartiría el vértice $u$ con $e$, y $M$ no sería matching.
+Luego sabemos que de todas las aristas de $T$ incidentes en $u$ o en $h$, la única que está en $M$ es $e$.
+
+Definimos ahora $T_1, T_2, \cdots, T_k$ como las componentes conexas de $T - h - u$ (notar que podemos quitar dos vértices y obtener un grafo, ya que $n \geq 3$. Este es el motivo por el que tomamos dos casos base.).
+Notar que por ser componentes conexas, en $T - h - u$ no hay ninguna arista que tenga un extremo en $T_i$ y otro en $T_j$ para $i \neq j$, es decir
+toda arista de $T - h - u$ está en algún $T_i$.
+
+A su vez, definimos para cada $1 \leq i \leq k$ a $M_i$ como el conjunto de aristas de $M$ que están en $T_i$, es decir, $M_i = M \cap E(T_i)$.
+
+Como las aristas de $T - h - u$ son todas las de $T$ salvo $e$ y las $e_1, e_2, \cdots, e_l$ ya analizadas, de esto y lo anterior resulta que
+$M = \{ e \} \cup M_1 \cup M_2 \cup \cdots \cup M_k$. Veamos ahora que los $M_i$ son correspondencias perfectas de los $T_i$.
+
+Sea $1 \leq i \leq k$. $M_i \subseteq M$, luego como $M$ es correspondencia, no puede tener dos aristas que compartan un vértice, y entonces tampoco
+puede ocurrir en $M_i$, luego $M_i$ es correspondencia. Además, dado un vértice cualquiera $v \in V(T_i)$, existe una arista $e_v \in M$ que incide en $v$,
+porque $M$ era correspondencia perfecta de todo $T$. Pero esa arista $e_v$ debe estar en $T_i$ al incidir en un vértice de $T_i$: Luego
+$e_v \in M \cap E(T_i) \Rightarrow e_v \in M_i$. Por lo tanto $M_i$ contiene una arista incidente a cualquier vértice $v$ de $T_i$, y por lo tanto es
+correspondencia perfecta de $T_i$.
+
+Entonces tenemos correspondencias perfectas de los subgrafos $T_i$, que tienen menos nodos que $T$. Para aplicarles la hipótesis inductiva, necesitamos que esos
+subgrafos sean árboles. Pero aquí es donde podemos aplicar las propiedades: Como $h$ es hoja, de la propiedad C tenemos que $T - h$ es un árbol.
+Además, al ser $T-h$ un árbol no trivial (porque tiene $n-1 \geq 2$ nodos) podemos aplicar la propiedad B y concluir que $T - h - u$ es un bosque.
+Luego cada una de sus componentes conexas, $T_1, T_2, \cdots, T_k$ resulta ser un árbol. Por hipótesis inductiva entonces, cada uno de los $T_i$
+tiene a lo sumo una correspondencia perfecta. Pero como ya hemos probado que $M_i$ es correspondencia perfecta de $T_i$, podemos afirmar que cada
+$T_i$ tiene entonces exactamente una correspondencia perfecta, que notaremos $m(T_i)$.
+
+Finalmente recordando la expresión de $M$ tenemos
+
+$$M = \{ e \} \cup M_1 \cup M_2 \cup \cdots \cup M_k = \{ e \} \cup m(T_1) \cup m(T_2) \cup \cdots \cup m(T_k)$$
+
+Pero la expresión de la derecha no depende de $M$, sino que está determinada en forma unívoca por la arista $e$ y los únicos matchings $m(T_1), \cdots, m(T_k)$.
+Por lo tanto, hemos probado que cualquier matching perfecto $M$ de $T$ tiene exactamente esas aristas, con lo cual $M$ es único. \qed
+
+
+\end{document}
