@@ -138,7 +138,7 @@
 \begin{frame}{Solución mejorada (tabla aditiva)}
     \begin{itemize}
        \item Esta solución puede mejorarse mediante el cómputo de una \textit{tabla aditiva}
-       \item Definimos un nuevo arreglo $V$ de $n+1$ posiciones, con $V[i] = suma(0, i) = \sum_{j=0}^{i-1}{v[i]}$
+       \item Definimos un nuevo arreglo $V$ de $n+1$ posiciones, con $V[i] = suma(0, i) = \sum_{j=0}^{i-1}{v[j]}$
        \item La clave está en notar que $suma(i,j) = V[j] - V[i]$
        \item El arreglo $V$ puede computarse acumulando en una sola iteración, en $O(n)$
        \item Luego cada pregunta podemos responderla en $O(1)$, comparado a $O(n)$ que costaba en la solución trivial.
