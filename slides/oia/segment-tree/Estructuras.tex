@@ -1,0 +1,458 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Segment Tree] % (optional, use only with long paper titles)
+{Estructura de datos ``Segment Tree''}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+%\institute[UBA] % (optional, but mostly needed)
+%{
+  %\inst{1}
+%  Facultad de Ciencias Exactas y Naturales\\
+%  Universidad de Buenos Aires
+%}
+\date[OIA 2015] % (optional, should be abbreviation of conference name)
+{Olimpíada Informática Argentina 2015}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+    \tableofcontents[currentsection, currentsubsection]
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame} 
+\footnotesize
+\frametitle{Contenidos} 
+\tableofcontents 
+\end{frame}
+
+\section{Introducción} % 10 min
+
+\subsection{El problema que nos interesa}
+
+\begin{frame}{Información acumulada en rangos}
+  \begin{itemize}
+  \item Supongamos que tenemos un arreglo $v$ de $n$ posiciones. Una pregunta natural que podemos hacernos es: ¿Cuál es la suma de los elementos en el rango $[i, j)$?
+  \item Podemos notar $suma(i,j)$ a dicha suma. Así tendríamos por ejemplo:
+  \end{itemize}
+  
+  $$\begin{array}{rcccccccccccccl}
+        i         & : & 0 & 1 & 2 &   & 3    &   & 4 &   & 5 &   & 6 &   &   \\
+        v[i]      & : & 2 & 6 & 2 &   &-4    &   & 6 &   & 4 &   & 3 &   &   \\
+        suma(2,5) & = &   &   & 2 & + & (-4) & + & 6 &   &   &   &   & = & 4 \\
+        suma(3,7) & = &   &   &   &   & (-4) & + & 6 & + & 4 & + & 3 & = & 9 \\
+        suma(5,5) & = &   &   &   &   &      &   &   &   &   &   &   & = & 0 \\
+    \end{array} $$
+  
+  Notar que los índices del arreglo van de $0$ a $n-1$, y una pregunta $[i,j)$ válida tiene $0 \leq i \leq j \leq n$
+  
+\end{frame}
+
+\begin{frame}{Solución trivial}
+    \begin{itemize}
+       \item La solución más natural al problema anterior es realizar una iteración (\texttt{for}) del rango $[i,j)$, calculando la suma total y devolviéndola ante cada pregunta.
+       \item La complejidad de esta solución es $O(Q \cdot n)$, siendo $Q$ la cantidad de preguntas que nos interesa responder.
+       \item El problema de esta solución es que es costosa en tiempo de ejecución cuando nos interesa hacer muchas preguntas sobre el mismo arreglo.
+    \end{itemize}
+   
+\end{frame}
+
+\begin{frame}{Solución mejorada (tabla aditiva)}
+    \begin{itemize}
+       \item Esta solución puede mejorarse mediante el cómputo de una \textit{tabla aditiva}
+       \item Definimos un nuevo arreglo $V$ de $n+1$ posiciones, con $V[i] = suma(0, i) = \sum_{j=0}^{i-1}{v[i]}$
+       \item La clave está en notar que $suma(i,j) = V[j] - V[i]$
+       \item El arreglo $V$ puede computarse acumulando en una sola iteración, en $O(n)$
+       \item Luego cada pregunta podemos responderla en $O(1)$, comparado a $O(n)$ que costaba en la solución trivial.
+    \end{itemize}
+   
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo (tabla aditiva)}
+
+    \begin{verbatim}
+        // Cálculo de V:
+        V[0] = 0
+        for i = 1 to n
+            V[i] = V[i-1] + v[i-1]
+    \end{verbatim}
+   
+   $$\begin{array}{rccccccccccl}
+        i         & : & 0 & 1 & 2  & 3     & 4  & 5  &   & 6  & 7  &    \\
+        v[i]      & : & 2 & 6 & 2  & -4    & 6  & 4  &   & 3  &    &    \\
+        V[i]      & : & 0 & 2 & 8  & 10    & 6  & 12 &   & 16 & 19 &    \\
+     \end{array} $$
+  
+    \begin{itemize}
+        \item $suma(2,5) = V[5] - V[2] = 12 - 8 = 4$
+        \item $suma(3,7) = V[7] - V[3] = 19 - 10 = 9$
+        \item $suma(5,5) = V[5] - V[5] = 12 - 12 = 0$
+    \end{itemize}
+  
+\end{frame}
+
+\subsection{Sus complicaciones}
+
+\begin{frame}{Complicaciones para la tabla aditiva}
+    La tabla aditiva es un recurso muy útil pero hay dos complicaciones comunes que no nos permiten utilizarla:
+    \begin{itemize}
+       \item Cuando se realizan modificaciones al arreglo $v$ entre preguntas, habría que recalcular $V$ cada vez, y ya no ganamos nada.
+       \item Si en lugar de la suma queremos saber el mínimo o el máximo valor en el rango, la tabla no sirve (no podemos ``restar'').
+    \end{itemize}
+   
+    La estructura de \textit{Segment Tree} permite resolver ambos inconvenientes (y otros más que no hemos mencionado).
+   
+\end{frame}
+
+\section{Segment Tree} % 35 min
+
+\subsection{Segment Tree}
+
+\begin{frame}{Estructura : Descripción}
+    \begin{itemize}
+      \item Para trabajar con el segment tree asumiremos que $n$ es potencia de $2$. De no serlo, basta extender el arreglo $v$ con a lo sumo $n$
+            elementos adicionales para que sea potencia de $2$.
+      %\pause
+      \item Utilizaremos un árbol binario completo de $n$ hojas, codificado en un arreglo $A$ de $2n$ elementos: 
+      %\pause
+      \item $A_1$ guardará la raíz del árbol.
+      \item Para cada $i$, los dos hijos del elemento $A_i$ serán $A_{2i}$ y $A_{2i+1}$. 
+      \item El padre de un elemento $i$ será \texttt{i/2}, salvo en el caso de la raíz.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Descripción (cont)}
+
+    \begin{itemize}
+      \item Las hojas tendran índices en $[n,2n)$.
+      \item La idea será que cada nodo interno del árbol (guardado en un elemento del arreglo $A$) almacene el mínimo (o la suma, o la información que corresponda) entre sus dos hijos.
+      \item Las hojas contendrán en todo momento los elementos del arreglo $v$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Dibujo}
+
+    Este segment tree guarda mínimos (la misma idea funciona para máximos, para la suma, etc), para un arreglo inicial de 10 elementos:
+
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeConIndices.png}
+    \end{figure}
+    
+\end{frame}
+
+
+\begin{frame}{Estructura : Inicializacion}
+    \begin{itemize}
+       \item Llenamos $A_n, \cdots, A_{2n-1}$ con los elementos del arreglo $v$.
+       %\pause
+       \item Para calcular los nodos internos, hacemos simplemente:
+        $$A_i = \mimin(A_{2i},A_{2i+1})$$
+        \item Notar que se debe recorrer $i$ en forma descendente para no utilizar valores aún no calculados.
+        %\pause
+        \item El proceso de inicialización toma tiempo $O(n)$, y la estructura utiliza $O(n)$ memoria.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Modificaciones}
+    \begin{itemize}
+       \item Para modificar el arreglo, utilizaremos nuevamente la fórmula:
+       $$A_i = \mimin(A_{2i},A_{2i+1})$$
+       %\pause
+       \item Notemos que si cambiamos el valor de $v_i$ por $x$, debemos modificar $A_{n+i}$ haciéndolo valer $x$, y recalcular
+          los nodos internos del árbol...
+       %\pause
+       \item Pero sólo se ven afectados los ancestros de $A_{n+i}$.
+       %\pause
+       \item Luego es posible modificar un valor de $v$ en tiempo $O(\lg n)$, recalculando sucesivamente los padres desde $A_{n+i}$ hasta llegar a la raíz.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Estructura : Nodos que hay que modificar}
+    \scriptsize
+    \begin{verbatim}
+        A[n+i] = nuevoValor
+        x      = (n + i) / 2
+        mientras x >= 1
+            A[x] = min(A[2*x], A[2*x+1])
+            x    = x / 2
+    \end{verbatim}
+    Si se modifica $v_2 = 1$:
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeAncestrosPintados.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Estructura : Nodos que hay que modificar}
+    \scriptsize
+    \begin{verbatim}
+        A[n+i] = nuevoValor
+        x      = (n + i) / 2
+        mientras x >= 1
+            A[x] = min(A[2*x], A[2*x+1])
+            x    = x / 2
+    \end{verbatim}
+    Si se modifica $v_2 = 1$:
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeAncestrosPintados2.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Estructura : Nodos que hay que modificar}
+    \scriptsize
+    \begin{verbatim}
+        A[n+i] = nuevoValor
+        x      = (n + i) / 2
+        mientras x >= 1
+            A[x] = min(A[2*x], A[2*x+1])
+            x    = x / 2
+    \end{verbatim}
+    Si se modifica $v_2 = 1$:
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeAncestrosPintados3.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Estructura : Nodos que hay que modificar}
+    \scriptsize
+    \begin{verbatim}
+        A[n+i] = nuevoValor
+        x      = (n + i) / 2
+        mientras x >= 1
+            A[x] = min(A[2*x], A[2*x+1])
+            x    = x / 2
+    \end{verbatim}
+    Si se modifica $v_2 = 1$:
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeAncestrosPintados4.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Estructura : Nodos que hay que modificar}
+    \scriptsize
+    \begin{verbatim}
+        A[n+i] = nuevoValor
+        x      = (n + i) / 2
+        mientras x >= 1
+            A[x] = min(A[2*x], A[2*x+1])
+            x    = x / 2
+    \end{verbatim}
+    Si se modifica $v_2 = 1$:
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeAncestrosPintados5.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Estructura : Nodos que hay que modificar}
+    \scriptsize
+    \begin{verbatim}
+        A[n+i] = nuevoValor
+        x      = (n + i) / 2
+        mientras x >= 1
+            A[x] = min(A[2*x], A[2*x+1])
+            x    = x / 2
+    \end{verbatim}
+    Si se modifica $v_2 = 1$:
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeAncestrosPintados6.png}
+    \end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Estructura : Queries}
+     Para encontrar el mínimo en un rango $[i,j)$, exploramos los nodos bajando desde la raíz recursivamente:
+    \begin{itemize}
+         \item Si el intervalo del nodo actual está totalmente contenido en el rango que nos interesa, devolvemos directamente el valor guardado en el nodo.
+         \item Si el intervalo del nodo actual es disjunto con el rango que nos interesa, devolvemos $+\infty$ (o cero si trabajamos con la suma, etc).
+         \item En otro caso (hay parte adentro y parte afuera), propagamos la pregunta a los dos hijos del nodo.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Queries (cont)}
+    Tomaremos $f(k,l,r)$ como ``El resultado de consultar por el rango $[i,j)$ desde el nodo número $k$, cuyo intervalo es el $[l, r)$ ''
+    
+    $$f(k,l, r) = \left\{ \begin{array}{l}
+                                  \begin{array}{llc}
+                                     A_k     & \mbox{si } i \leq l < r \leq j & \mbox{(contenido)} \\
+                                     +\infty & \mbox{si }r \leq i \mbox{ o } l \geq j & \mbox{(disjunto)} \\
+                                  \end{array} \\
+                                  \mimin(f(2k,l,\frac{l+r}{2}), f(2k+1,\frac{l+r}{2},r)) \mbox{ sino} \\
+                          \end{array} \right.  $$
+    \begin{itemize}
+         \item La respuesta vendrá dada por $f(1,0,n)$ (notar que la función recursiva usa los valores $i$ y $j$)
+         \item La complejidad temporal de un query es $O(\lg n)$, ya que se exploran a lo más 4 nodos por nivel.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Nodos consultados en una query}
+    Consideremos la consulta que busca el mínimo en el rango $[3, 9)$:
+    
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeQuery.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Estructura : Nodos consultados en una query}
+    Consideremos la consulta que busca el mínimo en el rango $[3, 9)$:
+    
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeQuery2.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Estructura : Nodos consultados en una query}
+    Consideremos la consulta que busca el mínimo en el rango $[3, 9)$:
+    
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeQuery3.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Estructura : Nodos consultados en una query}
+    Consideremos la consulta que busca el mínimo en el rango $[3, 9)$:
+    
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeQuery4.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Estructura : Nodos consultados en una query}
+    Consideremos la consulta que busca el mínimo en el rango $[3, 9)$:
+    
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeQuery5.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Estructura : Nodos consultados en una query}
+    Consideremos la consulta que busca el mínimo en el rango $[3, 9)$:
+    
+    \begin{figure}
+       \includegraphics[scale=0.4]{segmentTreeQuery6.png}
+    \end{figure}
+\end{frame}
+
+
+
+
+\subsection{Aplicación}
+
+\begin{frame}{Problema sumo (Certamen de selección 2010):}
+
+    \begin{itemize}
+            \item En el problema se dan $L \leq 100000$ luchadores de sumo, cada uno con dos atributos altura y peso entre $0$ y $1000000$ (no hay dos luchadores iguales).
+            \item Un luchador domina a otro si le gana estrictamente en uno de los atributos, y no es peor en el otro ($\geq$ y $>$).
+            \item Se pide dar para cada luchador, la cantidad de luchadores a los que domina.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Problema sumo (Certamen de selección 2010):}
+
+    \begin{itemize}
+            \item Observación: Si ordenamos a los luchadores por altura, desempatando por peso, los dominados quedan siempre a la izquierda.
+            \item Más precisamente, el luchador $i$ dominará exactamente a los $j < i$ tales $peso(j) \leq peso(i)$.
+            \item Es decir, que si vamos ``agregando'' los pesos de los luchadores en orden, la respuesta es en cada momento la cantidad de elementos agregados que son menores o iguales que $peso(i)$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Problema sumo (Certamen de selección 2010):}
+
+    \begin{itemize}
+            \item Si en un arreglo $v$ guardamos en el lugar $x$ la cantidad de luchadores agregados actualmente con peso $x$...
+            \pause
+            \invisible<1>{
+                \item La cantidad que queremos en todo momento es la suma de los valores de $v$ entre $0$ y $peso(i)$
+                \item Como el arreglo se va modificando (se agregan luchadores), no sirve una tablita aditiva.
+                \item Pero podemos utilizar un Segment Tree para obtener las sumas deseadas y actualizar en $O(\lg n)$
+            }
+    \end{itemize}
+\end{frame}
+
+
+\subsection{Tarea} %KGSS
+
+\begin{frame}{Tarea}
+        \begin{itemize}
+            \item http://www.spoj.pl/problems/KGSS/
+        \end{itemize}
+\end{frame}
+
+\end{document}
