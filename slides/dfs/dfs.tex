@@ -47,10 +47,10 @@
 
 
 \title[Grafos II] % (optional, use only with long paper titles)
-{Grafos}
+{Grafos II}
 
 \author[Agustín Gutiérrez] % (optional, use only with lots of authors)
-{~Agustín Gutiérrez}
+{~Agustín Santiago Gutiérrez}
 % - Give the names in the same order as the appear in the paper.
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
@@ -59,8 +59,8 @@
   Facultad de Ciencias Exactas y Naturales\\
   Universidad de Buenos Aires
 }
-\date[TC 2014] % (optional, should be abbreviation of conference name)
-{Training Camp 2014}
+\date[TC 2016] % (optional, should be abbreviation of conference name)
+{Training Camp 2016}
 
 % Acá se puede insertar el logo de la UBA
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
@@ -70,7 +70,7 @@
 
 % Delete this, if you do not want the table of contents to pop up at
 % the beginning of each subsection:
-\AtBeginSubsection[]
+\AtBeginSection[]
 {
 
   \begin{frame}<beamer>{Contenidos}
@@ -160,7 +160,7 @@ El algoritmo de DFS nos induce una clasificacion de aristas en 4 tipos:
 \item \textbf{Forward edge}
 \begin{itemize} 
     \item Viaja a un nodo negro con descubrimiento posterior al nodo actual
-    \item Viaja a un \textbf{descendiente} (no hijo) del nodo actual
+    \item Viaja a un \textbf{descendiente} (no necesariamente hijo) del nodo actual
     \item \textit{Solo aparece en grafos dirigidos}
 \end{itemize} 
 \item \textbf{Cross edge} 
@@ -186,8 +186,9 @@ El algoritmo de DFS nos induce una clasificacion de aristas en 4 tipos:
 \begin{itemize}
     \item Las back-edges siempre están involucradas en un ciclo (concretamente, el que se completa con las tree edges que bajan en sentido inverso)
     \item Las cross-edges forman un subgrafo acíclico (ya que por definición, siempre van de un nodo a otro con un tiempo de finalización menor)
-    \item Topological sort: Es tomar los vertices en orden inverso de finalizacion, gracias a que:
+    \item Topological sort: Es tomar los vertices en orden inverso de finalizacion, gracias a que (en un DAG):
     $$a \rightarrow b \Rightarrow f[a] > f[b]$$
+    \item Notar que no hace falta correr un sort: si cada vez que finalizamos un nodo lo agregamos a una lista, quedan al final en orden de finalización.
 \end{itemize}
 \end{frame}
 
@@ -205,6 +206,42 @@ El algoritmo de DFS nos induce una clasificacion de aristas en 4 tipos:
 Para pensar en el hogar:
 \begin{itemize}
 \item En un grafo dirigido, dar el vertice mas chico alcanzable por cada vertice, en tiempo lineal, es decir, $O(|V|+|E|)$.
+\end{itemize}
+\end{frame}
+
+\section{Componentes fuertemente conexas}
+
+\begin{frame}{Definiciones}
+\begin{itemize}
+\item Un grafo dirigido es \textbf{fuertemente conexo} si para todo par de nodos $a$,$b$ existe un camino (dirigido) desde $a$ hasta $b$.
+\item En un grafo no dirigido, una \textbf{componente fuertemente conexa} es un subgrafo fuertemente conexo maximal.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dibujito}
+\ \ \ \ \ \ \ \ \includegraphics[scale=0.8]{fuertemente-conexas.png}
+\end{frame}
+
+
+\begin{frame}{Observaciones}
+\begin{itemize}
+\item Una componente fuertemente conexa es un subgrafo inducido del grafo original.
+\item Las componentes fuertemente conexas particionan los nodos (según la relación de equivalencia de alcanzabilidad mutua).
+\item Si compactamos cada componente fuertemente conexa a un nodo (manteniendo las aristas que cruzan entre componentes), obtenemos un DAG llamado la \textit{condensación} del grafo original.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Condensación}
+\ \ \ \ \ \ \ \ \includegraphics[scale=0.4]{condensation.png}
+\end{frame}
+
+\begin{frame}{Cálculo de las componentes fuertemente conexas}
+\begin{itemize}
+\item Aunque hay otros mejores, el algoritmo eficiente más sencillo es el de Kosaraju.
+\item Con un primer DFS, obtenemos la lista de nodos en orden inverso de finalización (sería el orden topológico si fuera un DAG).
+\item Luego, damos vuelta todas las aristas de $G$ (obteniendo $G^t$). Esto no cambia las componentes fuertemente conexas, e invierte todas las aristas de la condensación de $G$.
+\item Notar que el primer nodo de la lista debe pertecer a una componente sin aristas salientes en la condensación de $G^t$. Luego un DFS desde él alcanza a exactamente a los elementos de esa componente.
+\item De la misma manera, si ahora continuamos realizando un recorrido cada vez desde el siguiente nodo sin recorrer, los alcanzables forman una nueva componente fuertemente conexa.
 \end{itemize}
 \end{frame}
 
@@ -226,9 +263,10 @@ Para pensar en el hogar:
 
 \begin{frame}{Observaciones}
 \begin{itemize}
-\item Los puentes vienen a ser componentes biconexas de 2 nodos.
-\item Las componentes biconexas \textbf{no particionan los nodos} (a diferencia de las componentes conexas).
-\item Las componentes biconexas \textbf{particionan las aristas} de grafo.
+\item Los nodos aislados son un caso especial. Conviene separarlos, y contarlos o no como componentes según convenga.
+\item Los puentes son exactamente las componentes biconexas de 2 nodos (y necesariamente, una arista).
+\item Las componentes biconexas \textbf{no particionan los nodos} (a diferencia de las componentes conexas o fuertemente conexas).
+\item Las componentes biconexas \textbf{particionan las aristas} del grafo (ignorando los nodos aislados), de acuerdo a la relación de equivalencia de cociclidad (pertenencia a un mismo ciclo simple).
 \end{itemize}
 \end{frame}
 
@@ -283,8 +321,6 @@ Para pensar en el hogar:
 \begin{center}
 
 {\Huge ¿Preguntas?}
-
-\includegraphics[scale=0.135]{batman.jpg}
 
 \end{center}
 \end{frame}
