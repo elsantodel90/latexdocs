@@ -1,0 +1,478 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Fast I/O] % (optional, use only with long paper titles)
+{Entrada / Salida rápida en C, C++ y Java}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[TC 2016] % (optional, should be abbreviation of conference name)
+{Training Camp 2016}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+%\AtBeginSubsection[]
+\AtBeginSection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  %\begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  %\end{multicols}
+  \end{frame}
+}
+%
+%\DeclareMathOperator*{\mimin}{min}
+%\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame} 
+\footnotesize
+\frametitle{Contenidos} 
+\tableofcontents
+\end{frame}
+
+\begin{frame}
+
+``Pero la velocidad era poder, y la velocidad era gozo, y la velocidad era pura belleza.''
+
+ \hfill Richard Bach, ``Juan Salvador Gaviota''
+
+\end{frame}
+
+\section{Contexto}
+
+\begin{frame}{¿Por qué conviene hacer eficiente la E/S?}
+  %%\pause
+  \begin{itemize}
+  \item En problemas de complejidad lineal o similar, las operaciones de E/S pueden insumir un porcentaje importante del tiempo total de ejecución, que es lo que se mide en la mayoría de las competencias.
+  \pause
+  \invisible<1>{
+      \item Aún si los tiempos elegidos por el jurado son generosos, y es posible con una solución esperada resolver el problema aún con mecanismos de E/S ineficientes, usar formas eficientes de hacer E/S nos permitirá siempre ``zafar'' con programas más lentos que si no lo hiciéramos así.
+      \pause
+      \invisible<1-2>{
+        \item Existen diferencias \textbf{muy simples y pequeñas} en la forma de realizar E/S en los programas, que \textbf{generan grandes diferencias} en el tiempo total insumido por estas operaciones. Conocer estas diferencias es entonces obtener un beneficio relevante con muy poco esfuerzo.
+      }
+  }
+  \end{itemize}
+  
+\end{frame}
+
+\section{C}
+
+\begin{frame}{Funciones printf y scanf}
+
+  \begin{itemize}
+      \item En C plano, la forma de E/S más utilizada son las funciones printf y scanf. Estas funciones \textbf{son eficientes}, y es la forma recomendada de realizar entrada salida en este lenguaje.
+      \item Ejemplo:
+      
+\texttt{\#include <stdio.h>}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ scanf("\%d\%d", \&x, \&y);}
+    
+\texttt{    \ \ \ printf("\%d\textbackslash n", x+y);}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\section{C++}
+
+\begin{frame}{Funciones printf y scanf}
+
+  \begin{itemize}
+      \item En C++, las mismas funciones scanf y printf siguen disponibles, y siguen siendo una opción eficiente para aquellos que estén acostumbrados o gusten de usarlas.
+      \item Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ scanf("\%d\%d", \&x, \&y);}
+    
+\texttt{    \ \ \ printf("\%d\textbackslash n", x+y);}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Streams cin y cout}
+
+  \begin{itemize}
+      \item La forma elegante de hacer E/S en C++ es mediante los streams cin y cout (Y análogos objetos fstream si hubiera que manipular archivos específicos en alguna competencia).
+      \item Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< endl;}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Por defecto en casos usuales, cin y cout son lentos}
+
+  \begin{itemize}
+      \item La eficiencia relativa de cin y cout vs scanf y printf dependerá del compilador y arquitectura en cuestión.
+      \item Dicho esto, en la mayoría de los compiladores y sistemas usuales utilizados en competencia, cin y cout son por defecto \textbf{mucho} más lentos que scanf y printf.
+      \item Veremos algunos trucos para que cin y cout funcionen más rápido. Con ellos, en algunos sistemas comunes funcionan más rápido que printf y scanf, pero la diferencia es muy pequeña.
+      \item En otras palabras, aplicando los trucos que veremos a continuación, da igual usar cin y cout o printf y scanf, ambas son eficientes.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Primera observación: endl}
+
+  \begin{itemize}
+      \item El valor ``endl'' no es solo un fin de línea, sino que además ordena que se realice un \textbf{flush del buffer}.
+      \item De esta forma, imprimir muchas líneas cortas (un solo entero, un solo valor Y/N, etc) realiza muchas llamadas a escribir directamente al sistema operativo, para escribir unos poquitos bytes en cada una.
+      \item \textbf{Solución:} utilizar \texttt{\textbackslash n} en su lugar. Esto es un sencillo caracter de fin de línea, que no ejecuta un flush del buffer.
+      \item Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< \textbf{"\textbackslash n"};}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Segunda observación: sincronización con stdio}
+
+  \begin{itemize}
+      \item Por defecto, cin y cout están sincronizados con todas las funciones de stdio (notablemente, scanf y printf). Esto significa que si usamos ambos métodos, las cosas se leen y escriben en el orden correcto.
+      \item En varios de los compiladores usuales esto vuelve a cin/cout \textbf{mucho} más lentos, y si solamente usamos cin y cout pero \textbf{nunca scanf y printf}, no lo necesitamos.
+      \item \textbf{Solución:} utilizar \texttt{ios::sync\_with\_stdio(false)} al iniciar el programa, para desactivar esta sincronización. Notar que si hacemos esto, \textbf{ya no podemos usar printf ni scanf} (ni ninguna función de stdio) sin tener resultados imprevisibles.
+      \item Desactivar la sincronización también puede tener efectos al utilizar más de un thread. Esto no nos importa en ICPC.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Segunda observación: sincronización (ejemplo)}
+
+Esta optimización tiene efectos muy notorios, típicamente reduce el tiempo de ejecución a la mitad en varios jueces online comunes.
+
+Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\textbf{\texttt{    \ \ \ ios::sync\_with\_stdio(false);}}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< "\textbackslash n";}
+    
+\texttt{\}}
+
+\end{frame}
+
+
+\begin{frame}{Tercera observación: dependencia entre cin y cout}
+
+  \begin{itemize}
+      \item Por defecto, cin está \textit{atado} a cout, lo cual significa que siempre antes de leer de cin, se fuerza un flush de cout. Esto hace que programas interactivos funcionen como se espera.
+      \item Cuando solo se hacen unas pocas escrituras con el resultado al final de toda la ejecución, esto no tiene un efecto tan grande.
+      \item Si por cada línea que leemos escribimos una en la salida, este comportamiento fuerza un flush en cada línea, como hacía endl.
+      \item \textbf{Solución:} utilizar \texttt{cin.tie(NULL)} al iniciar el programa, para desactivar esta dependencia. Notar que si hacemos esto, tendremos que realizar flush de cout manualmente si queremos un programa interactivo.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Tercera observación: dependencia (ejemplo)}
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ ios::sync\_with\_stdio(false);}
+
+\textbf{\texttt{    \ \ \ cin.tie(NULL);}}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< "\textbackslash n";}
+    
+\texttt{\}}
+
+\end{frame}
+
+\begin{frame}{Ejemplo final con las 3 técnicas}
+      
+      \begin{itemize}
+           \item Eliminar sincronización con stdio
+           \item Eliminar dependencia entre cin y cout
+           \item No utilizar endl
+      \end{itemize}
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\textbf{\texttt{    \ \ \ ios::sync\_with\_stdio(false);}}
+
+\textbf{\texttt{    \ \ \ cin.tie(NULL);}}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< \textbf{"\textbackslash n"};}
+    
+\texttt{\}}
+
+\end{frame}
+
+\section{Java}
+
+\begin{frame}{InputStreams, OutputStreams, Readers, Writers}
+
+  \begin{itemize}
+      \item En Java existe la distinción entre los Streams (bytes) y los Readers / Writers (caracteres unicode).
+      \item Aún siendo todo ASCII, para archivos de texto uno termina trabajando siempre con readers y writers porque tienen las funciones más cómodas.
+      \item El ``análogo'' de cin y cout en Java es System.in y System.out. 
+      \item Sin embargo, hay que tener cierto cuidado ya que al operar con ellos directamente, no se bufferean las operaciones, y tenemos un problema de permanente flushing, similar al que ocurría en C++ con endl.
+      \item Particularmente, hacer \texttt{System.out.println(x)} es exactamente como \texttt{cout <{}< x <{}< endl}, y queremos evitarlo.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo típico de I/O con Java}
+
+\scriptsize
+
+\begin{verbatim}
+import java.io.*;
+import java.util.*;
+
+class HelloWorld {
+    public static void main(String [] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        long total = 0;
+        for (int i = 0; i < n; i++) {
+            long x = scanner.nextLong();
+            total += x;
+            System.out.println(total);
+        }
+    }
+}\end{verbatim}
+  
+  Esto es lento, porque no usa buffers, lee y escribe directamente.
+  
+\end{frame}
+
+
+\begin{frame}[fragile]{Introduciendo Buffers}
+
+\tiny
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+import java.io.*;
+import java.util.*;
+
+class HelloWorld \{
+    public static void main(String [] args) throws Exception \{
+        \textbf{BufferedReader br = new BufferedReader(new InputStreamReader(System.in));}
+        \textbf{BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));}
+
+        \textbf{Scanner scanner     = new Scanner(br);}
+        \textbf{PrintWriter printer = new PrintWriter(bw);}
+        int n = scanner.nextInt();
+        long total = 0;
+        for (int i = 0; i < n; i++) \{
+            long x = scanner.nextLong();
+            total += x;
+            \textbf{printer.println(total);}
+        \}
+        \textbf{printer.flush();}
+    \}
+\}
+\end{Verbatim}
+  
+  ¡¡Notar el flush!! No se puede omitir. Al usar buffers, printer.println no imprime en el momento, y sin flushear al final pueden quedar cosas pendientes de escribir en la salida (se observa una salida ``cortada'').
+  
+\end{frame}
+
+
+\begin{frame}[fragile]{En versiones nuevas de Java...}
+
+\tiny
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+import java.io.*;
+import java.util.*;
+
+class HelloWorld \{
+    public static void main(String [] args) throws Exception \{
+        \textbf{Scanner scanner     = new Scanner(System.in);}
+        \textbf{PrintWriter printer = new PrintWriter(System.out);}
+        int n = scanner.nextInt();
+        long total = 0;
+        for (int i = 0; i < n; i++) \{
+            long x = scanner.nextLong();
+            total += x;
+            \textbf{printer.println(total);}
+        \}
+        \textbf{printer.flush();}
+    \}
+\}
+\end{Verbatim}
+  
+  En versiones nuevas, esto ``zafaría'', gracias a que Scanner y PrintWriter usan buffers internos. Notar que usar System.out y System.in directamente sin envolverlos nunca usan buffers.
+  
+  No obstante, la versión anterior es la jugada segura todo terreno. Si el rendimiento de E/S puede importar, \textbf{siempre usar buffers}.
+  
+\end{frame}
+
+\begin{frame}[fragile]{Más eficientes, pero más incómodos}
+
+\tiny
+
+Podemos evitar por completo PrintWriter y Scanner y resolver todo con BufferedWriter y BufferedReader:
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+import java.io.*;
+import java.util.*;
+
+class HelloWorld \{
+    public static void main(String [] args) throws Exception \{
+        \textbf{BufferedReader br = new BufferedReader(new InputStreamReader(System.in));}
+        \textbf{BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));}
+        
+        int n = \textbf{Integer.valueOf(br.readLine());}
+        long total = 0;
+        for (int i = 0; i < n; i++) \{
+            long x = \textbf{Long.valueOf(br.readLine());}
+            total += x;
+            \textbf{bw.write(String.valueOf(total));}
+            \textbf{bw.newLine();}
+        \}
+        \textbf{bw.flush();}
+    \}
+\}
+\end{Verbatim}
+  
+  La diferencia entre PrintWriter y BufferedWriter no es muy grande (En casos como el ejemplo, < 10\% ).
+  
+  La diferencia entre Scanner y BufferedReader es potencialmente muy grande (puede ser un 50\%). Otra función a evitar en estos casos es \texttt{String.split}, que es bastante lenta.
+  
+\end{frame}
+
+
+\end{document}
