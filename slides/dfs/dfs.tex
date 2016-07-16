@@ -270,6 +270,28 @@ Para pensar en el hogar:
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Observaciones (más)}
+\begin{itemize}
+\item Podríamos obtener algo parecido a la condensación de un grafo dirigido para este caso.
+\item Si miramos el dibujo y nos imaginamos que cada componente biconexa se transforma en un nodo, lo que queda tiene ``Pinta de árbol''.
+\item Sin embargo, simplemente contraer cada componente a un único nodo y unir componentes que se tocan no funciona, pues el resultado no es árbol.
+\pause
+\invisible<1>{
+\item Solución: utilizar un nodo por cada \textbf{componente biconexa}, y también un nodo por cada \textbf{punto de articulación}.
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Block-cut tree}
+\begin{itemize}
+\item Conectamos un punto de articulación a las componentes biconexas que lo contienen (siempre serán al menos 2). El resultado es un árbol.
+\item Notar que si bien todo árbol es bipartito, aquí la bipartición tiene un significado claro en relación al problema: por un lado puntos de articulación, por otro componentes.
+\item Además, todas las hojas están en el mismo conjunto de la bipartición, lo cual no ocurre en cualquier árbol, ya que en nuestro caso los puntos de articulación nunca son hoja.
+\item A este árbol se lo conoce como el \textit{block-cut tree} del grafo.
+\item En realidad lo anterior es un árbol si el grafo original es conexo. Sino, se obtiene un bosque, con un árbol de estos por componente conexa.
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Cálculo mediante DFS}
 \begin{itemize}
 \item La idea central es computar mediante recursión durante el recorrido del DFS, un valor $low[i]$ que para cada nodo, indique
