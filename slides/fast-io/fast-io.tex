@@ -400,12 +400,12 @@ class HelloWorld \{
             total += x;
             \textbf{printer.println(total);}
         \}
-        \textbf{printer.flush();}
+        \textbf{printer.close();}
     \}
 \}
 \end{Verbatim}
   
-  ¡¡Notar el flush!! No se puede omitir. Al usar buffers, printer.println no imprime en el momento, y sin flushear al final pueden quedar cosas pendientes de escribir en la salida (se observa una salida ``cortada'').
+  ¡¡Notar el close!! No se puede omitir. Al usar buffers, printer.println no imprime en el momento, y sin flushear al final pueden quedar cosas pendientes de escribir en la salida (se observa una salida ``cortada'').
   
 \end{frame}
 
@@ -429,7 +429,7 @@ class HelloWorld \{
             total += x;
             \textbf{printer.println(total);}
         \}
-        \textbf{printer.flush();}
+        \textbf{printer.close();}
     \}
 \}
 \end{Verbatim}
@@ -463,7 +463,7 @@ class HelloWorld \{
             \textbf{bw.write(String.valueOf(total));}
             \textbf{bw.newLine();}
         \}
-        \textbf{bw.flush();}
+        \textbf{bw.close();}
     \}
 \}
 \end{Verbatim}
