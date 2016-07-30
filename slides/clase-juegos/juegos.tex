@@ -1,3 +1,65 @@
+% MACHETE:
+
+
+% Juegos:
+%     Forman un DAG.
+% 
+% Juego de sustracci√≥n:
+% 
+% 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+% L W L W W W W L W L  W  W W  W  
+% 
+% L = 0 o 2 (mod 7)
+% 
+% 
+% 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+% W L W L W W W W L W L
+% 
+% L = 1 o 3 (mod 7)
+% 
+% (Dejar ah√≠ para explicar la idea de la criba)
+% 
+% Juego de la criba:
+%     Posiciones: Enteros >= 2
+%     Un jugador puede jugar a un divisor propio >= 2
+%     El que no puede jugar pierde
+%         L = Los primos
+%         
+%         
+% Loopy Games:
+%     Jugadas legales -2, -5, +1
+%     "El que llega a 0 gana" = "El que tiene que jugar en 0 pierde"
+% 
+%     Caminata en grafo (caso general).
+%     
+% 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21
+% L L W W L W W W L W  W  W  L  W  W  W  L  W W  W   L  W
+% 
+% L = multiplos de 4 y el 1
+% W = el resto
+% 
+% 
+% 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \documentclass{beamer}
 
 \mode<presentation>
@@ -15,6 +77,7 @@
 \usepackage{verbatim}
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{ulem}
 
 \lstloadlanguages{C++}
 \lstnewenvironment{code}
@@ -35,7 +98,7 @@
 \usepackage[spanish]{babel}
 % or whatever
 
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 % or whatever
 
 \usepackage{times}
@@ -47,8 +110,9 @@
 \title % (optional, use only with long paper titles)
 {Juegos combinatorios imparciales}
 
-\author % (optional, use only with lots of authors)
-{AgustÌn Santiago GutiÈrrez}
+\author[Agust√≠n Guti√©rrez] % (optional, use only with lots of authors)
+{~Agust√≠n Santiago Guti√©rrez\\ \texorpdfstring{\sout{Leopoldo Taravilse} \\ \sout{Agust√≠n Santiago Guti√©rrez}}{}}
+
 % - Give the names in the same order as the appear in the paper.
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
@@ -57,10 +121,10 @@
   Facultad de Ciencias Exactas y Naturales\\
   Universidad de Buenos Aires
 }
-\date[TC 2013] % (optional, should be abbreviation of conference name)
-{Training Camp 2013}
+\date[TC 2016] % (optional, should be abbreviation of conference name)
+{Training Camp 2016}
 
-% Ac· se puede insertar el logo de la UBA
+% Ac√° se puede insertar el logo de la UBA
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
 % \logo{\pgfuseimage{university-logo}}
 
@@ -96,7 +160,25 @@
 \begin{frame}
   \textbf{Disclaimer}:
   
-  Estas diapositivas est·n pensadas como ayuda para apoyar la charla y no son autocontenidas. Su lectura \textbf{no} reemplaza la charla.
+  Estas diapositivas est√°n pensadas como ayuda para apoyar la charla y no son autocontenidas. Su lectura \textbf{no} reemplaza la charla.
+  \pause
+  \invisible<1>{
+  
+  \textbf{Disclaimer 2}:
+  
+      Estas diapositivas son un calco exacto de las que dio Agust√≠n Guti√©rrez en 2013 en el Training Camp de La Plata. La √∫nica diferencia
+      con aquellas diapositivas es este disclaimer. O sea... agradezcanle a Agust√≠n.
+      
+      \pause
+      
+      \invisible<1-2>{
+  
+      \textbf{Disclaimer 3}:
+      
+          Este disclaimer anula al anterior que escribi√≥ Leopoldo. Son mis diapos de nuevo. Hice retoques m√≠nimos pero la mayor parte sigue igual.
+      }
+      
+  }
 \end{frame}
 
 \begin{frame}
@@ -118,83 +200,83 @@
 \end{frame}
 
 
-\section{Nociones b·sicas}
+\section{Nociones b√°sicas}
 
 
-\begin{frame}{QuÈ es un juego}
+\begin{frame}{Qu√© es un juego}
   \begin{itemize}
   
   \item ``Un juego es eso que hace un conjunto de jugadores cuando ``juega'' a algo.''
   \pause
-  \item \invisible<1>{Go, Ajedrez, Solitario, PÛker, Batalla Naval, Teg, 1914, Veo Veo}
+  \item \invisible<1>{Go, Ajedrez, Solitario, P√≥ker, Batalla Naval, Teg, 1914, Veo Veo}
   \pause
-  \item \invisible<1-2>{F˙tbol, Escondida, ChinchÛn, Mafia.}
+  \item \invisible<1-2>{F√∫tbol, Escondida, Chinch√≥n, Mafia.}
   \pause
-  \item \invisible<1-3>{PartÌculas subatÛmicas jugando a seguir ciertas reglas de fÌsica cu·ntica}
+  \item \invisible<1-3>{Part√≠culas subat√≥micas jugando a seguir ciertas reglas de f√≠sica cu√°ntica}
   \pause
-  \item \invisible<1-4>{El universo jugando a seguir las leyes de la fÌsica...}
+  \item \invisible<1-4>{El universo jugando a seguir las leyes de la f√≠sica...}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{QuÈ es un juego para nos}
+\begin{frame}{Qu√© es un juego para nos}
   \begin{itemize}
-  \item La nociÛn de juego es muy general y se puede enfocar desde muchos aspectos incluso dentro de la matem·tica misma, asÌ que nosotros nos vamos a concentrar en la siguiente nociÛn:
+  \item La noci√≥n de juego es muy general y se puede enfocar desde muchos aspectos incluso dentro de la matem√°tica misma, as√≠ que nosotros nos vamos a concentrar en la siguiente noci√≥n:
   \end{itemize}
   \begin{block}{Juego combinatorio imparcial}
-   Un juego combinatorio imparcial ser· para nosotros un juego de dos jugadores por turnos, de informaciÛn perfecta y sin azar, que siempre termina, y cuyo ˙nico resultado posible es que un jugador gane y el otro pierda.
+   Un juego combinatorio imparcial ser√° para nosotros un juego de dos jugadores por turnos, de informaci√≥n perfecta y sin azar, que siempre termina, y cuyo √∫nico resultado posible es que un jugador gane y el otro pierda.
   \end{block}
   \begin{itemize}
   \item La parte de \textit{imparcial} hace referencia a que no hay ninguna diferencia entre las opciones disponibles a ambos
-  jugadores a lo largo del juego, ni en su funciÛn de pagos en una posiciÛn terminal. Es decir, ambos jugadores son idÈnticos.
+  jugadores a lo largo del juego, ni en su funci√≥n de pagos en una posici√≥n terminal. Es decir, ambos jugadores son id√©nticos.
   \item Los juegos combinatorios en general permiten juegos \textit{partisanos}, donde los jugadores no son iguales (como en Ajedrez).
   \end{itemize}
 \end{frame}
 
-\begin{frame}{QuÈ es un juego para nos (2)}
+\begin{frame}{Qu√© es un juego para nos (2)}
   \begin{itemize}
   \item Muchos de nuestros resultados e ideas se pueden usar igual en juegos que no sean exactamente combinatorios imparciales (veremos algunos ejemplos)
-  \item En general, podemos pensar estos juegos de manera abstracta como un grafo de posiciones, con los ejes indicando jugadas v·lidas
-  de una posiciÛn a otra, y una posiciÛn especial actual o inicial. Las posiciones terminales estar·n marcadas como perdedoras / ganadoras seg˙n las reglas del juego. Con las
-  reglas usuales de la mayorÌa de los juegos, las posiciones terminales ser·n perdedoras (porque el que no puede jugar pierde).
+  \item En general, podemos pensar estos juegos de manera abstracta como un grafo de posiciones, con los ejes indicando jugadas v√°lidas
+  de una posici√≥n a otra, y una posici√≥n especial actual o inicial. Las posiciones terminales estar√°n marcadas como perdedoras / ganadoras seg√∫n las reglas del juego. Con las
+  reglas usuales de la mayor√≠a de los juegos, las posiciones terminales ser√°n perdedoras (porque el que no puede jugar pierde).
   \end{itemize}
 \end{frame}
 
-\begin{frame}{QuÈ es un juego para nos (3)}
+\begin{frame}{Qu√© es un juego para nos (3)}
   \begin{itemize}
-  \item En la teorÌa no es necesario pedir que estos grafos sean finitos y hay juegos combinatorios infinitos bien estudiados. Sin
+  \item En la teor√≠a no es necesario pedir que estos grafos sean finitos y hay juegos combinatorios infinitos bien estudiados. Sin
   embargo nosotros nos dedicaremos casi exclusivamente a trabajar con juegos con grafos finitos.
-  \item Notar que un juego combinatorio genera un grafo que no contiene ciclos (DAG), ya que una de las hipÛtesis es que el juego
+  \item Notar que un juego combinatorio genera un grafo que no contiene ciclos (DAG), ya que una de las hip√≥tesis es que el juego
   siempre termina y no existen cadenas de jugadas infinitas.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Posiciones perdedoras y ganadoras}
   \begin{itemize}
-  \item Decimos que una posiciÛn es \textbf{ganadora} si el jugador al que le toca jugar tiene una estrategia ganadora (se puede
-  formalizar en teorÌa de conjuntos la definiciÛn de estrategia, pero nos quedaremos con la intuiciÛn). Es decir, una estrategia
-  que le asegura terminar el juego y adem·s terminarlo ganando, sin importar lo que haga el rival.
-  \item De manera an·loga una posiciÛn es \textbf{perdedora} si el jugador al que no le toca jugar en esa posiciÛn tiene una estrategia
+  \item Decimos que una posici√≥n es \textbf{ganadora} si el jugador al que le toca jugar tiene una estrategia ganadora (se puede
+  formalizar en teor√≠a de conjuntos la definici√≥n de estrategia, pero nos quedaremos con la intuici√≥n). Es decir, una estrategia
+  que le asegura terminar el juego y adem√°s terminarlo ganando, sin importar lo que haga el rival.
+  \item De manera an√°loga una posici√≥n es \textbf{perdedora} si el jugador al que no le toca jugar en esa posici√≥n tiene una estrategia
   ganadora.
   \end{itemize}
-  \begin{block}{Teorema (DeterminaciÛn)}
-    En un juego combinatorio imparcial, toda posiciÛn es perdedora o ganadora.
+  \begin{block}{Teorema (Determinaci√≥n)}
+    En un juego combinatorio imparcial, toda posici√≥n es perdedora o ganadora.
   \end{block}
 \end{frame}
 
-\begin{frame}{DemostraciÛn (O ``cÛmo resolver un juego con DP'')}
-  Basta notar que inductivamente se puede ir asignando un estatus de ganadora o perdedora a cada posiciÛn.
+\begin{frame}{Demostraci√≥n (O ``c√≥mo resolver un juego con DP'')}
+  Basta notar que inductivamente se puede ir asignando un estatus de ganadora o perdedora a cada posici√≥n.
   \begin{itemize}
-  \item En las posiciones terminales no hay ninguna elecciÛn posible: Son ganadoras o perdedoras inmediatamente seg˙n las reglas del juego.
-  \item Luego podemos ir calculando en orden (recordar que es un DAG): Si de una posiciÛn solo se puede mover a ganadoras, entonces es perdedora.
+  \item En las posiciones terminales no hay ninguna elecci√≥n posible: Son ganadoras o perdedoras inmediatamente seg√∫n las reglas del juego.
+  \item Luego podemos ir calculando en orden (recordar que es un DAG): Si de una posici√≥n solo se puede mover a ganadoras, entonces es perdedora.
   Si se puede mover a al menos una perdedora, entonces es ganadora.
-  \item Esto ˙ltimo es claro pensando en tÈrminos de estrategias.
+  \item Esto √∫ltimo es claro pensando en t√©rminos de estrategias.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Propiedad universal de las posiciones ganadoras-perdedoras}
-  Se llama asÌ a la siguiente propiedad:
+  Se llama as√≠ a la siguiente propiedad:
   \begin{block}{Teorema (Propiedad universal)}
-   Si $\{W,L\}$ es una particiÛn del conjunto de posiciones en dos conjuntos $W$ y $L$, que cumple la siguiente propiedad universal:
+   Si $\{W,L\}$ es una partici√≥n del conjunto de posiciones en dos conjuntos $W$ y $L$, que cumple la siguiente propiedad universal:
      \begin{itemize}
         \item Si $p$ es posicion terminal, $p \in W$ si es ganadora y $p \in L$ si es perdedora.
         \item Si $p \in W$ no terminal, entonces existe una jugada de $p$ a $q$ y tal que $q \in L$
@@ -205,18 +287,18 @@
 \end{frame}
 
 \begin{frame}{Propiedad universal de las posiciones ganadoras-perdedoras (2)}
-    Ya hemos visto que las posiciones ganadoras y perdedoras cumplen la propiedad universal. El teorema adem·s nos dice que
-  esta es la ˙nica particiÛn posible que cumple la propiedad. Esta propiedad es extremadamente ˙til para demostrar f·cilmente
-  cu·les son las posiciones ganadoras y perdedoras una vez que las tenemos conjeturadas: Basta chequear que esa divisiÛn propuesta
+    Ya hemos visto que las posiciones ganadoras y perdedoras cumplen la propiedad universal. El teorema adem√°s nos dice que
+  esta es la √∫nica partici√≥n posible que cumple la propiedad. Esta propiedad es extremadamente √∫til para demostrar f√°cilmente
+  cu√°les son las posiciones ganadoras y perdedoras una vez que las tenemos conjeturadas: Basta chequear que esa divisi√≥n propuesta
   satisface la propiedad universal.
 \end{frame}
 
 \begin{frame}{Ejemplo de las piedritas}
     \begin{itemize}
-        \item Un ejemplo tÌpico es un juego de sustracciÛn como el siguiente:
+        \item Un ejemplo t√≠pico es un juego de sustracci√≥n como el siguiente:
         \item Juegan dos jugadores por turnos, con una pilita de $n$ piedras. En cada turno, un jugador puede retirar $1,3$ o $4$ piedritas de la pila.
-        \item Dado un $n$, øQuiÈn gana si el primer jugador que no puede jugar es el perdedor?
-        \item øY si quien no puede jugar ahora es quien gana?
+        \item Dado un $n$, ¬øQui√©n gana si el primer jugador que no puede jugar es el perdedor?
+        \item ¬øY si quien no puede jugar ahora es quien gana?
     \end{itemize}  
 \end{frame}
 
@@ -224,7 +306,7 @@
 
 \begin{frame}{Wythoff's Game (la idea de la criba)}
     \begin{itemize}
-        \item Una variaciÛn interesante del juego de sustracciÛn anterior serÌa el siguiente:
+        \item Una variaci√≥n interesante del juego de sustracci√≥n anterior ser√≠a el siguiente:
         \item Juegan dos jugadores por turnos, pero ahora con dos pilitas de piedras, de $n$ y $m$ piedras.
         \item En cada turno, un jugador puede retirar cualquier cantidad positiva de piedras de una de las pilas. O bien, puede
         retirar una misma cantidad $k > 0$ de ambas pilas. El jugador que no puede jugar pierde.
@@ -233,7 +315,7 @@
 
 \begin{frame}{Strategy Stealing Argument}
     \begin{itemize}
-        \item Un recurso principalmente teÛrico, aunque podrÌa servir en competencia.
+        \item Un recurso principalmente te√≥rico, aunque podr√≠a servir en competencia.
         \item Es un argumento muy elegante, no constructivo, para demostrar que un jugador tiene estrategia ganadora.
         \item La idea consiste en suponer que un jugador tiene estrategia ganadora, y mostrar un absurdo haciendo que el otro jugador
         se aproveche de esa estrategia para ganar (le roba la estrategia).
@@ -245,22 +327,22 @@
 \begin{frame}{Loopy Games}
     \begin{itemize}
         \item Dijimos que nos ibamos a concentrar en juegos combinatorios, y en particular sin ciclos.
-        \item Pero a veces pueden aparecer juegos con ciclos, y en algunos casos el estudio no es mucho m·s complicado.
-        \item Por ejemplo: 
+        \item Pero a veces pueden aparecer juegos con ciclos, y en algunos casos el estudio no es mucho m√°s complicado.
+        \item Por ejemplo, un juego de sustracci√≥n donde vale restar 2 o 5, pero tambi√©n sumar 1 (la posici√≥n 0 se considera autom√°ticamente perdedora).
         
-        \small http://community.topcoder.com/stat?c=problem\_statement\&pm=12474
+        \item O bien, el caso general en un grafo dirigido arbitrario, con posiciones terminales definidas.
     \end{itemize}
 \end{frame}
 
 \section{El Nim y su importancia}
 
-\begin{frame}{AclaraciÛn previa}
+\begin{frame}{Aclaraci√≥n previa}
     \begin{itemize}
         \item Para toda esta parte, es fundamental suponer que tomamos en nuestros juegos la regla \textit{normal} de que el jugador que no puede jugar pierde
         (o sea, todas las posiciones terminales son perdedoras).
-        \item La suma de juegos se puede plantear tambiÈn suponiendo que el que no puede jugar gana, pero la teorÌa resultante en el caso general es
-         \textbf{mucho} m·s complicada en comparaciÛn. En muchos ejemplos de juegos particulares la estrategia es parecida al caso normal,
-         con alguna modificaciÛn ad-hoc.
+        \item La suma de juegos se puede plantear tambi√©n suponiendo que el que no puede jugar gana, pero la teor√≠a resultante en el caso general es
+         \textbf{mucho} m√°s complicada en comparaci√≥n. En muchos ejemplos de juegos particulares la estrategia es parecida al caso normal,
+         con alguna modificaci√≥n ad-hoc.
     \end{itemize}
 \end{frame}
 
@@ -269,17 +351,17 @@
         \item Dados dos juegos combinatorios imparciales $A$ y $B$ (como aclaramos, con la regla normal para terminaciones), podemos
         definir un nuevo juego combinatorio imparcial $A+B$, que consiste en jugar ambos juegos a la vez.
         \item Es decir: Se ponen los dos tableros sobre la mesa, y cada jugador en su turno elige uno de los dos juegos y hace una
-        jugada v·lida en Èl. El primero que no puede jugar (porque no quedan jugadas v·lidas en ninguno de los dos juegos) pierde.
+        jugada v√°lida en √©l. El primero que no puede jugar (porque no quedan jugadas v√°lidas en ninguno de los dos juegos) pierde.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Suma de juegos (2)}
     \begin{itemize}
-        \item NotaciÛn: Diremos que $res(A) = 1$ si la posiciÛn inicial del juego $A$ es ganadora, y $res(A) = 0$ sino.
-        \item Argumento muy importante: $res(A+A) = 0$ para cualquier $A$.
-        \item NotaciÛn: Llamaremos $0$ al juego donde no quedan jugadas posibles. Es claro que $A+0$ es esencialmente el mismo
-        juego que $A$ (grafos isomorfos) ya que ese tablero extra no aporta nada al no poder jugar en Èl. En particular $res(A+0) = res(A)$.
-        \item NotaciÛn: Llamaremos $*n$ al juego consistente en empezar con una pilita de $n$ piedras, y en cada jugada sacar una cantidad positiva arbitraria. Llamaremos $* = *1$, y notemos que $*0 = 0$
+        \item Notaci√≥n: Diremos que $res(A) = 1$ si la posici√≥n inicial del juego $A$ es ganadora, y $res(A) = 0$ sino.
+        \item \textbf{Argumento muy importante:} $res(A+A) = 0$ para cualquier $A$.
+        \item Notaci√≥n: Llamaremos $0$ al juego donde no quedan jugadas posibles. Es claro que $A+0$ es esencialmente el mismo
+        juego que $A$ (grafos isomorfos) ya que ese tablero extra no aporta nada al no poder jugar en √©l. En particular $res(A+0) = res(A)$.
+        \item Notaci√≥n: Llamaremos $*n$ al juego consistente en empezar con una pilita de $n$ piedras, y en cada jugada sacar una cantidad positiva arbitraria. Llamaremos $* = *1$, y notemos que $*0 = 0$
         \item Notar que la suma de juegos es asociativa y conmutativa (los juegos resultantes tienen grafos isomorfos), y el $0$ viene a ser elemento neutro.
     \end{itemize}
 \end{frame}
@@ -289,95 +371,95 @@
     \begin{itemize}
         \item Dados dos juegos combinatorios imparciales $A$ y $B$, decimos que son equivalentes y notamos $A \equiv B$ si para todo juego $C$ vale:
         $res(A+C) = res(B+C)$
-        \item Es decir, los juegos son intercambiables entre sÌ (equivalentes): si en una suma reemplazamos uno por otro, no
+        \item Es decir, los juegos son intercambiables entre s√≠ (equivalentes): si en una suma reemplazamos uno por otro, no
         afecta al resultado del juego.
         \item Notar que poniendo $C=0$ tenemos $res(A+0) = res(B+0) \Rightarrow res(A) = res(B)$.
-        \item Sin embargo la equivalencia es m·s fuerte que tener el mismo resultado ($res(*2) = res(*) = 1$ pero no son equivalentes, como se ve poniendo $C = *$).
+        \item Sin embargo la equivalencia es m√°s fuerte que tener el mismo resultado ($res(*2) = res(*) = 1$ pero no son equivalentes, como se ve poniendo $C = *$).
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Propiedades de la Equivalencia de juegos}
     \begin{itemize}
-        \item Es inmediato de la definiciÛn que la equivalencia de juegos es reflexiva, simÈtrica y transitiva, o sea relaciÛn de equivalencia.
+        \item Es inmediato de la definici√≥n que la equivalencia de juegos es reflexiva, sim√©trica y transitiva, o sea relaci√≥n de equivalencia.
         \item Propiedad: $A+0 \equiv A$
-        \item Propiedad: $A \equiv 0 \Leftrightarrow res(A) = 0$ (argumento estratÈgico: agregar a una suma un juego perdedor no afecta)
-        \item Propiedad: $A \equiv B \Rightarrow A+C \equiv B+C$ (inmediato de la definiciÛn y propiedades vistas de la suma)
+        \item Propiedad: $A \equiv 0 \Leftrightarrow res(A) = 0$ (\textbf{argumento estrat√©gico}: agregar a una suma un juego perdedor no afecta)
+        \item Propiedad: $A \equiv B \Rightarrow A+C \equiv B+C$ (inmediato de la definici√≥n y propiedades vistas de la suma)
         \item Propiedad: $A \equiv B \Leftrightarrow A + B \equiv 0$ (de las anteriores y $res(B+B) = 0$)
         \item En este sentido se observa que la suma de juegos combinatorios imparciales forma esencialmente un grupo abeliano
         donde cada juego es su propio inverso, si identificamos juegos equivalentes como un mismo juego.
-        \item Surge ahora la pregunta natural de encontrar las clases de equivalencia de juegos, y entender cÛmo se comportan
+        \item Surge ahora la pregunta natural de encontrar las clases de equivalencia de juegos, y entender c√≥mo se comportan
         respecto a la suma de juegos.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{El nim}
     \begin{itemize}
-        \item Se llama nim a un juego donde la posiciÛn inicial es suma de varios $*n$.
-        \item Es decir, en el juego hay pilitas de piedras. Y la jugada v·lida en cada paso es elegir una pila y quitarle piedras.
+        \item Se llama nim a un juego donde la posici√≥n inicial es suma de varios $*n$.
+        \item Es decir, en el juego hay pilitas de piedras. Y la jugada v√°lida en cada paso es elegir una pila y quitarle piedras.
         \item El Nim resulta ser un juego muy importante por ser representativo de muchos otros juegos combinatorios.
         \item Como precalentamiento, estudiemos por ejemplo el Nim cuando todas las pilitas son $*$ o $*2$
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Juego ad-hoc y su relaciÛn con el Nim...}
+\begin{frame}{Juego ad-hoc y su relaci√≥n con el Nim...}
     \begin{itemize}
         \item Consideremos un juego donde hay muchos tableros de 3x3. Cada tablero puede tener casillas rotas y sanas. La jugada
-        v·lida consiste en poner un triminÛ con forma de L en un tablero, llenando casillas sanas libres no ocupadas anteriormente.
+        v√°lida consiste en poner un trimin√≥ con forma de L en un tablero, llenando casillas sanas libres no ocupadas anteriormente.
         \item Como siempre el primer jugador que no puede jugar pierde.
-        \item øCu·l es la relaciÛn de este juego con el Nim?
+        \item ¬øCu√°l es la relaci√≥n de este juego con el Nim?
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Sprague-Grundy Theorem}
-    Resulta que esta traducciÛn al Nim que hemos realizado en el ejemplo de reciÈn es un caso particular del siguiente
+    Resulta que esta traducci√≥n al Nim que hemos realizado en el ejemplo de reci√©n es un caso particular del siguiente
     \begin{block}{Teorema (Sprague-Grundy)}
         Si $G$ es un juego combinatorio imparcial cualquiera, entonces existe un $n$ tal que $G \equiv *n$
     \end{block}
-    Si $G$ es un juego con grafo finito, como todos los que estudiamos, el $n$ es un natural com˙n y corriente. Sino, el resultado
-    sigue valiendo pero $n$ podr· ser un n˙mero ordinal. Al $n$ tal que $G \equiv *n$ se lo llama el \textit{Grundy Number} de $G$ y
-    lo notaremos $g(G)$ (øpor quÈ podemos afirmar que tal $n$ es ˙nico?)
+    Si $G$ es un juego con grafo finito, como todos los que estudiamos, el $n$ es un natural com√∫n y corriente. Sino, el resultado
+    sigue valiendo pero $n$ podr√° ser un n√∫mero ordinal. Al $n$ tal que $G \equiv *n$ se lo llama el \textit{Grundy Number} de $G$ y
+    lo notaremos $g(G)$ (¬øpor qu√© podemos afirmar que tal $n$ es √∫nico?)
 \end{frame}
 
-\begin{frame}{DemostraciÛn (algoritmo para calcular Grundy Numbers)}
+\begin{frame}{Demostraci√≥n (algoritmo para calcular Grundy Numbers)}
     \begin{itemize}
         \item A partir del grafo del juego, vamos a ir marcando los Grundy Numbers de sus posiciones.
         \item Es claro que las posiciones $p$ terminales tienen $g(p) = 0$, pues justamente son perdedoras.
-        \item A partir de ahora, definimos para cada posiciÛn $p$, $g(p) = mex \{ g(h) | h \mbox{ es hijo de } p \}$
-        \item Se puede ver por inducciÛn que cada posiciÛn resulta equivalente con su Grundy Number asignado de esta manera.
+        \item A partir de ahora, definimos para cada posici√≥n $p$, $g(p) = mex \{ g(h) | h \mbox{ es hijo de } p \}$
+        \item Se puede ver por inducci√≥n que cada posici√≥n resulta equivalente con su Grundy Number asignado de esta manera.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Teorema de la suma (soluciÛn al Nim)}
+\begin{frame}{Teorema de la suma (soluci√≥n al Nim)}
     \begin{itemize}
-        \item Sabemos ahora que a cada juego $G$ le podemos asignar un n˙mero $g(G)$, que sabemos en principio calcular.
+        \item Sabemos ahora que a cada juego $G$ le podemos asignar un n√∫mero $g(G)$, que sabemos en principio calcular.
         \item  Y es claro que en $G$ gana el primer jugador si y solo si $g(G) \neq 0$ (pues $res(*n) = 0$ solo cuando $n=0$)
-        \item Lo que nos faltarÌa para que nuestra teorÌa resulte ser una herramienta poderosa para estudiar la suma de juegos
-        es cu·nto vale $g(A+B)$, sabiendo $g(A)$ y $g(B)$
+        \item Lo que nos faltar√≠a para que nuestra teor√≠a resulte ser una herramienta poderosa para estudiar la suma de juegos
+        es cu√°nto vale $g(A+B)$, sabiendo $g(A)$ y $g(B)$
         \begin{block}{Teorema}
           Si $A,B$ son juegos combinatorios imparciales, entonces vale $g(A+B) = g(A) \mbox{\ xor\ } g(B)$
         \end{block}
     \end{itemize}
 \end{frame}
 
-\begin{frame}{DemostraciÛn}
+\begin{frame}{Demostraci√≥n}
     \begin{itemize}
         \item Podemos probarlo inductivamente sobre el grafo del juego $A+B$
         \item Desde $A+B$ podemos mover a juegos de la forma $A' + B$ o $A + B'$, siendo $A',B'$ ejemplos de opciones
         posibles en $A$ y $B$.
         \item Inductivamente sabemos que $g(A' + B) = g(A') \mbox{\ xor\ } g(B)$ y lo mismo con $A,B'$
-        \item Por lo tanto lo que queremos ver es que el $mex$ de todos estos n˙meros es justamente $g(A) \mbox{\ xor\ } g(B)$
-        \item Como no hay un $A'$ tal que $g(A) = g(A')$ y lo mismo con $B$, es f·cil ver que $g(A) \mbox{\ xor\ } g(B)$ no
-        aparece entre los n˙meros.
+        \item Por lo tanto lo que queremos ver es que el $mex$ de todos estos n√∫meros es justamente $g(A) \mbox{\ xor\ } g(B)$
+        \item Como no hay un $A'$ tal que $g(A) = g(A')$ y lo mismo con $B$, es f√°cil ver que $g(A) \mbox{\ xor\ } g(B)$ no
+        aparece entre los n√∫meros.
         \item Para ver que todos los anteriores aparecen (y por lo tanto ese es el $mex$), hay que notar que para cada $x < g(A)$ hay un $A'$ con $g(A') = x$,
-        y lo mismo con $B$, y observar que con estas opciones se forman entre los n˙meros todos los $y < g(A) \mbox{\ xor\ } g(B)$
+        y lo mismo con $B$, y observar que con estas opciones se forman entre los n√∫meros todos los $y < g(A) \mbox{\ xor\ } g(B)$
     \end{itemize}
 \end{frame}
 
-\begin{frame}{°El Nim est· resuelto!}
+\begin{frame}{¬°El Nim est√° resuelto!}
     \begin{itemize}
-        \item De nuestros resultados es inmediato ahora que una posiciÛn en el Nim es perdedora si y solo si el xor de todas las
-        cantidades de piedritas es 0. O sea que jugar bien consiste en jugar siempre a una posiciÛn con xor nulo para dejarle a
-        nuestro rival una posiciÛn perdedora en todo momento y asegurarnos ganar.
+        \item De nuestros resultados es inmediato ahora que una posici√≥n en el Nim es perdedora si y solo si el xor de todas las
+        cantidades de piedritas es 0. O sea que jugar bien consiste en jugar siempre a una posici√≥n con xor nulo para dejarle a
+        nuestro rival una posici√≥n perdedora en todo momento y asegurarnos ganar.
         \item Lo mismo vale para cualquier otra suma de juegos, siempre que seamos capaces de calcular primero los Grundy Numbers
         correspondientes.
     \end{itemize}
@@ -385,32 +467,32 @@
 
 \section{Algunas variantes}
 
-\begin{frame}{MisËre Nim}
+\begin{frame}{Mis√®re Nim}
     \begin{itemize}
-        \item Se llama asÌ a la variante del Nim (y de cualquier juego en general) en la cual el jugador que se queda sin movimientos
+        \item Se llama as√≠ a la variante del Nim (y de cualquier juego en general) en la cual el jugador que se queda sin movimientos
         \textit{gana}, en lugar de perder.
-        \item Con esta regla ya no hay una teorÌa tan feliz basada en Grundy Numbers sencillos y nada m·s. Pero al menos para el
-        caso del Nim, la modificaciÛn necesaria es menor.
-        \item Usando la propiedad universal es f·cil ver que una posiciÛn es ganadora en el mismo caso que antes, salvo
-        el caso en que son todas pilitas de 1, en cuyo caso es al revÈs que antes.
+        \item Con esta regla ya no hay una teor√≠a tan feliz basada en Grundy Numbers sencillos y nada m√°s. Pero al menos para el
+        caso del Nim, la modificaci√≥n necesaria es menor.
+        \item Usando la propiedad universal es f√°cil ver que una posici√≥n es ganadora en el mismo caso que antes, salvo
+        el caso en que son todas pilitas de 1, en cuyo caso es al rev√©s que antes.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Variantes alternativas de la suma de juegos}
     \begin{itemize}
-        \item Variante 1: Puedo mover con varios tableros que quiera (al menos uno). Una posiciÛn resulta perdedora exactamente
+        \item Variante 1: Puedo mover con varios tableros que quiera (al menos uno). Una posici√≥n resulta perdedora exactamente
          cuando todos los grundy numbers de los tableros son nulos.
-        \item Variante 2: Puedo mover con varios tableros que quiera (al menos uno y no todos). Una posiciÛn resulta perdedora exactamente
+        \item Variante 2: Puedo mover con varios tableros que quiera (al menos uno y no todos). Una posici√≥n resulta perdedora exactamente
          cuando todos los grundy numbers de los tableros son iguales.
-        \item Ambas son muy f·ciles de chequear utilizando la propiedad universal.
+        \item Ambas son muy f√°ciles de chequear utilizando la propiedad universal.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{El Nim puede esconderse en un Loopy-Game partisano }
         Considerar el siguiente juego: En un tablero de ajedrez se ponen en cada columna una torre blanca y una negra. Cada
         jugador controla un color y juegan por turnos. En cada turno cada jugador mueve libremente una de sus torres dentro
-        de la columna correspondiente, pero sin comer ni saltar la otra torre. Si alguien no puede jugar, pierde. øAlguien
-        tiene estrategia ganadora? øQuiÈn? øCÛmo debe jugar?
+        de la columna correspondiente, pero sin comer ni saltar la otra torre. Si alguien no puede jugar, pierde. ¬øAlguien
+        tiene estrategia ganadora? ¬øQui√©n? ¬øC√≥mo debe jugar?
 \end{frame}
 
 \section{Problema (Maratona 2010)}
@@ -428,7 +510,7 @@
 
 \section{Problemas de tarea}
 
-\begin{frame}{°°Problemas!!}
+\begin{frame}{¬°¬°Problemas!!}
 
     {\tiny
 
@@ -470,7 +552,14 @@
 
 \section{Lecturas recomendadas}
 
-\begin{frame}{BibliografÌa}
+\begin{frame}{Yo}
+
+\includegraphics{Yo.jpg}
+\end{frame}
+
+
+
+\begin{frame}{Bibliograf√≠a}
 
     {\tiny
 
