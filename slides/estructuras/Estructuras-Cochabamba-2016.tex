@@ -1,0 +1,610 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Estructuras] % (optional, use only with long paper titles)
+{(algunas) Estructuras de datos útiles}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[Cochabamba 2016] % (optional, should be abbreviation of conference name)
+{Campamento de Programación: Cochabamba 2016}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}
+
+``For the fashion of Minas Tirith was such that it was built on seven levels,
+each delved into a hill, and about each was set a wall, and in each wall
+was a gate.''
+
+\hfill		J.R.R. Tolkien, ``The Return of the King''
+
+\end{frame}
+
+\begin{frame} 
+\footnotesize
+\frametitle{Contenidos} 
+\begin{multicols}{2} 
+\tableofcontents 
+\end{multicols} 
+\end{frame}
+
+\section{Tablas aditivas} % 20 min
+\subsection{Visión del usuario}
+
+\begin{frame}{Visión del usuario de una tabla aditiva}
+   \begin{block}{Tabla aditiva}
+      Dado un arreglo de $r$ dimensiones, digamos de $n_1 \times n_2 \times \cdots \times n_r$, una tabla aditiva es una estructura
+      que permite averiguar rápidamente la suma de los elementos de cualquier subarreglo contiguo (intervalo, rectángulo, paralelepípedo, etc).
+      En este caso \textbf{NO} nos interesará realizar modificaciones a la matriz durante el proceso de consultas.
+  \end{block}
+  La estructura consta de dos fases de uso:
+  %\pause
+  \begin{itemize}
+    \item  Primero la estructura es inicializada con los datos del arreglo.
+    %\pause
+    \item Y luego se realizan una serie de consultas a la misma, sin modificar el arreglo.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Complejidad pretendida}
+   La implementación que propondremos tendrá una complejidad:
+  %\pause
+  \begin{itemize}
+    \item \textit{Lineal} para la inicialización o preproceso (es decir, proporcional a la \textbf{cantidad de elementos} del arreglo).
+    %\pause
+    \item \textit{Constante} para las queries (Es decir, responderemos cada consulta en $\mathbf{O(1)}$).
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso unidimensional}
+
+\begin{frame}{Arreglo acumulado}
+   \begin{block}{Definición}
+      Dado un arreglo unidimensional $v$ de $n$ elementos $v_0, v_1, \cdots, v_{n-1}$, definimos el \textbf{arreglo acumulado} de $v$ como
+      el arreglo unidimensional $V$ de $n+1$ elementos $V_0, \cdots, V_n$ y tal que:
+      $$V_i = \sum_{j=0}^{i-1}{v_j}$$
+  \end{block}
+  %\pause
+  Notar que $V$ es muy fácil de calcular en tiempo lineal utilizando programación dinámica:
+  %\pause
+  \begin{itemize}
+    \item $V_0 = 0$
+    %\pause
+    \item $V_{i+1} = v_i + V_i, \forall \ 0 \leq i < n$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries a la tabla aditiva vendrán dadas por intervalos $[i,j)$ con $0 \leq i \leq j \leq n$.
+  %\pause
+  \item La respuesta al query $[i,j)$ sera $Q(i,j) = \sum \limits _{k=i}^{j-1}{v_k}$
+  %\pause
+    \item Pero:
+    $$Q(i,j) = \sum_{k=i}^{j-1}{v_k} = \sum_{k=0}^{j-1}{v_k} - \sum_{k=0}^{i-1}{v_k} = V_j - V_i$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando una sola resta entre dos valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso bidimensional}
+
+\begin{frame}{Arreglo acumulado}
+   \begin{block}{Definición}
+      Dado un arreglo bidimensional $v$ de $n \times m$ elementos $v_{i,j}$ con $0 \leq i < n, 0\leq j < m$, 
+      definimos el \textbf{arreglo acumulado} de $v$ como el arreglo bidimensional $V$ de $(n+1) \times (m+1)$ elementos
+      tal que:
+      $$V_{i,j} = \sum_{a=0}^{i-1}\sum_{b=0}^{j-1}{v_{a,b}}$$
+  \end{block}
+  %\pause
+  ¿Podremos calcular fácilmente $V$ en tiempo lineal como en el caso unidimensional?
+  %\pause
+  %\invisible<1-2>
+  {
+      \textbf{¡Sí!} Utilizando programación dinámica.
+      %\pause
+      \begin{itemize}
+        \item $V_{0,j} = V_{i,0} = 0 \ \ \forall \ 0 \leq i \leq n, 0 \leq j \leq m$
+        %\pause
+        \item $V_{i+1,j+1} = v_{i,j} + V_{i,j+1} + V_{i+1,j} - V_{i,j} \ \ \forall \ 0 \leq i < n, 0 \leq j < m$
+      \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries a la tabla aditiva vendrán dadas por rectángulos $[i_1,i_2) \times [j_1,j_2)$ con $0 \leq i_1 \leq i_2 \leq n, 0 \leq j_1 \leq j_2 \leq m$.
+  %\pause
+  \item La respuesta al query $[i_1,i_2) \times [j_1,j_2)$ sera $Q(i_1,i_2,j_1,j_2) = \sum \limits _{a=i_1}^{i_2-1}\sum \limits _{b=j_1}^{j_2-1}{v_{a,b}}$
+  %\pause
+    \item Pero de manera similar a como hicimos para calcular el arreglo acumulado, resulta que:
+    $$Q(i_1,i_2,j_1,j_2) = V_{i_2,j_2} - V_{i_1,j_2} - V_{i_2,j_1} + V_{i_1,j_1}$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando sumas y restas de cuatro valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso general}
+
+\begin{frame}{Arreglo acumulado}
+    El caso general es completamente análogo... Dejamos las cuentas escritas rápidamente.
+   \begin{block}{Definición}
+      Dado un arreglo $v$ de $n_1 \times \cdots \times n_r$ elementos $v_{i_1,\cdots,i_r}$ con $0 \leq i_k < n_k, 1\leq k \leq r$, 
+      definimos el \textbf{arreglo acumulado} de $v$ como el arreglo $V$ de $(n_1+1) \times \cdots \times (n_r+1)$ elementos
+      tal que:
+      $$V_{i_1,\cdots,i_r} = \sum_{k_1=0}^{i_1-1} \cdots \sum_{k_r=0}^{i_r-1}{v_{k_1,\cdots,k_r}}$$
+  \end{block}
+\end{frame}
+\begin{frame}{Arreglo acumulado (Cálculo usando programación dinámica)}
+   El cálculo de $V$ mediante programación dinámica viene dado por:
+      \begin{itemize}
+        \item $$V_{i_1, \cdots, i_r} = 0\ \ \ \mbox{si para algún $k$ resulta $i_k = 0$}$$
+        %\pause
+        \item $$V_{i_1+1,\cdots,i_r+1} = v_{i_1,\cdots,i_r} + \sum_{d_1=0}^1 \cdots \sum_{d_r=0}^1 {(-1)^{r+1 + \sum\limits_{k=1}^r{d_k}}V_{i_1+d_1,\cdots,i_r+d_r}}$$
+                Donde en las sumatorias anidadas se excluye el caso en que $d_k = 1 \ \forall\ k$
+      \end{itemize}
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries a la tabla aditiva vendrán dadas por subarreglos $[{i_1}_0,{i_1}_1) \times \cdots \times [{i_r}_0,{i_r}_1)$
+  %\pause
+  \item La respuesta al query $[{i_1}_0,{i_1}_1) \times \cdots \times [{i_r}_0,{i_r}_1)$ será:
+  %\pause
+    \item
+    $$Q({i_1}_0,{i_1}_1, \cdots ,{i_r}_0,{i_r}_1) = \sum_{d_1=0}^1 \cdots \sum_{d_r=0}^1 {(-1)^{r + \sum\limits_{k=1}^r{d_k}}V_{{i_1}_{d_1},\cdots,{i_r}_{d_r}}}$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando sumas y restas de $2^r$ valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Tarea}
+\begin{frame}{Tarea}
+  \begin{itemize}
+     \item http://www.spoj.pl/problems/KPMATRIX/
+     \item http://www.spoj.pl/problems/TEM/
+     \item http://www.spoj.pl/problems/MATRIX/
+  \end{itemize}
+\end{frame}
+
+
+\section{Tablas de frecuencia acumulada} % 20 min
+
+\subsection{Problema a resolver}
+
+\begin{frame}{Problema a resolver}
+  \begin{itemize}
+    \item Se quiere saber la suma (o máximo, o cualquier operación asociativa) en un \textbf{prefijo} del arreglo.
+    \item Además, para esta estructura es necesario que las modificaciones se realicen sumándole (o tomando máximo) una constante (negativa o positiva),
+    a un valor en una posición dada (Operación que notaremos $add(i,x)$). Es decir, las operaciones de modificación son \textbf{acumulativas}.
+    %\pause
+    \item Notar que si la operación tiene inverso como la suma (pero \textbf{no si usamos la estructura para máximo / mínimo}), podemos computar cualquier subrango:
+    si notamos $accum(i)$ a la suma de los primeros $i$, la suma del intervalo $[i,j)$ se calcula simplemente como $accum(j) - accum(i)$ (análogo a tablas aditivas). 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Complejidad}
+  \begin{itemize}
+    \item En esta charla nos limitaremos al caso unidimensional. El caso multidimensional es análogo, utilizando
+    ``tablas aditivas sobre tablas aditivas''.
+    %\pause
+    \item La implementación que propondremos tendrá una complejidad logarítmica para sus operaciones.
+  \end{itemize}
+\end{frame}
+
+\subsection{Binary Indexed Tree}
+
+\begin{frame}{Estructura : Descripción}
+    \begin{itemize}
+      \item Utilizaremos un arreglo que en cada posición guardará la suma de ciertos intervalos.
+      %\pause
+      \item Más precisamente, utilizaremos un arreglo $V$ de $n$ elementos indexados desde $1$. Notar que los elementos de
+      $v$, el vector original son $v_0, \cdots, v_{n-1}$; mientras que los de $V$ son $V_1, \cdots, V_n$.
+      %\pause
+      \item El arreglo $V$ estará definido por: $V_i = \sum_{j=i-k}^{i-1}{v_j}$, siendo $k$ la potencia de $2$ más grande que divide a $i$.
+      %\pause
+      \item La estructura comienza con todos los valores del arreglo en 0, y cada vez que se hace un $add$ a una posición del vector original,
+      se suma la cantidad correspondiente a todos los intervalos que lo contengan.
+      %\pause
+      \item Para el cálculo de $accum(i)$, se suman todos los intervalos necesarios.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Accum}
+    Código fuente C++ para el $accum$
+\begin{lstlisting}
+int accum(int i)
+{
+    int res = 0;
+    while (i != 0)
+    {
+        res += v[i];
+        i = (i-1)&i;
+    }
+    return res;
+}
+\end{lstlisting}
+%\pause
+    \begin{itemize}
+        \item La idea es simplemente ir acumulando en $res$ todas las sumas relevantes.
+        \item El invariante de ciclo es: ``La respuesta al problema viene dada por $res + \sum_{j=0}^{i-1}{v_j}$''
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Add}
+    Código fuente C++ para el $add$
+    \begin{lstlisting}
+void add(int i, int x)
+{
+    int ceros = ~i;
+    for (int bit = ceros & (-ceros); ;  ceros -= bit, bit = ceros &(-ceros))
+    {
+        int index = (i &~(bit-1)) | bit;
+        if (index > N) break;
+        v[index] += x;
+    }
+}
+    \end{lstlisting}
+%\pause
+    \begin{itemize}
+        \item La idea es simplemente sumar $x$ a todos los intervalos guardados que contengan a $v_i$
+    \end{itemize}
+\end{frame}
+
+\subsection{Tarea} %MATSUM
+
+\begin{frame}{Tarea}
+\begin{itemize}
+    \item http://www.spoj.pl/problems/MATSUM/
+    \item http://www.topcoder.com/stat?c=problem\_statement
+    
+    \&pm=6551\&rd=9990
+\end{itemize}
+\end{frame}
+
+\section{Lowest Common Ancestor} % 20 min
+
+\subsection{Visión del usuario}
+
+\begin{frame}{Visión del usuario de LCA}
+   \begin{block}{LCA}
+      Dado un árbol con raíz de $n$ nodos, una estructura de LCA permite responder rápidamente consultas por el \textbf{ancestro común
+      más bajo} entre dos nodos (es decir, el nodo más alejado de la raíz que es ancestro de ambos).
+  \end{block}
+  %\pause
+  \begin{itemize}
+      \item Sorprendentemente se puede reducir una estructura de LCA a una de RMQ!
+      \item Luego no daremos explícitamente una estructura para LCA, sino que mostraremos como reducirla a RMQ para poder aplicar
+      cualquiera de las técnicas ya vistas.
+  \end{itemize}
+\end{frame}
+
+\subsection{Reducción a RMQ}
+
+\begin{frame}{Recorrido de DFS}
+\begin{itemize}
+   \item Utilizando un recorrido de DFS, podemos computar un arreglo $v$ de $2n - 1$ posiciones que indica el orden en que
+   fueron visitados los nodos por el DFS (cada nodo puede aparecer múltiples veces).
+   %\pause
+   \item Aprovechando este recorrido podemos computar también la \textbf{profundidad} (distancia a la raíz) de cada nodo $i$, que notaremos $P_i$.
+   %\pause
+   \item También guardaremos el índice de la primer aparición de cada nodo $i$ en $v$, que notaremos $L_i$ (Cualquier posición servirá, así
+   que es razonable tomar la primera).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Utilizacion del RMQ}
+\begin{itemize}
+   \item La observación clave consiste en notar que para dos nodos $i,j$ con $i \neq j$:
+   $$ LCA(i,j) = RMQ(\mimin(L_i,L_j),\mimax(L_i,L_j)) $$
+   \item Tomamos mínimo y máximo simplemente para asegurar que en la llamada a $RMQ$ se especifica un rango válido ($i < j$).
+   \item Notar que en la igualdad anterior, $RMQ(i,j)$ compara los elementos de $v$ por sus valores de profundidad dados por $P$.
+   %\pause
+   \item La complejidad de la transformación del LCA al RMQ es $O(n)$, con lo cual la complejidad final de las operaciones
+   será la del $RMQ$ utilizado.
+\end{itemize}
+\end{frame}
+
+\subsection{Aplicación} % 
+
+\begin{frame}{Distancias en árboles}
+\begin{itemize}
+   \item Queremos utilizar consultas de LCA para obtener una estructura capaz de computar rápidamente distancias entre nodos en un árbol.
+   \item Notar que computar todas las distancias en un árbol utilizando un algoritmo como DFS o BFS $n$ veces toma tiempo $O(n^2)$, que es
+   lineal en la cantidad de distancias existentes.
+   %\pause
+   \item El algoritmo que propondremos por lo tanto solo constituirá una ventaja importante cuando se quieran consultar muchas menos que las $n^2$
+   distancias (pero suficiente cantidad como para que resolver cada una en forma independiente no sea práctico)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Distancias en árboles (Algoritmo)}
+\begin{itemize}
+   \item Tomamos un elemento cualquiera como raíz.
+   \item Utilizamos DFS o BFS para recorrer el árbol computando las distancias desde la raíz hasta cada uno de los vértices.
+   \item A partir de ahora, para resolver la distancia entre dos nodos cualesquiera $i$ y $j$, utilizamos la identidad:
+   
+   $$ D(i,j) = D(r,i) + D(r,j) - 2 D(r,LCA(i,j)) $$
+   %\pause
+   \item El algoritmo propuesto responde una distancia con una complejidad de $O(1)$ más una consulta de LCA. La inicialización más allá del LCA es un único
+   DFS o BFS, por lo que es $O(n)$.
+\end{itemize}
+\end{frame}
+
+\subsection{Tarea}
+
+\begin{frame}{Tarea}
+\begin{itemize}
+    \item http://acm.uva.es/p/v109/10938.html
+    \item http://www.spoj.pl/problems/QTREE2/
+    \item http://poj.org/problem?id=2763
+    \item http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p=2045
+    \item http://poj.org/problem?id=1986
+\end{itemize}
+\end{frame}
+
+\section{Ascenso rápido en árbol}
+
+\subsection{Visión del usuario}
+
+
+
+
+\begin{frame}{Visión del usuario}
+   \begin{block}{Ascenso rápido en árbol}
+      Dado un árbol con raíz de $n$ nodos, queremos responder rápidamente la consulta de dado un nodo $v$ y un entero no negativo $k$, cuál
+      es el $k$-ésimo ancestro en el camino desde $v$ hasta la raíz.
+  \end{block}
+
+  \begin{itemize}
+      \item Se podría pedir también una query de operación acumulada (por ejemplo máximo) entre todos los nodos del camino al ancestro.
+      \item Sumado a un LCA y profundidades, sirve para encontrar el $k$-ésimo nodo en un camino en el árbol
+  \end{itemize}
+\end{frame}
+
+
+\subsection{Sparse Table en árbol}
+
+\begin{frame}{Sparse Table en árbol}
+    También conocida como ``saltitos potencia de dos en el árbol''
+    \begin{itemize}
+        \item Si el árbol es un ``palito'', queda algo análogo a Sparse Table
+        \item Por cada nodo, se guardan quiénes son sus ancestros a distancias potencia de 2 (eventualmente se podrían guardar también valores acumulados)
+        \item Mediante $O(\lg k)$ saltos, es posible llegar al k-ésimo ancestro
+        \item Guardando la pila de ancestros durante un recorrido de DFS, es posible llenar la lista de ``saltos'' de cada nodo al visitarlo
+    \end{itemize}
+\end{frame}
+
+\section{Segment Tree}
+
+\subsection{Estructura}
+
+\begin{frame}{Estructura : Descripción}
+    \begin{itemize}
+      \item Para trabajar con el segment tree asumiremos que $n$ es potencia de $2$. De no serlo, basta extender el arreglo $v$ con a lo sumo $n$
+            elementos adicionales para que sea potencia de $2$.
+      %\pause
+      \item Utilizaremos un árbol binario completo codificado en un arreglo: 
+      %\pause
+      \item $A_1$ guardará la raíz del árbol.
+      \item Para cada $i$, los dos hijos del elemento $A_i$ serán $A_{2i}$ y $A_{2i+1}$. 
+      \item El padre de un elemento $i$ será \texttt{i/2}, salvo en el caso de la raíz.
+      \item Las hojas tendran índices en $[n,2n)$.
+      %\pause
+      \item La idea será que cada nodo interno del árbol (guardado en un elemento del arreglo) almacene el mínimo entre sus dos hijos.
+      %\pause
+      \item Las hojas contendrán en todo momento los elementos del arreglo $v$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Inicializacion}
+    \begin{itemize}
+       \item Llenamos $A_n, \cdots, A_{2n-1}$ con los elementos del arreglo $v$.
+       %\pause
+       \item Usando programación dinámica hacemos simplemente:
+        $$A_i = \mimin(A_{2i},A_{2i+1})$$
+        \item Notar que se debe recorrer $i$ en forma descendente para no utilizar valores aún no calculados.
+        %\pause
+        \item El proceso de inicialización toma tiempo $O(n)$, y la estructura utiliza $O(n)$ memoria.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Modificaciones}
+    \begin{itemize}
+       \item Para modificar el arreglo, utilizaremos nuevamente la fórmula:
+       $$A_i = \mimin(A_{2i},A_{2i+1})$$
+       %\pause
+       \item Notemos que si cambiamos el valor de $v_i$ por $x$, debemos modificar $A_{n+i}$ haciéndolo valer $x$, y recalcular
+          los nodos internos del árbol...
+       %\pause
+       \item Pero sólo se ven afectados los ancestros de $A_{n+i}$.
+       %\pause
+       \item Luego es posible modificar un valor de $v$ en tiempo $O(\lg n)$, recalculando sucesivamente los padres desde $A_{n+i}$ hasta llegar a la raíz.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Estructura : Queries}
+     Consideremos el siguiente algoritmo recursivo:
+    \begin{itemize}
+         \item $$f(k,l, r, i,j) = \left\{ \begin{array}{ll}
+                                     A_k & \mbox{si $i \leq l < r \leq j$};\\
+                                     +\infty & 
+                                      \mbox{si $r \leq i$ o $l \geq j$} \\
+                                     \mimin(f(2k,l,\frac{l+r}{2},i,j), & \\
+                                     ,f(2k+1,\frac{l+r}{2},r,i,j))& sino.\end{array} \right. $$
+         \item La respuesta vendrá dada por $RMQ(i,j) = f(1,0,n,i,j)$
+         %\pause
+         \item La complejidad temporal de un query es $O(\lg n)$
+    \end{itemize}
+\end{frame}
+
+\subsection{Tarea} %KGSS
+
+\begin{frame}{Tarea}
+        \begin{itemize}
+            \item http://www.spoj.pl/problems/KGSS/
+            \item http://poj.org/problem?id=2374
+            \item http://acm.sgu.ru/problem.php?contest=0\&problem=155
+        \end{itemize}
+\end{frame}
+
+\subsection{Lazy Update}
+
+\begin{frame}{Motivación}
+        \begin{itemize}
+            \item A veces, en los problemas tenemos modificaciones de \textbf{rangos} completos, y no de un único elemento.
+            \item En ese caso, modificar los elementos uno por uno sería demasiado caro. Queremos actualizar \textbf{de a nodos grandes} completos, al igual que hacemos con las queries.
+            \item La forma de hacerlo es ser ``lazy'', y tener en cada nodo información de operaciones ``que todavía falta propagar''.
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Cambios en la implementación}
+        \begin{itemize}
+            \item Cada nodo guardará ahora dos datos distintos: su \textbf{valor}, que es esencialmente lo mismo de antes, y una \textbf{información lazy}, que indica lo que falta propagar hacia abajo.
+            \item Cuando se realiza una actualización de rango:
+               \begin{itemize}
+                  \item Se buscan los nodos que forman el rango de manera idéntica a la query de rangos del Segment Tree normal.
+                  \item En cada uno de dichos nodos, se debe \textbf{actualizar la información lazy}, y \textbf{recalcular el valor del nodo} acorde a la operación que estamos realizando.
+                  \item El valor de los ancestros de los nodos modificados, se recalcula de la manera normal a la vuelta de la recursión.
+               \end{itemize}
+            \item Siempre que se va a bajar de un nodo a sus dos hijos, se debe primero \textbf{propagar} la información lazy hacia los hijos.
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejemplo de uso}
+        \begin{itemize}
+            \item Dada una cadena de paréntesis que abren y cierran, sobre la cual se hacen modificaciones de caracteres, saber en todo momento si
+                    está ``bien parenteseada''.
+            \item Algoritmos geométricos, como ``área de unión de rectángulos'' (Se mencionará en la clase de geometría).
+        \end{itemize}
+\end{frame}
+
+
+\subsection{Persistencia}
+
+\begin{frame}{Motivación}
+        \begin{itemize}
+            \item Normalmente, cuando operamos con Segment Tree, cada update ``destruye'' la versión anterior de la estructura (no la tenemos más).
+            \item Decimos que una estructura es \textbf{persistente}, cuando esto no ocurre: Siempre tenemos acceso a todas las versiones previas de
+                   la estructura, y un update lo que hace es simplemente darnos una nueva versión disponible.
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Implementación}
+        \begin{itemize}
+            \item Una forma de implementar persistencia eficientemente es con lo que se llama \textbf{Path Copying}.
+            \item Para esto guardamos el Segment Tree explícitamente como árbol, \textbf{con punteros}: Cada nodo tiene punteros a sus dos hijos.
+            \item Los nodos existentes \textbf{jamás se modifican}: Cuando se hace un cambio, \textbf{se crean nodos nuevos}.
+            \item Los nodos nuevos apuntan a los nodos viejos no modificados.
+            \item Como solamente se actualizan $O(\lg n)$ nodos en una query normal, aquí solamente se crean esa cantidad de nodos nuevos por operación.
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Implementación con Lazy Creation}
+        \begin{itemize}
+            \item Curiosamente, la persistencia nos simplifica la tarea de implementar \textbf{Lazy Creation} (Es decir, crear los nodos del Segment Tree solamente cuando se usan).
+            \item Para esto podemos iniciar con un nodo cuyos dos hijos sean sí mismo, inicializado ``en cero''. Esto representa un árbol infinito de ceros, mediante un único nodo en memoria.
+            \item Como el Segment Tree es persistente, este nodo nunca se modifica, así que la estructura ``no se rompe'', y solo se crean nodos nuevos ante updates.
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejemplo de uso}
+        \begin{itemize}
+            \item Contar cantidad de puntos de un conjunto que caen en un rectángulo cualquiera (``Tabla aditiva rala'')
+            \item Tener disponible para cada nodo de un árbol con raíz, un Segment Tree con todos los ancestros insertados.
+        \end{itemize}
+\end{frame}
+
+
+\end{document}

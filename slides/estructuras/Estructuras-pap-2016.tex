@@ -1,0 +1,603 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Estructuras] % (optional, use only with long paper titles)
+{Estructuras para operadores asociativos en intervalos}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[PAP 2016] % (optional, should be abbreviation of conference name)
+{Problemas, Algoritmos y Programación 2016}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}
+
+``For the fashion of Minas Tirith was such that it was built on seven levels,
+each delved into a hill, and about each was set a wall, and in each wall
+was a gate.''
+
+\hfill		J.R.R. Tolkien, ``The Return of the King''
+
+\end{frame}
+
+\begin{frame} 
+\footnotesize
+\frametitle{Contenidos} 
+\begin{multicols}{2} 
+\tableofcontents 
+\end{multicols} 
+\end{frame}
+
+\section{Operaciones en rangos} % 15 Min
+
+\subsection{Operadores asociativos}
+
+\begin{frame}{¿Qué es un operador asociativo?}
+  \begin{block}{Definición}
+    Un operador binario $\triangleright$ se dice \textbf{asociativo}, si siempre se cumple que $(a \triangleright b) \triangleright c = a \triangleright (b \triangleright c)$
+  \end{block}
+  \pause
+  Ejemplos:
+  \begin{itemize}
+  \item \textbf{Suma $+$ de enteros (o reales)}
+  \item Producto $\cdot$ de enteros (o reales)
+  \item \textbf{Máximo / Mínimo de enteros (o reales)}
+  \item Operadores lógicos ``or'' y ``and'' (caso particular de Max y Min)
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Más ejemplos}
+  Notar que en general el operador podría no ser conmutativo:
+  \begin{itemize}
+  \item Producto de matrices
+  \item Composición de funciones
+  \item Concatenación de Strings
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Elemento neutro}
+  \begin{block}{Definición}
+    Un \textbf{elemento neutro} para un operador $\triangleright$ es un $e$ con la propiedad de que para cualquier $x$ siempre se cumple $x \triangleright e = e \triangleright x = x$
+  \end{block}
+  \pause
+  Ejemplos:
+  \begin{itemize}
+  \item $0$ para la suma
+  \item $1$ para el producto
+  \item $+\infty$ / $-\infty$ para Min / Max
+  \item $True$ / $False$ para And / Or
+  \item $I$ (matriz identidad) para el producto de matrices
+  \item $id$ (función identidad) para la composición de funciones
+  \item ``'' (string vacío) para la concatenación de Strings
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Elemento neutro (cont)}
+  Asumiremos por comodidad siempre que sea necesario que existe un elemento neutro.
+  
+  Notar que si no existiera uno para la operación con la que estemos trabajando, podemos siempre simular uno con un valor ``NULL'' y ``poniendo un if'',
+  de forma tal que una operación de NULL con $x$ deja al $x$ intacto como resultado.
+  
+\end{frame}
+
+\subsection{Queries importantes}
+
+\begin{frame}{Problema de consulta de prefijos}
+    \begin{block}{Problema:}
+    Dado un arreglo $v$ de $n$ posiciones, numeradas de $0$ a $n-1$, y un operador asociativo $\triangleright$, es posible definir
+     para $0 \leq i \leq n$, la \textbf{consulta} $P(i)$, cuyo resultado es $P(i) = v_0 \triangleright v_1 \triangleright \cdots \triangleright v_{i-1}$
+  \end{block}
+  Es decir, se consulta el resultado del operador $\triangleright$ sobre los primeros $i$ elementos.
+  \pause
+  
+  \begin{itemize}
+  \item Notar que cuando el rango es vacío, la respuesta es el elemento neutro (definición).
+  \item Cuando el arreglo inicial nunca se modifica, se dice que el problema es \textbf{estático}.
+  \item Si el arreglo se va modificando (generalmente, cambiando el valor en una cierta posición) con el paso del tiempo entre consultas, se dice que el problema es \textbf{dinámico}.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Problema de consulta de intervalos (rangos)}
+    \begin{block}{Problema:}
+    Dado un arreglo $v$ de $n$ posiciones, numeradas de $0$ a $n-1$, y un operador asociativo $\triangleright$, es posible definir
+     para $0 \leq i \leq j \leq n$, la \textbf{consulta} $R(i,j)$, cuyo resultado es $R(i,j) = v_i \triangleright v_{i+1} \triangleright \cdots \triangleright v_{j-1}$
+  \end{block}
+  Es decir, se consulta el resultado del operador $\triangleright$ sobre el rango de elementos $[i,j)$.
+  \pause
+  
+  \begin{itemize}
+  \item Nuevamente cuando el rango es vacío, definimos la respuesta como el elemento neutro.
+  \item Al igual que antes, el problema puede ser estático o dinámico según se realicen modificaciones en el arreglo.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Problema de consulta de intervalos (cont)}
+  
+  Una observación importante es que cuando el operador tiene inverso (Ejemplo: \textbf{la resta}, para el $+$), es posible resolver este problema
+         utilizando estructuras que resuelvan consulta de prefijos, mediante:
+         
+         $$ R(i,j) = inv(P(i)) \triangleright P(j) \mbox{ (por ejemplo, } P(j) - P(i) \mbox{ para el operador +})$$
+  
+\end{frame}
+
+\begin{frame}{Las estructuras de datos}
+  
+  \begin{itemize}
+      \item Veremos estructuras que resuelven cada uno de los 4 problemas planteados, en todos los casos para un operador asociativo completamente arbitrario.
+             
+       $$\begin{array}{rcc}
+                    & \mbox{Prefijos}       & \mbox{Intervalos} \\
+           \mbox{Estático} & \mbox{\textbf{Tabla Aditiva}}  & \mbox{\textbf{Sparse Table}} \\
+           \mbox{Dinámica} & \mbox{Fenwick Tree}   & \mbox{\textbf{Segment Tree}} \\
+         \end{array}$$
+
+      \item ``Orden de dificultad subjetivo'': \\ \textbf{TablaAditiva} < \textbf{SparseTable} < FenwickTree < \textbf{SegmentTree}
+      
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Las estructuras de datos (múltiples dimensiones)}
+  
+  \begin{itemize}
+      \item Todas estas estructuras generalizan adecuadamente para resolver los correspondientes problemas en múltiples dimensiones.
+      \item Por ejemplo para el caso 2D, podemos usar un Segment Tree donde cada hoja sea un nuevo Segment Tree.
+      \item Incluso se podrían combinar de maneras diferentes, teniendo por ejemplo una tabla aditiva en donde cada celda guarda una Sparse Table.
+      \item \textbf{Lo veremos solamente para el caso de Tablas Aditivas}, donde es más simple.
+  \end{itemize}
+  
+\end{frame}
+
+\section{Tablas aditivas} % 20 min
+\subsection{Caso unidimensional}
+
+\begin{frame}{Problema}
+    \begin {itemize}
+        \item Dado un arreglo $v$ de elementos, queremos encontrar una estructura eficiente que permita calcular
+         $v_0 \triangleright v_1 \triangleright v_2 \triangleright \cdots \triangleright v_{i-1}$ para cualquier $i$.
+        \item Supondremos desde ahora en toda esta parte que el operador es la suma: $\triangleright \equiv +$
+        \item Todo lo que hagamos para cálculos de prefijos se traslada idéntico para cualquier otro operador asociativo.
+        \item Además, para cualquier operador con inversos, podremos calcular intervalos de la misma manera que lo haremos.
+    \end {itemize}
+\end{frame}
+
+
+\begin{frame}{Arreglo acumulado}
+   \begin{block}{Definición}
+      Dado un arreglo unidimensional $v$ de $n$ elementos $v_0, v_1, \cdots, v_{n-1}$, definimos el \textbf{arreglo acumulado} de $v$ como
+      el arreglo unidimensional $V$ de $n+1$ elementos $V_0, \cdots, V_n$ y tal que:
+      $$V_i = \sum_{j=0}^{i-1}{v_j}$$
+  \end{block}
+  %\pause
+  Notar que $V$ es muy fácil de calcular en tiempo lineal utilizando programación dinámica (``un for sumando''):
+  %\pause
+  \begin{itemize}
+    \item $V_0 = 0$
+    %\pause
+    \item $V_{i+1} = v_i + V_i, \forall \ 0 \leq i < n$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+      \item Una vez computada la tabla, las consultas $P(i)$ son directamente los valores $V_i$ calculados.
+      \item La respuesta a un query $R(i,j)$ de intervalo $[i,j)$ se obtiene directamente como $ V_j - V_i$
+      \item Luego podemos responder cada query en tiempo constante, computando una sola resta entre dos valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso bidimensional (sumar rectángulos)}
+
+\begin{frame}{Arreglo acumulado}
+   \begin{block}{Definición}
+      Dado un arreglo bidimensional $v$ de $n \times m$ elementos $v_{i,j}$ con $0 \leq i < n, 0\leq j < m$, 
+      definimos el \textbf{arreglo acumulado} de $v$ como el arreglo bidimensional $V$ de $(n+1) \times (m+1)$ elementos
+      tal que:
+      $$V_{i,j} = \sum_{a=0}^{i-1}\sum_{b=0}^{j-1}{v_{a,b}}$$
+  \end{block}
+  %\pause
+  ¿Podremos calcular fácilmente $V$ en tiempo lineal como en el caso unidimensional?
+  %\pause
+  %\invisible<1-2>
+  {
+      \textbf{¡Sí!} Utilizando programación dinámica.
+      %\pause
+      \begin{itemize}
+        \item $V_{0,j} = V_{i,0} = 0 \ \ \forall \ 0 \leq i \leq n, 0 \leq j \leq m$
+        %\pause
+        \item $V_{i+1,j+1} = v_{i,j} + V_{i,j+1} + V_{i+1,j} - V_{i,j} \ \ \forall \ 0 \leq i < n, 0 \leq j < m$
+      \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries de rectángulos generales a la tabla aditiva vendrán dadas por rectángulos $[i_1,i_2) \times [j_1,j_2)$ con $0 \leq i_1 \leq i_2 \leq n, 0 \leq j_1 \leq j_2 \leq m$.
+  %\pause
+  \item La respuesta al query $[i_1,i_2) \times [j_1,j_2)$ sera $Q(i_1,i_2,j_1,j_2) = \sum \limits _{a=i_1}^{i_2-1}\sum \limits _{b=j_1}^{j_2-1}{v_{a,b}}$
+  %\pause
+    \item Pero de manera similar a como hicimos para calcular el arreglo acumulado, resulta que:
+    $$Q(i_1,i_2,j_1,j_2) = V_{i_2,j_2} - V_{i_1,j_2} - V_{i_2,j_1} + V_{i_1,j_1}$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando sumas y restas de cuatro valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Caso general}
+
+\begin{frame}{Arreglo acumulado}
+    El caso general es completamente análogo... Dejamos las cuentas escritas rápidamente.
+   \begin{block}{Definición}
+      Dado un arreglo $v$ de $n_1 \times \cdots \times n_r$ elementos $v_{i_1,\cdots,i_r}$ con $0 \leq i_k < n_k, 1\leq k \leq r$, 
+      definimos el \textbf{arreglo acumulado} de $v$ como el arreglo $V$ de $(n_1+1) \times \cdots \times (n_r+1)$ elementos
+      tal que:
+      $$V_{i_1,\cdots,i_r} = \sum_{k_1=0}^{i_1-1} \cdots \sum_{k_r=0}^{i_r-1}{v_{k_1,\cdots,k_r}}$$
+  \end{block}
+\end{frame}
+\begin{frame}{Arreglo acumulado (Cálculo usando programación dinámica)}
+   El cálculo de $V$ mediante programación dinámica viene dado por:
+      \begin{itemize}
+        \item $$V_{i_1, \cdots, i_r} = 0\ \ \ \mbox{si para algún $k$ resulta $i_k = 0$}$$
+        %\pause
+        \item $$V_{i_1+1,\cdots,i_r+1} = v_{i_1,\cdots,i_r} + \sum_{d_1=0}^1 \cdots \sum_{d_r=0}^1 {(-1)^{r+1 + \sum\limits_{k=1}^r{d_k}}V_{i_1+d_1,\cdots,i_r+d_r}}$$
+                Donde en las sumatorias anidadas se excluye el caso en que $d_k = 1 \ \forall\ k$
+      \end{itemize}
+\end{frame}
+
+\begin{frame}{Respuesta de los queries}
+  \begin{itemize}
+  \item Las queries a la tabla aditiva vendrán dadas por subarreglos $[{i_1}_0,{i_1}_1) \times \cdots \times [{i_r}_0,{i_r}_1)$
+  %\pause
+  \item La respuesta al query $[{i_1}_0,{i_1}_1) \times \cdots \times [{i_r}_0,{i_r}_1)$ será:
+  %\pause
+    \item
+    $$Q({i_1}_0,{i_1}_1, \cdots ,{i_r}_0,{i_r}_1) = \sum_{d_1=0}^1 \cdots \sum_{d_r=0}^1 {(-1)^{r + \sum\limits_{k=1}^r{d_k}}V_{{i_1}_{d_1},\cdots,{i_r}_{d_r}}}$$
+    %\pause
+    \item Luego podemos responder cada query en tiempo constante computando sumas y restas de $2^r$ valores del arreglo acumulado.
+  \end{itemize}
+\end{frame}
+
+\subsection{Aplicaciones prácticas}
+
+\begin{frame}{Aplicaciones prácticas de las tablas aditivas}
+  \begin{itemize}
+     \item Se usan en procesamiento digital de imágenes:
+        \begin{itemize}
+            \footnotesize
+            \item Crow, Franklin (1984). ``Summed-area tables for texture mapping'' SIGGRAPH '84: Proceedings of the 11th annual conference on Computer graphics and interactive techniques. pp. 207-212.
+            \item Lewis, J.P. (1995). ``Fast template matching.'' Proc. Vision Interface. pp. 120-123.
+            \item Viola, Paul; Jones, Michael (2002). ``Robust Real-time Object Detection''. International Journal of Computer Vision.
+        \end{itemize}
+     \item Sirven para manipular distribuciones de probabilidad multivariadas, por ejemplo $P(A_x \leq X \leq B_x \land A_y \leq Y \leq B_y)$.
+     \item Podemos encontrarlas en inglés como ``Summed area table''
+  \end{itemize}
+\end{frame}
+
+\subsection{Tarea}
+\begin{frame}{Tarea}
+  \begin{itemize}
+     \item http://www.spoj.pl/problems/KPMATRIX/
+     \item http://www.spoj.pl/problems/TEM/
+     \item http://www.spoj.pl/problems/MATRIX/
+  \end{itemize}
+\end{frame}
+
+\section{Sparse Table}
+
+\subsection{Motivación}
+
+\begin{frame}{Motivación (range minimum query)}
+    \begin{itemize}
+        \item Si no trabajamos con un operador con inverso, las tablas aditivas no sirven para calcular intervalos arbitrarios.
+        \item Por ejemplo si queremos el mínimo de un intervalo en lugar de la suma, ya no podemos ``restar'' y hacer lo mismo.
+        \item Idea: Guardar prefijos es poco. Guardemos el acumulado de más intervalos del arreglo.
+        \item Guardaremos el acumulado de todos los intervalos del arreglo con \textbf{tamaño potencia de 2}
+        \item Notación: Usaremos en esta sección el operador Min, y llamaremos $RMQ(i,j)$ a la consulta de rango $[i,j)$
+    \end{itemize}
+\end{frame}
+
+\subsection{Estructura}
+
+\begin{frame}[fragile]{Estructura : Inicialización}
+\begin{itemize}
+    \small
+      \item Utilizaremos programación dinámica para llenar el arreglo $M$, definido como:
+      $$M(i,k) = RMQ(i,i+2^k), 0 \leq i \leq n - 2^k$$
+      %\pause
+      \item Para esto basta notar:
+        \begin{itemize}
+          \item $M(i,0) = RMQ(i,i+1) = v_i$
+          \item $M(i,k+1) = RMQ(i,i + 2^{k+1}) = \mimin(M(i,k),M(i+2^k,k))$
+        \end{itemize}
+      %\pause
+      \item La tabla $M$ contiene $\Theta(n \lg n)$ elementos, luego la inicialización requiere $\Theta(n \lg n)$ tiempo y memoria.
+    \end{itemize}
+\begin{lstlisting}
+    for (int i = 0; i < N; i++) M[i][0] = v[i];
+    for (int k = 0; k < ULTIMO_NIVEL; k++) {
+        const int LARGO = (1<<k);
+        for (int i = 0; i <= N - 2 * LARGO; i++)
+            M[i][k+1] = min(M[i][k], M[i + LARGO][k]);
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Estructura : Queries en $O(\lg N)$ (``estilo skiplist'')}
+\begin{itemize}
+      \item Una vez computado el arreglo $M$, podemos consultar cualquier rango potencia de 2.
+      \item Como en binario todo número $N$ se escribe con $O(\lg N)$ potencias de 2, basta usar $O(\lg L)$ queries para formar un intervalo de longitud $L$.
+      \item Por ejemplo el intervalo $[2,13)$, tiene longitud $11 = 8 + 2 + 1$
+      \item Luego podemos formar $RMQ(2,13) = min(M(2,3) + M(10, 1) + M(12, 0))$
+      \item Esto funciona con \textbf{cualquier operador asociativo}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Estructura : Queries en $O(1)$}
+\begin{itemize}
+      \item Una vez computado el arreglo $M$, para responder un query basta notar que:
+      $$RMQ(i,j) = \mimin(M(i,k), M(j-2^k, k)), 2^k \leq j-i < 2^{k+1}$$
+      %\pause
+      \item Luego podemos responder queries en $O(1)$, siempre y cuando podamos computar $k$ en $O(1)$.
+      %\pause
+      %\invisible<1-2>
+      {
+        \item Esto se puede lograr al trabajar con enteros de 32 bits haciendo:
+        \item \texttt{k = 31 - \_\_builtin\_clz(j-i)} en C++,
+        \item \texttt{k = 31 - Integer.numberOfLeadingZeros(j-i)} en Java.
+        %\pause
+        \item Notar que esto \textbf{no funciona} con cualquier operador asociativo: se debe cumplir $x \triangleright x = x$ para todo $x$
+      }
+    \end{itemize}
+\end{frame}
+
+\subsection{Lowest Common Ancestor} % 20 min
+
+\begin{frame}{El problema}
+   \begin{block}{LCA}
+      Dado un árbol con raíz de $n$ nodos, una estructura de LCA permite responder rápidamente consultas por el \textbf{ancestro común
+      más bajo} entre dos nodos (es decir, el nodo más alejado de la raíz que es ancestro de ambos).
+  \end{block}
+  %\pause
+  \begin{itemize}
+      \item ¡Sorprendentemente se puede reducir una consulta de LCA a una de RMQ!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Recorrido de DFS}
+\begin{itemize}
+   \item Utilizando un recorrido de DFS, podemos computar un arreglo $v$ de $2n - 1$ posiciones que indica el orden en que
+   fueron visitados los nodos por el DFS (cada nodo puede aparecer múltiples veces).
+   %\pause
+   \item Aprovechando este recorrido podemos computar también la \textbf{profundidad} (distancia a la raíz) de cada nodo $i$, que notaremos $P_i$.
+   %\pause
+   \item También guardaremos el índice de la primera aparición de cada nodo $i$ en $v$, que notaremos $L_i$ (Cualquier posición servirá, así
+   que es razonable tomar la primera).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Utilizacion del RMQ}
+\begin{itemize}
+   \item La observación clave consiste en notar que para dos nodos $i,j$ con $i \neq j$:
+   $$ LCA(i,j) = RMQ(\mimin(L_i,L_j),\mimax(L_i,L_j)+1) $$
+   \item Tomamos mínimo y máximo simplemente para asegurar que en la llamada a $RMQ$ se especifica un rango válido ($i < j$).
+   \item Notar que en la igualdad anterior, $RMQ(i,j)$ compara los elementos de $v$ por sus valores de profundidad dados por $P$.
+   %\pause
+   \item La complejidad de la transformación del LCA al RMQ es $O(n)$, con lo cual la complejidad final de las operaciones
+   será la del $RMQ$ utilizado.
+\end{itemize}
+\end{frame}
+
+\subsection{Aplicaciones prácticas} % 
+
+\begin{frame}{Aplicaciones prácticas}
+\begin{itemize}
+   \item Mediante LCA con Sparse Table, es posible computar en $O(N \lg N + Q)$, $Q$ consultas de distancia entre nodos en un árbol.
+   \item Sparse Table puede combinarse también con estructuras de Strings (Suffix Array) para responder queries de ``prefijo común más largo'' entre
+           subcadenas arbitrarias de cadenas dadas. Esto se puede usar en bioinformática para hacer comparaciones de ADN y buscar genes.
+\end{itemize}
+\end{frame}
+
+\section{Segment Tree}
+
+\subsection{Segment Tree}
+
+\begin{frame}{Segment Tree}
+    \begin{itemize}
+      \item En esta sección seguiremos llamando ``mínimo'' a la operación $\triangleright$
+      \item Segment Tree funciona bien con cualquier operador asociativo, en todos los casos
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Descripción}
+    \begin{itemize}
+      \item Para trabajar con el segment tree asumiremos que $n$ es potencia de $2$. De no serlo, basta extender el arreglo $v$ con a lo sumo $n$
+            elementos adicionales para que sea potencia de $2$.
+      %\pause
+      \item Utilizaremos un árbol binario completo codificado en un arreglo: 
+      %\pause
+      \item $A_1$ guardará la raíz del árbol.
+      \item Para cada $i$, los dos hijos del elemento $A_i$ serán $A_{2i}$ y $A_{2i+1}$. 
+      \item El padre de un elemento $i$ será \texttt{i/2}, salvo en el caso de la raíz.
+      \item Las hojas tendran índices en $[n,2n)$.
+      %\pause
+      \item La idea será que cada nodo interno del árbol (guardado en un elemento del arreglo) almacene el mínimo entre sus dos hijos.
+      %\pause
+      \item Las hojas contendrán en todo momento los elementos del arreglo $v$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Inicializacion}
+    \begin{itemize}
+       \item Llenamos $A_n, \cdots, A_{2n-1}$ con los elementos del arreglo $v$.
+       %\pause
+       \item Usando programación dinámica hacemos simplemente:
+        $$A_i = \mimin(A_{2i},A_{2i+1})$$
+        \item Notar que se debe recorrer $i$ en forma descendente para no utilizar valores aún no calculados.
+        %\pause
+        \item El proceso de inicialización toma tiempo $O(n)$, y la estructura utiliza $O(n)$ memoria.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Estructura : Modificaciones}
+    \begin{itemize}
+       \item Para modificar el arreglo, utilizaremos nuevamente la fórmula:
+       $$A_i = \mimin(A_{2i},A_{2i+1})$$
+       %\pause
+       \item Notemos que si cambiamos el valor de $v_i$ por $x$, debemos modificar $A_{n+i}$ haciéndolo valer $x$, y recalcular
+          los nodos internos del árbol...
+       %\pause
+       \item Pero sólo se ven afectados los ancestros de $A_{n+i}$.
+       %\pause
+       \item Luego es posible modificar un valor de $v$ en tiempo $O(\lg n)$, recalculando sucesivamente los padres desde $A_{n+i}$ hasta llegar a la raíz.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Estructura : Queries}
+     Consideremos el siguiente algoritmo recursivo:
+    \begin{itemize}
+         \item $$f(k,l, r, i,j) = \left\{ \begin{array}{ll}
+                                     A_k & \mbox{si $i \leq l < r \leq j$};\\
+                                     +\infty & 
+                                      \mbox{si $r \leq i$ o $l \geq j$} \\
+                                     \mimin(f(2k,l,\frac{l+r}{2},i,j), & \\
+                                     ,f(2k+1,\frac{l+r}{2},r,i,j))& sino.\end{array} \right.$$
+         \item La respuesta vendrá dada por $RMQ(i,j) = f(1,0,n,i,j)$
+         %\pause
+         \item La complejidad temporal de un query es $O(\lg n)$
+    \end{itemize}
+\end{frame}
+
+\subsection{Ejemplo}
+
+\begin{frame}{Ejemplo}
+    ``Suma máxima de dos elementos en rango''
+    \begin{itemize}
+         \item http://www.spoj.com/problems/KGSS/
+    \end{itemize}
+\end{frame}
+
+
+
+\subsection{Aplicaciones prácticas}
+
+\begin{frame}{Aplicaciones prácticas}
+    \begin{itemize}
+         \item Es usual que los algoritmos de geometría computacional se vean beneficiados por el uso de Segment Trees. Por ejemplo,
+                se utilizan los Segment Trees en el algoritmo para calcular ``área de la unión de $N$ rectángulos'' en $O(N \lg N)$
+    \end{itemize}
+\end{frame}
+
+\section{Binary Indexed Tree} % 20 min
+
+\subsection{Binary Indexed Tree} % 20 min
+
+\begin{frame}{Binary Indexed Tree}
+  \begin{itemize}
+    \item También llamados ``Fenwick Tree''
+    \item Introducidos en la literatura en: \\
+            Peter M. Fenwick (1994). ``A new data structure for cumulative frequency tables''. Software: Practice and Experience
+    \item Se utilizan para implementar eficientemente algoritmos de compresión adaptativa mediante Arithmetic Encoding (motivación original de Fenwick)
+    \item $\frac{\mbox{Fenwick}}{\mbox{Tabla Aditiva}} = \frac{\mbox{Segment Tree}}{\mbox{Sparse Table}}$ 
+    \item Un Segment Tree es estrictamente más poderoso como estructura de datos. El Fenwick Tree tiene la misma complejidad, pero suele ser más fácil
+           de programar y tener mejores constantes.
+  \end{itemize}
+\end{frame}
+
+\end{document}
