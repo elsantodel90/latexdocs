@@ -1,0 +1,426 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme{spruce}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\sffamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Probabilidad y Combinatoria] % (optional, use only with long paper titles)
+{Probabilidad y Combinatoria}
+
+\author[Agustín Santiago Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[PAP 2016] % (optional, should be abbreviation of conference name)
+{Problemas Algoritmos y Programación 2016}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+    \tableofcontents[currentsection, currentsubsection]
+  \end{frame}
+}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Contenidos}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\begin{frame}
+
+\footnotesize
+
+``The generation of random numbers is too important to be left to chance.''
+    
+{\tiny \hfill    Robert R. Coveyou, \textit{Oak Ridge National Laboratory, 1969.}}
+
+\vfill
+
+``Randomness is a very, very subtle concept with its study properly belonging to statisticians more than mathematicians.'' 
+
+{\tiny \hfill    Julian Havil, \textit{The Irrationals: A Story of the Numbers You Can't Count On (2012), Chapter 9, p. 229.}}
+
+\vfill
+    
+``The sun comes up just about as often as it goes down, in the long run, but this doesn't make its motion random.''
+
+{\tiny \hfill    Donald Knuth, \textit{The Art of Computer Programming, Vol. II, 1969, section 3.3.2.}}
+    
+    \vfill
+    
+``Si la literatura no fuera más que un álgebra verbal, cualquiera podría producir cualquier libro, a fuerza de ensayar variaciones.''
+
+{\tiny \hfill    Jorge Luis Borges, \textit{Nota sobre (hacia) Bernard Shaw }}
+    
+    \vfill
+    
+``There is no problem in all mathematics that cannot be solved by direct counting.''
+
+{\tiny \hfill    Ernst Mach, \textit{quoted by A. T. Benjamin, G. M. Levin, K. Mahlburg and J. J. Quinn,}}
+
+{\tiny \hfill    \textit{Random approaches to Fibonacci identities, Amer. Math. Monthly 107 (2000), p.511.}}
+
+\end{frame}
+
+\begin{frame}
+
+La probabilidad y la combinatoria:
+
+\begin{itemize}
+    \item Están estrechamente relacionadas
+    \item Combinatoria: Queremos contar la cantidad de elementos de un conjunto (finito).
+    \item Probabilidad: Queremos cuantificar qué porcentaje ``de las veces'' ocurre algo.
+    \item Ambas son una \textbf{medida}. Responden un ``\textbf{¿Cuánto?}''
+\end{itemize}
+
+\end{frame}
+
+\section{Combinatoria}
+
+\subsection{Principios}
+
+\begin{frame}{Principios}
+  \begin{block}{Principio de suma}
+  Si $A$ y $B$ son conjuntos disjuntos finitos, $|A \cup B| = |A| + |B|$
+  \end{block}
+  
+  \begin{itemize}
+    \item Sirve para contar \textbf{disyunciones}: Si tengo que hacer algo de la manera A \textbf{o} de la manera B, \textbf{disjuntas}, entonces si la $A$ presenta $n$ opciones y la $B$ presenta $m$ opciones, en total tengo $n+m$ posibilidades.
+    \item Generaliza naturalmente a más de 2, sumando todas las opciones.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Principios (cont)}
+  \begin{block}{Principio de multiplicación}
+  Si $A$ y $B$ son conjuntos finitos, $|A \times B| = |A| \cdot |B|$
+  \end{block}
+  
+  \begin{itemize}
+    \item Sirve para contar \textbf{conjunciones}: Si tengo que hacer una cosa que se puede hacer de $n$ formas, \textbf{y} otra más \textbf{independiente} que se puede hacer de $m$ formas, el proceso completo lo puedo realizar de $n \cdot m$ formas.
+    \item Generaliza naturalmente a más de 2 cosas que haya que elegir, multiplicando todas las opciones.
+    \item Es fundamental que en cada paso, la cantidad de opciones \textbf{no dependa} de las elecciones anteriores, para poder aplicar el principio.
+  \end{itemize}
+\end{frame}
+
+\subsection{Ejemplos}
+
+\begin{frame}{Ejemplo}
+  
+  Podemos aplicar estos principios para calcular polinomios cromáticos. Por ejemplo, para los siguientes grafos:
+  
+  {
+  \includegraphics[width=0.5\textwidth]{grafoK4.png}
+  \includegraphics[width=0.5\textwidth]{grafoC4.png}
+  }
+  
+\end{frame}
+
+\begin{frame}{Repaso (pizarrón)}
+
+    Repaso de álgebra 1:
+      \begin{itemize}
+        \item Subconjuntos
+        \item Permutaciones
+        \item Factorial
+        \item Anagramas 
+        \item Numeros combinatorios
+        \item Bosones
+      \end{itemize}
+
+    
+\end{frame}
+
+\begin{frame}{Más ejemplos de combinatoria (pizarrón)}
+  \begin{itemize}
+    \item ¿De cuántas maneras podemos cubrir un tablero de $2 \times n$ con dominós?
+    \item Dado un DAG: ¿Cuántos caminos existen entre $A$ y $B$?
+    \item Dado un grafo (dirigido): ¿Cuántos caminos de longitud $L$ existen entre $A$ y $B$?
+    \item Dado un entero positivo $N$: ¿De cuántas maneras se lo puede obtener como suma de números positivos? $1 + 2$ y $2 + 1$ se consideran la misma manera de obtener $3$.
+  \end{itemize}
+
+\end{frame}
+
+\section{Probabilidad}
+
+\subsection{Principios}
+
+\begin{frame}{Principios}
+    \begin{block}{Unión}
+        Si $A$ y $B$ son eventos disjuntos (cosas que nunca ocurren a la vez), $P(A \cup B) = P(A) + P(B)$
+    \end{block}
+    
+    \begin{itemize}
+       \item Si los eventos no son \textbf{disjuntos}, hay que \textbf{medir} adecuadamente y restar lo que se contó dos veces:
+               $$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$
+       \item Corolario: La probabilidad de que $E$ no ocurra es $1 - P(E)$
+       \item Es análogo al principio de suma en combinatoria.
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Principios}
+    \begin{block}{Intersección}
+        Si $A$ y $B$ son eventos \textbf{independientes} (la ocurrencia de uno no depende para nada del otro), $P(A \cap B) = P(A) \cdot P(B)$
+    \end{block}
+    
+    \begin{itemize}
+       \item Si los eventos no son independientes no se puede multiplicar, hay que analizar la probabilidad contando de alguna otra forma.
+       \item Es el análogo al principio de multiplicación en combinatoria.
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Principios}
+    \begin{block}{Probabilidad total}
+        Si en un cierto momento ``se sortea'' entre $n$ opciones distintas, donde la opción $i$ tiene probabilidad $p_i$, y además una vez que
+         ya sabemos que salió la opción $i$, entonces resulta que el evento $E$ que nos interesa ocurre con una probabilidad $e_i$, entonces
+          la probabilidad del evento al comienzo del sorteo es $P(E) = \sum_{i=1}^{n}{p_i \cdot e_i}$
+    \end{block}
+    
+    \begin{itemize}
+        \item Esta regla es extremadamente común de utilizar en problemas, sobre todo combinada con programación dinámica, donde los $e_i$ resultarán
+                ser nuevos subproblemas recursivos.
+        \item Lo veremos enseguida al hablar de procesos de Markov.
+        \item En problemas donde los resultados posibles son continuos (números reales arbitrarios), todo es igual pero con integrales en lugar de sumas
+               (recordar que una integral no es más que una suma sobre muchos intervalitos, muy chiquititos).
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Principios}
+    \begin{block}{Espacio de equiprobabilidad}
+        Cuando hay $n$ resultados posibles, y todos tienen la misma probabilidad, estamos ante un \textit{espacio de equiprobabilidad}.
+    \end{block}
+    
+    \begin{itemize}
+        \item En este caso, si el evento que nos interesa se corresponde con $k$ de los $n$ resultados, tiene probabilidad $P(E) = \frac{k}{n}$
+        \item Este caso generalmente da problemas y soluciones muy similares a los de combinatoria, pues equivale esencialmente a contar $n$ y $k$.
+    \end{itemize}
+    
+\end{frame}
+
+\subsection{Ejemplos}
+
+\begin{frame}{Paradoja de los cumpleaños}
+    \begin{itemize}
+        \item ¿Cuál es la probabilidad de que en un grupo de $N$ personas, dos cumplan años el mismo día?
+        \item Asumimos por supuesto, de manera totalmente irrazonable, que no hay bisiestos y que todos los días son equiprobables.
+        \item $P = 1 - \prod_{i=0}^{N-1}{\frac{365-i}{365}} = 1 - \frac{365!}{(365-N)! 365^N}$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Máximo de dos números}
+    \begin{itemize}
+        \item Se eligen dos números al azar uniformemente entre 0 y 1. ¿Cuál es la probabilidad de que el máximo sea mayor o igual que 0.5?
+        \item ¿Cuál es la probabilidad de que su suma sea mayor o igual que 0.5?
+        \item ¿Cuál es la probabilidad de que la suma de sus cuadrados sea mayor o igual que 0.5?
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Red Tape Committee}
+    \begin{itemize}
+        \item Google Codejam: Round 2 2016, problema B.
+{ \footnotesize        
+        \item You are the head of the Department of Redundancy Reduction and Superfluity Shrinkage. Currently, the department cannot agree on whether there is too much ``red tape'' (inefficiency) in the department itself. They have asked you to form a Red Tape Committee to vote on the issue.
+
+        \item The department has $N$ members. For each member, you know the probability $P_i$ that that member will vote "Yes". If a member does not vote "Yes", they necessarily vote "No"; nobody abstains.
+
+        \item You must choose exactly $K$ members to be on the committee. The department rules dictate that $K$ must be an even number to allow for ties, which are seen as part of a healthy bureaucracy.
+
+        \item If you choose committee members to maximize the probability of a tie, what is that probability? 
+}
+    \end{itemize}
+\end{frame}
+
+\subsection{Esperanza}
+
+\begin{frame}{Definición}
+    \begin{block}{Esperanza}
+        Dado un número \textbf{que depende de nuestro experimento} (variable aleatoria), su \textit{esperanza} es la suma sobre
+         todos los resultados posibles de $p_i \cdot X_i$, siendo $p_i$ la probabilidad del resultado $i$, y $X_i$ el valor
+          de nuestra variable aleatoria en ese resultado particular.
+          
+        En el caso continuo, en lugar de una suma tenemos una integral.
+    \end{block}
+    
+    \begin{itemize}
+        \item Si repetimos el experimento muchas veces y promediamos el valor obtenido sobre todas las mediciones, obtendremos un valor muy cercano
+                a la esperanza, arbitrariamente cercano con arbitrariamente alta confianza cuantas más mediciones tomemos. (Ley de los grandes números).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Linealidad de la esperanza}
+    \begin{itemize}
+        \item La propiedad más importante y útil de la esperanza es su linealidad.
+        
+        \item Si $X$ e $Y$ son variables aleatorias: $E(aX + bY) = aE(X) + bE(Y)$
+        
+        \item En lo anterior \textbf{no hace falta que $X$ e $Y$ sean independientes}: La linealidad funciona para cualesquiera variables aleatorias.
+        
+    \end{itemize}
+    
+
+\end{frame}
+
+\begin{frame}{Esperanza partida en cachos}
+    \begin{block}{Esperanza condicional}
+        Si en un cierto momento ``se sortea'' entre $n$ opciones distintas, donde la opción $i$ tiene probabilidad $p_i$, y además una vez que
+         ya sabemos que salió la opción $i$, entonces resulta que la esperanza de la cantidad $X$ que nos interesa es $e_i$, entonces
+          la esperanza de $X$ es $E(X) = \sum_{i=1}^{n}{p_i \cdot e_i}$
+    \end{block}
+    
+    \begin{itemize}
+        \item El teorema anterior mencionado para probabilidades es un caso particular.
+        \item Nuevamente, es muy común combinar esta idea con programación dinámica.
+    \end{itemize}
+    
+\end{frame}
+
+\subsection{Ejemplos}
+
+\begin{frame}{Ejemplos}
+    \begin{itemize}
+        \item Cantidad de intentos esperada hasta tener éxito: $\frac{1}{p}$
+        \item Problema del álbum de figuritas.
+        \item Posición esperada en el torneo ``ganador queda en cancha''.
+        \item Matriz: viajamos solo para abajo y para la derecha, a elección. En cada celda hay un cierto beneficio, pero una cierta probabilidad de que al llegar ahí se termine el juego.
+                Siempre se termina si llegamos a la esquina inferior derecha, pues no se puede seguir. Comenzamos en la esquina superior izquierda. Si jugamos
+                 de manera óptima para maximizar la esperanza del beneficio total (suma) obtenido, ¿Cuánto será esa esperanza?
+    \end{itemize}
+    
+\end{frame}
+
+
+\section{Procesos de Markov}
+
+\subsection{Definición}
+
+\begin{frame}{Markov}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+    \includegraphics[width=1.0\textwidth]{AAMarkov.jpg}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+       \footnotesize
+       \begin{itemize}
+        \item Este es Andrey Andreyevich Markov, matemático ruso famoso principalmente por su trabajo en procesos estocásticos.
+       
+        
+        \item Además de llamarse igual que su viejo, es conocido entre otras cosas por la desigualdad de los hermanos Markov, que demostró junto con su hermano Vladimir Andreyevich Markov.
+        
+        \item Su hijo, también llamado Andrey Andreyevich Markov, fue otro matemático notorio, uno de los padres fundadores de la matemática constructiva, y conocido por su trabajo en lógica y teoría de funciones recursivas.
+        \end{itemize}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Definición}
+
+   \begin{itemize}
+       \item Un proceso de Markov tiene varios \textbf{pasos}.
+       \item Cada paso consiste de una transición del \textbf{estado} actual, a un nuevo estado.
+       \item El proceso no es determinista, sino que en cada paso hay una cierta probabilidad de saltar a otros estados posibles.
+       \item Se cumple la propiedad de Markov: La probabilidad de pasar de un cierto estado actual $i$, a otro estado $j$, depende \textbf{únicamente} de $i$ y de $j$, y \textbf{no depende} del camino utilizado para llegar a $i$.
+       \item Da lugar naturalmente a un grafo dirigido, con probabilidades en las aristas.
+   \end{itemize}
+
+\end{frame}
+
+\subsection{Ejemplos}
+
+\begin{frame}{Ejemplos}
+
+   \begin{itemize}
+       \item Juego de la Oca: Se tira un dado desde la casilla actual, y se mueve de manera acorde.
+       \item Moneda: si sale cara se avanza, si sale ceca se retrocede. Se termina cuando uno ``se cae'' por un extremo.
+       \item Borrachos peleando en una grilla de $n \times m$, que no paran hasta no pasar por la comisaría.
+   \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Preguntas comunes}
+
+   Generalmente, estas llevan a un sistema de ecuaciones. Se puede resolver directamente con DP cuando el grafo es DAG.
+
+   \begin{itemize}
+       \item ¿Cuál es la cantidad de pasos esperada hasta llegar a un cierto estado?
+       \item ¿Luego de muuuuchos (en el límite) pasos, cuál es la probabilidad de estar en un cierto estado?
+       \item ¿Luego de exactamente $K$ pasos, cuál es la probabilidad de estar en un cierto estado?
+   \end{itemize}
+
+\end{frame}
+
+\end{document}
