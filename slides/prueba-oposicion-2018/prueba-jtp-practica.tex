@@ -1,0 +1,171 @@
+\documentclass{article}
+
+% El archivo está codificado utf8.
+
+\usepackage[utf8]{inputenc}
+
+
+\usepackage[spanish]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{enumitem}
+
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textheight}{8.5in}
+\setlength{\topmargin}{0.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+
+\def\lg{\mathop{\mathrm {lg}}\nolimits}
+
+\title{Optimizaciones de DP}
+\author{Agustín Santiago Gutiérrez}
+\date{\today}
+
+\makeindex
+
+%Ejemplos de macros
+%\newcommand{\Left}{\textbf{Left}\xspace}
+%\newcommand{\Right}{\textbf{Right}\xspace}
+%\newcommand{\Jota}{\ensuremath{\mathcal{J}}\xspace}
+%\newcommand{\Juego}[2]{\ensuremath{\left \{ #1 | #2 \right \}}\xspace}
+
+\begin{document}
+
+%\maketitle
+
+\section*{Práctica: Técnicas algorítmicas \\
+{\small Concurso JTP Simple Algoritmos. Agustín Santiago Gutiérrez}}
+
+Los ejercicios marcados con \textbf{(*)} se consideran ``Menos importantes / Opcionales''.
+
+\subsection*{Dividir y conquistar}
+
+    \begin{enumerate}[resume]
+        \item Sea $v = (v_1, v_2, \cdots, v_n)$ un vector de $n$ objetos. Un elemento mayoría de $v$ es un valor que aparece en $v$ \textbf{más} de $\frac{n}{2}$ veces.
+            \begin{enumerate}
+                  \item Si $n \geq 2$, dado algún $2 \leq i \leq n$, podemos partir a $v$ en dos arreglos: $a = (v_1, v_2, \cdots, v_{i-1})$ y $b = (v_i, v_{i+1}, \cdots, v_n)$. Probar que si $v_m$ es elemento mayoría de $v$, entonces $v_m$ es elemento mayoría de $a$ o de $b$ (o de ambas partes).
+                  \item Utilizar el ítem anterior para escribir un algoritmo de dividir y conquistar que determine si un arreglo dado tiene elemento mayoría, y de ser así, lo calcule. Debe tener complejidad $O(n \lg n)$.
+            \end{enumerate}
+        \item \textbf{(*)} Hay que organizar un torneo que involucre a $n$ competidores. Cada competidor debe jugar exactamente una vez contra cada uno de sus oponentes. Además cada competidor debe jugar un partido por día con la sola posible excepción de un día en el cual no juegue.
+                    \begin{enumerate}
+                        \item Si $n$ es potencia de $2$ dar un algoritmo que use la técnica de dividir y conquistar para armar el fixture
+                               para que el torneo termine en $n-1$ días.
+                        \item Si $n>1$ no es potencia de $2$ dar un algoritmo para armar el fixture para que el torneo termine en $n-1$ días, si $n$ es par o en $n$, si $n$ es impar.
+
+                Demostrar que las cantidades de días indicadas son mínimas.
+                    \end{enumerate}
+    \end{enumerate}
+
+\subsection*{Algoritmos golosos}
+
+    \begin{enumerate}[resume]
+        \item Se tiene inicialmente una hilera de $n$ casillas blancas consecutivas. Se deben pintar algunas casillas de negro, de manera tal que no haya nunca dos consecutivas pintadas. Algunas casillas ya fueron pintadas de antemano, cumpliendo con la restricción.
+        
+              Dar un algoritmo goloso que pinte algunas de las restantes, de modo tal que la cantidad total de casillas pintadas sea máxima. Demostrar que el algoritmo es correcto y calcular su complejidad.
+        \item Se tiene un listado de $m$ intervalos, de modo tal que para cada $1 \leq i \leq m$, el intervalo i-ésimo es $[A_i, B_i]$, siendo $0 \leq A_i \leq B_i \leq n$, para cierto valor $n$ fijo. Se desea seleccionar algunos de los intervalos, de modo tal que
+               su unión sea todo el intervalo $[0, n]$ (es decir, se desea ``cubrir'' el $[0,n]$ usando algunos intervalos de la entrada).
+               
+              Dar un algoritmo goloso que calcule la mínima cantidad de intervalos necesaria, o indique que esta tarea es imposible. Calcular su complejidad en términos de $m$ y $n$.
+        \item \textbf{(*)} Se quiere dar el vuelto a un cliente usando el mínimo número de monedas posibles. Se tiene un suministro ilimitado de monedas de 1, 5, 10 y 25 centavos. Dado el siguiente algoritmo goloso:
+        
+         \texttt{Elegir en cada paso la moneda de mayor valor entre las disponibles (sin pasarse).}
+        
+        \begin{enumerate}
+           \item Probar que este algoritmo siempre da el vuelto utilizando la mínima cantidad posible de monedas.
+           \item ¿Ocurre lo mismo si se elimina la moneda de 5, de forma tal que las denominaciones posibles sean 1, 10 y 25 centavos? En caso afirmativo, demostrar. En caso negativo, dar un contraejemplo para el algoritmo.
+        \end{enumerate}
+        
+    \end{enumerate}
+    
+
+\subsection*{Programación dinámica}
+
+    \begin{enumerate}[resume]
+        \item La sucesión de Fibonacci se define matemáticamente de la siguiente manera:
+                 
+                 $f_0 = f_1 = 1$
+                 
+                 $f_n = f_{n-1} + f_{n-2}$ para $n \geq 2$
+        
+                   Escribir una función recursiva (implementación ``directa'') que calcule $f_n$ dado $n$.
+                      \begin{enumerate}
+                           \item Determinar la complejidad de esta función. ¿Es polinomial? ¿Es exponencial?
+                           \item Explicar por qué se puede decir que tenemos en este caso \textit{superposición de subproblemas}.
+                           \item Teniendo en cuenta lo anterior, utilizar programación dinámica para mejorar la complejidad de la función de modo que esta sea $O(n)$.
+                      \end{enumerate}
+        \item Se tienen $n$ números enteros positivos en fila, de izquierda a derecha. Se deben elegir algunos de ellos, pero con la restricción de que no se permite elegir nunca dos elementos que sean consecutivos.
+                \begin{enumerate}
+                    \item Utilizar programación dinámica para calcular la máxima suma posible de los elementos elegidos. 
+                    \item ¿Hay alguna relación entre este problema y el ejercicio 3?
+                    \item Plantear un algoritmo goloso para este problema, y decidir si es correcto o no.
+                \end{enumerate}
+        \item Sea $M \in \mathbb{N}^{m \times n}$ una matriz de números naturales. Se desea obtener un camino que empiece en la casilla superior izquierda
+               ($[1,1]$), termine en la casilla inferior derecha ($[m,n]$), y tal que minimice la suma de los valores de las casillas por las que pasa.
+            
+            En cada casilla $[i,j]$ hay dos movimientos posibles: ir hacia abajo (a la casilla $[i+1,j]$), o ir hacia la derecha (a la casilla $[i,j+1]$).
+               \begin{enumerate}
+                   \item Diseñar un algoritmo eficiente basado en programación dinámica que resuelva este problema.
+                   \item Determinar la complejidad del algoritmo propuesto (temporal y espacial).
+                   \item Exhibir el comportamiento del algoritmo sobre la matriz que aparece a continuación.
+                                 
+                                 $\left [ \begin{array}{cccc} 
+                                                2 & 8 & 3 & 4 \\ 
+                                                5 & 3 & 4 & 5 \\ 
+                                                1 & 2 & 2 & 1 \\ 
+                                                3 & 4 & 6 & 5 \\ 
+                                          \end{array} \right ]$
+               \end{enumerate}
+        \item Supongamos que tenemos la situación del ejercicio 4, pero ahora cada intervalo tiene un cierto \textbf{costo} $c_i$ asociado, y queremos cubrir el $[0,n]$ con costo mínimo (sin importar la cantidad de intervalos).
+                \begin{enumerate}
+                    \item Mostrar que el mismo algoritmo goloso ya no es correcto para esta variante del problema.
+                    \item Dar un algoritmo de programación dinámica $O(m^2)$ para este problema (sugerencia: pensar primero un algoritmo $O(nm)$).
+                \end{enumerate}
+        \item Dar un algoritmo de programación dinámica que resuelva el problema de dar el vuelto del ejercicio 5, que funcione correctamente para cualquier conjunto de denominaciones dado.
+        
+              El algoritmo recibirá la lista de valores de monedas existentes $v_1, v_2, \cdots, v_n$, y el vuelto $T$ objetivo.
+        
+        \item Dada una cadena de $n$ caracteres $s_1,s_2,\cdots, s_n$, se desea conocer todas sus subcadenas palindrómicas\footnote{Una cadena es un palíndromo si se lee igual de izquierda a derecha que de derecha a izquierda. Por ejemplo, RADAR lo es pero RADA no lo es.}.
+        Computar mediante programación dinámica una tabla de $n \times n$, que en el lugar $[i,j]$, para $i \leq j$, indique con un booleano si la subcadena $s_i, s_{i+1}, \cdots, s_{j}$ es palíndromo. La complejidad del algoritmo debe ser $O(n^2)$. % [Evalúa el patrón de programación dinámica con subproblemas de "rangos" o "intervalos" que la actual práctica no tiene]
+        \item \textbf{(*)} Dada una cadena de $n$ caracteres, determinar mediante programación dinámica la mínima cantidad de palíndromos en que puede descomponerse. Calcular la complejidad del algoritmo resultante.
+    \end{enumerate}        
+
+\subsection*{Búsqueda exhaustiva}
+
+    \begin{enumerate}[resume]
+        \item En el problema de \textit{suma de subconjunto}, se recibe un conjunto de $n$ enteros positivos $S = \{a_1, a_2, \cdots, a_n\}$, y se debe determinar \textbf{si existe} algún subconjunto $S' \subseteq S$ cuya suma
+               sea un cierto valor objetivo dado $T$.
+                  \begin{enumerate}
+                        \item Describir un algoritmo de \textbf{fuerza bruta} para este problema.
+                        \item Describir un algoritmo de \textbf{backtracking} para este problema.
+                        \item ¿Cuál es la diferencia entre un algoritmo de fuerza bruta y uno de backtracking?
+                        \item Asumiendo que los números $a_i$ no son excesivamente grandes, dar un algoritmo de programación dinámica eficiente para este problema.
+                  \end{enumerate}
+        \item \textbf{(*)} En el \textit{problema de la partición}, se tiene un conjunto de $n$ enteros positivos $\{a_1, a_2, \cdots, a_n\}$ y se
+                deben particionar sus elementos en dos conjuntos de igual suma. Por ejemplo, para la entrada $n=7$ con elementos $\{1,2,5,6,7,10,11\}$, las soluciones son $\{\{1,2,5,6,7\}, \{10,11\}\}$  y
+                $\{\{1,2,7,11\}, \{5,6,10\}\}$.
+                  \begin{enumerate}
+                      \item Escribir un algoritmo de backtracking que encuentre todas las soluciones posibles al problema de la partición.
+                      \item ¿Hay alguna relación entre este problema y el anterior?
+                  \end{enumerate}
+    \end{enumerate}
+    
+\subsection*{Algoritmos probabilísticos (*)}
+    
+    \begin{enumerate}[resume]
+        \item\textbf{(*)} Un algoritmo de backtracking posible para el problema de la partición considera en cada paso, para cierto elemento de la entrada las dos posibilidades: incluirlo en el conjunto ``de la derecha'' o en el ``de la izquierda''. En una implementación determística usual, siempre se probará la misma opción primero, por ejemplo, siempre se intentará primero ubicar los números en el conjunto izquierdo, y solo al retroceder en el algoritmo se reintenta ubicarlos a la derecha.
+        
+              En la práctica esto puede tardar mucho en encontrar una solución, y si no hace falta buscar todas las soluciones sino solamente encontrar una, se
+               puede utilizar un algoritmo probabilístico de tipo \textit{Las Vegas}: En cada paso del backtracking, \textbf{se elige al azar} en cuál de los conjuntos ubicar al número. Si esa rama resulta no producir una solución, luego se intenta la otra opción.
+               
+               Implementar este algoritmo y comparar los tiempos de ejecución hasta encontrar alguna solución en instancias ``grandes'', con los del backtracking determinístico.
+        \item\textbf{(*)} Dadas 3 matrices $A,B,C \in \mathbb{R}^{n \times n}$, se desea verificar si es cierto que $A \times B = C$. Como multiplicar dos matrices es muy costoso\footnote{Existen algoritmos avanzados $O(n^{2.37})$, pero no se conocen algoritmos $O(n^2)$}, se desea realizar la verificación utilizando únicamente productos entre matrices y vectores: Si $M \in \mathbb{R}^{n\times n}$ y $v \in \mathbb{R}^{n\times 1}$, computar $M \times v$ toma solamente $O(n^2)$.
+               
+               Proponer un algoritmo probabilístico eficiente de tipo Montecarlo, que determine si es cierto que $A \times B = C$ con baja probabilidad de error.
+    \end{enumerate}
+
+\end{document}
