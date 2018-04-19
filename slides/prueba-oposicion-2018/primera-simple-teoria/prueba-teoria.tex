@@ -1,0 +1,324 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[LyC: Práctica 6]{LyC: Lógica de Primer Orden}  % (optional, use only with long paper titles)
+
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date % (optional, should be abbreviation of conference name)
+{Abril 2018}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}{Contexto en la materia Lógica y Computabilidad}
+	La materia se encuentra dividida en dos partes relacionadas, pero relativamente independientes entre sí:
+        \begin{itemize}
+            \item Computabilidad
+            \item Lógica: La práctica analizada corresponde a esta parte.
+        \end{itemize}
+    Hasta este punto en la materia, los alumnos han estudiado todos los conceptos fundamentales de la lógica \textbf{proposicional}:
+      \begin{itemize}
+       \item Fórmulas de lógica proposicional 
+       \item Valuaciones
+       \item Funciones booleanas / tablas de verdad
+       \item Tautologías, contradicciones, fórmulas satisfacibles
+       \item Teorema de compacidad
+      \end{itemize}
+\end{frame}
+
+\begin{frame}{Objetivos de la práctica}
+    \begin{itemize}
+     \item Reforzar definiciones y conceptos principales de primer orden
+        \begin{itemize}
+            \item $\mathcal L$-estructuras
+            \item Fórmulas de lógica primer orden
+        \end{itemize}
+     \item Adquirir práctica e intuición sobre la expresión de ``enunciados'', en el lenguaje de la lógica de primer orden.
+     
+\end{itemize}
+
+\end{frame}
+
+
+  
+\begin{frame}{División}
+	Si bien no se encuentra explicitado, podemos observar que la práctica está dividida en dos secciones principales:
+  \begin{itemize}
+   \item Ejercicios 1 a 5: Nociones fundamentales de primer orden
+                \begin{itemize}
+                    \item $\mathcal{L}$-Estructura
+                    \item Sentencias de primer orden: uso para escribir enunciados
+                    \item Concepto de que una estructura satisfaga una sentencia: $\mathcal{A} \vDash \varphi$
+                \end{itemize}
+   \item Ejercicios 6 a 11: Todos tratan sobre la noción de elementos, conjuntos, relaciones o clases \textbf{expresables o definibles} por una fórmula
+           de primer orden.
+                \begin{itemize}
+                    \item Noción muy importante en lógica y teoría de modelos.
+                    \item Fuertemente ligada a la idea de \textbf{poder expresivo}, de importancia también en lenguajes de programación.
+                \end{itemize}
+  \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Ejercicio 1}
+    Decidir si ciertos ejemplos de ``estructuras'' son apropiadas para los lenguajes dados.
+    \begin{itemize}
+	\item Se ejercita la definición de $\mathcal{L}$-Estructura
+    \item Se debe verificar:
+       \begin{enumerate}
+          \item El universo $U$ es no vacío.
+          \item La interpretación de cada constante está en $U$.
+          \item La interpretación de cada función es total y con imagen en $U$.
+          \item La interpretación de cada predicado es total.
+       \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejercicio 2}
+    Se dan ciertas sentencias con sus correspondientes estructuras, y se pide describir las propiedades correspondientes, así como evaluar su validez sobre la estructura correspondiente.
+    \begin{itemize}
+	\item Se ejercita:
+        \begin{itemize}
+            \item Interpretación intuitiva de fórmulas de primer orden.
+            \item Interpretación de los símbolos de $\mathcal{L}$, en el contexto de cierta $\mathcal{A}$.
+            \item Noción de $\mathcal{A} \vDash \varphi$
+        \end{itemize}
+    \item Enunciados:
+       \begin{enumerate}
+          \item Entre todo par de números reales, hay un número racional. \textbf{(Verdadera)}
+          \item Todos los días nace un hombre libre. \textbf{(???)}
+          \item La suma de dos números pares cualesquiera da por resultado un número impar. \textbf{(Falsa)}
+       \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Ejercicio 3}
+    
+    Se piden escribir varias fórmulas utilizando únicamente $=$ y $P$, que predican sobre la cantidad de elementos distintos que existen en $U$ (con la propiedad $P$).
+    
+    \begin{itemize}
+    \item Ejercicio muy importante:
+        \begin{itemize}
+            \item Las fórmulas que se pide escribir son muy útiles para utilizar como subfórmulas de enunciados más complejos.
+            \item Serán útiles en varios ejercicios posteriores.
+        \end{itemize}
+	\item Error común:
+       \begin{enumerate}
+          \item Creer que $\exists x,y (x \neq y \wedge \varphi(x) \wedge \varphi(y))$ significa que existen \textbf{exactamente} dos elementos con la propiedad $\varphi$.
+          \item Es una buena idea resolver este ejercicio o uno similar durante una clase práctica, mostrando errores comunes como este.
+       \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejercicios 4 y 5}
+    
+    Ejercicio 4: Se pide escribir una $\varphi$ tal que $\mathcal{A} \vDash \varphi$ sii $f_A$ es inyectiva pero no sobreyectiva.
+    
+    \begin{itemize}
+    \item Definición de infinitud de Dedekind.
+	\item Se pregunta si $\varphi$ es satisfacible por un modelo finito.
+    \end{itemize}
+    
+    Ejercicio 5: Se dan varias sentencias, y se pide para cada una dar una estructura donde sea verdadera y una donde sean falsa.
+    \begin{itemize}
+            \item En ambos ejercicios se ejercita específicamente estudiar la noción $\mathcal{A} \vDash \varphi$ sobre distintas posibles estructuras $\mathcal{A}$,
+        para una sentencia $\varphi$ dada.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Ejercicios 6 y 7}
+    
+    \small
+    
+    Ejercicio 6: Dar un ejemplo de $\mathcal{L}$ estructura con universo infinito, en la que todo elemento sea distinguible. $\mathcal{L}$ finito sin constantes.
+    
+    \begin{itemize}
+	\item Con constantes o lenguaje infinito sería más fácil de lograr:
+        \begin{itemize}
+            \item $c$, $f(c)$, $f(f(c))$, $\cdots$ . Con fórmulas de la forma $x = f^i(c)$
+            \item Con infinitos predicados, fórmulas $P_1(x)$, $P_2(x)$, $P_3(x)$, $\cdots$
+        \end{itemize}
+    \item Se puede mantener la misma idea con solo $=$, $P$ y $f$: $\exists z \left ( P(z) \wedge f^i(z) = x \right )$
+    \end{itemize}
+    
+    Ejercicio 7: Probar que $1$ es distinguible en $(\mathbb{N}, +,=)$ y en $(\mathbb{N}, \cdot,=)$
+    \begin{itemize}
+            \item En $(\mathbb{N}, \cdot,=)$ es el único neutro.
+            \item En $(\mathbb{N}, +,=)$, el $0$ es el único neutro. Con el $0$, se puede definir el $1$:
+                    $\exists z (\underbrace{\forall y (z + y = y)}_{z\ \mbox{\small es neutro}} \wedge \underbrace{x \neq z}_{x\ \mbox{\small  es no nulo}} \wedge \underbrace{\neg \exists a \exists b (a \neq z \wedge b \neq z \wedge a+b=z)}_{x\ \mbox{\small  no es suma de dos no nulos}})$
+    \end{itemize}
+    
+    Ambos salen alternativamente con las fórmulas del Ejercicio 3
+\end{frame}
+
+
+\begin{frame}{Ejercicio 8}
+    
+    \small
+    
+    Dadas dos $\mathcal{L}$-estructuras mediante diagramas de Hasse, $\mathcal{L}=\{\leq,=\}$, probar que todos sus elementos son distinguibles.
+    
+    {\hfill \includegraphics[scale=0.3]{hasse.png} \hfill}
+    
+    \begin{itemize}
+        \item Para cada $x \in U$, podemos contar $m$, la cantidad de elementos menores o iguales ($y \leq x$).
+        \item También podemos contar $M$, la cantidad de mayores o iguales ($y \geq x$).
+        \item El par $(m,M)$ caracteriza a cada elemento en ambos ejemplos.
+        \item Basta entonces aplicar las fórmulas del ejercicio 3, para:
+            \begin{itemize}
+                \item $\varphi(y) \equiv y \leq x$
+                \item $\psi(y) \equiv y \geq x$
+            \end{itemize}
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Ejercicio 9}
+    
+    Probar que si en una estructura de $n+1$ elementos hay $n$ distinguibles, el restante también lo es.
+    
+    \begin{itemize}
+        \item Fácil y corto de resolver si se entienden los conceptos involucrados.
+        \item Supongamos $\varphi_1(x)$,$\varphi_2(x)$, $\cdots$, $\varphi_n(x)$ distinguen los $n$ elementos. 
+        \item El elemento que queda es distinguido por $\neg \varphi_1(x) \wedge \neg \varphi_2(x) \wedge \cdots \wedge \neg \varphi_n(x)$
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Ejercicio 10}
+    
+    Demostrar que varias relaciones dadas son \textit{expresables} en las correspondientes estructuras. 
+    
+    \begin{itemize}
+        \item Ejercicio de modelado: Se ejercita el pasaje de relaciones en lenguaje natural, a lógica.
+        \item Se puede ejercitar la técnica de utilizar subfórmulas para construir fórmulas más complejas.
+            \begin{itemize}
+                \item Esta es una idea fundamental aplicable también en los lenguajes de programación.
+                \item Ejemplo: La fórmula para la relación $R_1 = \{(n,m) : n \mbox{ divide a }m \}$ es útil
+                       para construir una fórmula para el predicado $P_1 = \{ n : n \mbox{ es primo }\}$
+            \end{itemize}
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Ejercicio 11}
+    
+    Dadas varias clases de $\mathcal{L}$-estructuras, demostrar que son clases definibles.
+    
+    \begin{itemize}
+        \item Similar al anterior pero sobre \textbf{clases de estructuras}, en lugar de relaciones en una estructura prefijada.
+        \item Se piden:
+            \begin{itemize}
+                \item La clase vacía.
+                \item La clase de todas las $\mathcal{L}$-estructuras.
+                \item Ejemplos triviales (la idea no depende de la estructura misma) para fijar conceptos.
+                \item Basta tomar una $\varphi$ que sea contradicción o tautología.
+            \end{itemize}
+        \item Además:
+            \begin{itemize}
+                \item La clase de estructuras con predicado binario reflexivo y transitivo.
+                \item La clase con funciones unarias $f$ y $g$ tales que $Im(f_A) \subseteq Im(g_A)$ 
+                \item Ejemplo de una idea general para expresar inclusión de conjuntos: Usar la fórmula $\forall x (\varphi(x) \Rightarrow \psi(x))$
+                    \begin{itemize}
+                        \item $\varphi(x)$ es una fórmula para $x \in Im(f_A)$
+                        \item $\psi(x)$ es una fórmula para $x \in Im(g_A)$
+                    \end{itemize}
+                
+            \end{itemize}
+    \end{itemize}
+    
+\end{frame}
+
+\end{document}
