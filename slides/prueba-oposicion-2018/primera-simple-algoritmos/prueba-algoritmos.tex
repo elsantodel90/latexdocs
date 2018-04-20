@@ -1,0 +1,289 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={28,13,151}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title{AED 3: Programación Dinámica}  % (optional, use only with long paper titles)
+
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[Abril 2018] % (optional, should be abbreviation of conference name)
+{Abril 2018}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+
+\DeclareMathOperator*{\mimin}{min}
+\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{AED 3, Práctica 3: Técnicas algorítmicas}
+
+    En la primera parte de la materia, se explican varias \textbf{técnicas algorítmicas generales}:
+
+  \begin{itemize}
+     \item Repaso (AED2)
+      \begin{itemize}
+        \item Recursión
+        \item Divide and Conquer
+      \end{itemize}
+     \item Nuevas
+      \begin{itemize}
+        \item Algoritmos golosos
+        \item \textbf{Programación dinámica} [Ejercicio elegido 3.8]
+        \item Backtracking
+      \end{itemize}
+  \end{itemize}
+
+    \pause
+  
+  Objetivos de la práctica:
+    \begin{itemize}
+        \item Ejercitar el uso de las técnicas en la formulación de algoritmos.
+        \item Ejercitar el análisis de los mismos
+            \begin{itemize}
+                \item Correctitud
+                \item Complejidad
+            \end{itemize}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{¿En qué consiste la programación dinámica?}
+  \begin{itemize}
+   \item Es una técnica de solución de problemas \textbf{recursiva}.
+   \item Al igual que DyC, se descompone en \textbf{subproblemas más pequeños de la
+   misma especie}, para resolverlos recursivamente y combinar esas soluciones.
+   \item La \textbf{diferencia} importante:
+         \begin{itemize}
+            \item En DyC, los subproblemas son independientes entre sí, y se resuelven individualmente.
+            \item PD es aplicable cuando los subproblemas \textbf{no son independientes}.
+         \end{itemize}
+   \item De realizar una implementación recursiva directa, se \textbf{recalcularían} los mismos subproblemas muchas veces.
+  \end{itemize}
+  {\hfill \includegraphics[scale=0.3]{captionfibotree.png} \hfill}
+    
+\end{frame}
+
+\begin{frame}{¿En qué consiste la programación dinámica? (2)}
+  \begin{itemize}
+   \item Solución: \textbf{almacenar} las soluciones a subproblemas.
+   \item De esta forma cada subproblema se calcula \textbf{una sola vez}.
+   \item Se podría decir muy simplificadamente que: DyC $+$ Caching = PD
+   \item Es común usar PD para problemas de \textbf{optimización}:
+       \begin{itemize}
+           \item Encontrar una solución que \textbf{minimice} cierta función objetivo, en un espacio de soluciones posibles.
+           \item Como la técnica es recursiva, para poderse aplicar el problema debe cumplir el \textbf{principio del óptimo}.
+       \end{itemize}
+   \item Principio del óptimo:
+       \begin{itemize}
+            \item \textbf{Las partes de una solución óptima} a un problema, deben ser \textbf{soluciones óptimas de los correspondientes subproblemas}.
+            \item Es lo que permite obtener una solución óptima al problema original a partir de soluciones óptimas de los subproblemas.
+       \end{itemize}
+  \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{El esquema general [Según CLRS]}
+    Los algoritmos de programación dinámica se pueden organizar típicamente en 4 pasos que responden al siguiente esquema general:
+   \begin{enumerate}
+   \item Caracterizar la estructura de una solución óptima.
+   \item Definir recursivamente el valor de una solución óptima.
+   \item Computar el \textbf{valor} de una solución óptima. Se calcula de manera \textit{bottom-up}. [Según CLRS: Puede ser top-down en AED 3]
+   \item Construir una solución óptima a partir de la información obtenida en el paso 3
+  \end{enumerate}
+    El paso 4 es optativo: se omite si solo interesa el valor o puntaje.
+\end{frame}
+
+\begin{frame}{Problema del recorrido óptimo en una matriz}
+
+\small
+
+	Ejercicio 3.8, práctica 3 de Algoritmos y Estructuras de Datos 3:
+
+\ 
+
+	Sea $M \in \mathbb{N}^{m \times n}$ una matriz de números naturales. Se desea obtener un camino que empiece en la casilla superior
+    izquierda $(1,1)$, termine en la casilla inferior derecha $(m,n)$ y tal que minimice la suma de los valores de las casillas por
+    las que pasa. En cada casilla $(i,j)$ hay dos movimientos posibles: ir hacia abajo (a la casilla $(i+1, j)$), o ir hacia la
+    derecha (a la casilla $(i, j+1)$).
+   \begin{itemize}
+   \item[a] Diseñar un algoritmo eficiente basado en programación dinámica que resuelva este problema.
+   \item[b] Determinar la complejidad del algoritmo propuesto (temporal y espacial).
+   \item[c] Exhibir el comportamiento del algoritmo sobre la matriz que aparece a continuación.
+  \end{itemize}
+                \[ \left [  \begin{array}{cccc}
+2 & 8 & 3 & 4 \\
+5 & 3 & 4 & 5 \\
+1 & 2 & 2 & 1 \\
+3 & 4 & 6 & 5 \\
+ \end{array} \right ] \]
+
+\end{frame}
+
+\begin{frame}{Relevancia del ejercicio elegido}
+    \begin{itemize}
+        \item Patrón de recursión sencillo (solo 2 llamadas), pero no trivial.
+        \item Los subproblemas se pueden ``ver'' en la misma matriz.
+        \item Camino mínimo en un DAG (reveer el ejercicio más adelante).
+        \item Pide complejidad y reconstrucción del camino: es un ejercio completo, que ejercita todos los pasos generales de PD.
+        \item Por todo esto, es un buen ejercicio para usar como primer problema de optimización en el que los subproblemas se definan con 2 variables ($i$,$j$), luego
+                de haber visto ejemplos de PD unidimensionales.
+    \end{itemize}
+     
+    
+\end{frame}
+
+
+\begin{frame}{Fórmula recursiva}
+    \small
+    La matriz de resultados parciales almacena en $best(i,j)$ la mínima longitud de un camino que empiece en $(i,j)$ y llegue
+    a $(m,n)$, haciendo solo movimientos hacia abajo y hacia la derecha.
+   \begin{itemize}
+   \item $best(i,j) = M_{i,j} + min(best(i+1,j), best(i,j+1))$ \\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ para $1 \leq i < m$ y $1 \leq j < n$
+   \item $best(i,n) = M_{i,n} + best(i+1,n)$ para $1 \leq i < m$
+   \item $best(m,j) = M_{m,j} + best(m,j+1)$ para $1 \leq j < n$
+   \item $best(m,n) = M_{m,n}$
+  \end{itemize}
+    La longitud del mínimo camino entre esquinas, que constituye la solución al problema, viene dada por $best(1,1)$. Con esto ya podríamos implementar una solución top-down recursiva (Memoization):
+    \begin{itemize}
+       \item Si para calcular un $best(i,j)$ necesitamos un resultado ya calculado, lo usamos directamente.
+       \item Sino, lo calculamos recursivamente, almacenamos su valor en la tabla de resultados y luego lo utilizamos.
+    \end{itemize}
+     
+    
+\end{frame}
+
+
+\begin{frame}[fragile]{Algoritmo bottom-up}
+\begin{lstlisting}
+longitudCaminoMinimo(Matriz, m, n):
+    best <- matrizDeEnteros(m,n)
+    best[m,n] = Matriz[m,n]
+    FOR i <- m-1 DOWNTO 1 DO
+        best[i,n] = Matriz[i,n] + best[i+1,n]
+    FOR j <- n-1 DOWNTO 1 DO
+        best[m,j] = Matriz[m,j] + best[m,j+1]
+    FOR i <- m-1 DOWNTO 1 DO
+        FOR j <- n-1 DOWNTO 1 DO
+            best[i,j] = Matriz[i,j] + min(best[i+1,j] + best[i,j+1])
+    RETURN best[1,1]
+\end{lstlisting}
+
+La complejidad del algoritmo resultante es $O(nm)$, tanto espacial como temporal. Se puede bajar la complejidad espacial a $O(min(n,m))$ si no interesa reconstruir el camino sino solo su longitud.
+\end{frame}
+
+\begin{frame}{Cálculo en el ejemplo}
+
+Matriz de entrada:
+                \[ \left [  \begin{array}{cccc}
+\textbf{2} & 8 & 3 & 4 \\
+\textbf{5} & 3 & 4 & 5 \\
+\textbf{1} & \textbf{2} & \textbf{2} & \textbf{1} \\
+3 & 4 & 6 & \textbf{5} \\
+ \end{array} \right ] \]
+
+Matriz de best:
+                \[ \left [  \begin{array}{cccc}
+\textbf{18} & 21 & 15 & 15 \\
+\textbf{16} & 13 & 12 & 11 \\
+\textbf{11} & \textbf{10} & \textbf{8} & \textbf{6} \\
+18 & 15 & 11 & \textbf{5} \\
+ \end{array} \right ] \]
+
+En ambas matrices, se indica un camino óptimo en negrita.
+
+\end{frame}
+
+
+\begin{frame}{Referencias}
+   \begin{itemize}
+   \item Introduction to Algorithms, 2nd Edition. MIT Press. Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein
+   Página 323: 15 Dynamic Programming
+  \end{itemize}
+\end{frame}
+
+
+\end{document}
