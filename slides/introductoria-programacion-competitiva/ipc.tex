@@ -1,0 +1,736 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[IPC] % (optional, use only with long paper titles)
+{Introducción a la programación competitiva (IPC)}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[TC 2018] % (optional, should be abbreviation of conference name)
+{Training Camp 2018}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+%\AtBeginSubsection[]
+\AtBeginSection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+  \end{multicols}
+  \end{frame}
+}
+%
+%\DeclareMathOperator*{\mimin}{min}
+%\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame} 
+\footnotesize
+\frametitle{Contenidos} 
+\begin{multicols}{2} 
+\tableofcontents
+\end{multicols}
+\end{frame}
+
+\section{Cantidad de operaciones}
+
+\begin{frame}{Cantidad de operaciones}
+    ¿Cuántas operaciones ``entran en tiempo''?
+    \begin{itemize}
+        \item Hasta $10^7$ : ¡Todo OK!
+        \item Entre $10^7$ y hasta $10^9$: ``Tierra incógnita''. Puede cambiar mucho según el costo de las operaciones.
+        \item Más de $10^9$: Casi con certeza total será demasiado lento.
+    \end{itemize}
+    Lo anterior asume:
+        \begin{itemize}
+            \item Hardware no extremadamente viejo.
+            \item Límites de tiempo del orden de ``segundos'' (ni minutos, ni milésimas).
+        \end{itemize}
+\end{frame}
+
+\section{Overflow}
+
+\begin{frame}{Overflow}
+    \begin{itemize}
+        \item Si uno no presta atención, es \textbf{extremadamente común} tener errores por culpa del overflow de enteros.
+        \item Es importante acostumbrarse a \textbf{siempre} revisar las cotas de todas las entradas, y calcular los posibles valores máximos de los números que maneja el programa. Suele ser multiplicar cotas de la entrada.
+        \item Ante la duda preferir tipos de 64 bits (long long en C++, long en Java) a tipos de 32 bits (int).
+        \item Ojo con \\ \texttt{long long mask = 1 << 33;} \\  que está mal. Debería ser \\ \texttt{long long mask = 1LL << 33;}
+        \item int: hasta $2^{31}-1 = 2.147.483.647$. Algo más de dos mil milllones.
+        \item long long: hasta $2^{63}-1$. Más de $10^{18}$, pero menos que $10^{19}$.
+    \end{itemize}
+\end{frame}
+
+\section{Aritmética modular}
+
+\begin{frame}{Aritmética modular}
+    \begin{itemize}
+        \item A veces, en problemas donde una respuesta sería muy grande, para no tener que manejar enteros enormes se pide ``módulo $M$''.
+        \item La aritmética ``módulo $M$'' consiste en hacer todas las cuentas tomando el resto de la división por $M$.
+        \item Si $M>0$ el resultado queda siempre entre $-M+1$ y $M-1$ inclusive.
+        \item El resultado final de hacer las cuentas modulo $M$ es el correcto, si solo hay +, - y multiplicaciones.
+        \item Es decir:
+            \begin{itemize}
+                \item (a+b)\%M en lugar de a+b
+                \item (a*b)\%M en lugar de a*b
+                \item (a-b)\%M en lugar de a-b
+            \end{itemize}
+        \item Ojo con la resta que puede generar negativos. $((x\%M)+M)\%M$ siempre lo deja positivo.
+    \end{itemize}
+\end{frame}
+
+
+\section{Fórmulas matemáticas fundamentales}
+
+\begin{frame}{Fórmulas matemáticas fundamentales}
+    \begin{itemize}
+        \item $1 + 2 + 3 + \cdots + n = \displaystyle\sum_{i=1}^{n}{i} = \frac{n (n+1)}{2}$
+        \item En general para progresiones aritméticas: $promedio \times cantidad$, y el promedio siempre es $\frac{primero + ultimo}{2}$
+        \item $\displaystyle\sum_{i=0}^n{x^i} = \frac{x^{n+1}-1}{x-1} = \frac{1 - x^{n+1}}{1 - x} $
+        \item $\displaystyle\sum_{i=0}^n{2^i} = 2^{n+1}-1 $
+    \end{itemize}
+\end{frame}
+
+\section{Funciones clave (C++)}
+
+\begin{frame}{Funciones clave (C++)}
+    \begin{itemize}
+        \item \texttt{sort} (algorithm) [begin, end]
+        \item \texttt{lower\_bound , upper\_bound, equal\_range} (algorithm) [begin, end, val]
+        \item \texttt{find} (algorithm) [begin, end, val]
+        \item \texttt{max\_element, min\_element} (algorithm) [begin, end]
+    \end{itemize}
+\end{frame}
+
+\section{Técnicas de debugging}
+
+\subsection{Testing por fragmentos}
+
+\begin{frame}{Testing por fragmentos}
+    \begin{itemize}
+        \item Cuando un programa va a tener que ``calcular cosas independientes'', conviene escribirlas por separado y testearlas independientemente.
+        \item Por ejemplo, supongamos que en un problema es útil tener una función $f(i,j)$ que calcula la suma de los elementos de un arreglo entre $i$ y $j$.
+        \item La función anterior tiene una consigna bien definida y tiene sentido testearla independientemente con valores de $i,j$ para ganar confianza en que no tiene error.
+        \item Una vez que ganamos confianza en la $f$, podemos revisar con cuidado el código en otras partes que usan $f$.
+        \item Si testeando $f$ encontramos un caso donde falla, ya sabemos que el bug es  en la $f$: con un caso que falla para todo el programa, no sabríamos dónde está el bug.
+    \end{itemize}
+\end{frame}
+
+
+\subsection{TDD sobre los fallos}
+\begin{frame}{TDD sobre los fallos}
+    \begin{itemize}
+        \item Al encontrar un bug en el código o en la idea, que sabemos como solucionar, es conveniente buscar y escribir un caso de prueba donde el programa falle, \textbf{antes} de solucionar el bug.
+        \item Es increíblemente común hacer esto, ir a solucionar el bug, volver a correr y descubrir que sigue dando mal!!
+        \item Es frecuente que un caso que logra hacer saltar un bug, también haga saltar otros bugs, así que tener el caso ayuda.
+        \item Regla muy útil: \textbf{no corregir el código hasta no tener un caso de prueba en el que el programa falle}.
+        \item Excepción: si solucionar el código y mandar en ese problema particular es muy fácil (por ejemplo es poner un +1), 
+                    pero buscar y armar un caso que rompa es difícil, puede ser razonable corregir y enviar.
+        
+    \end{itemize}
+\end{frame}
+
+\subsection{Flags del compilador (C++)}
+
+    \begin{frame}{Flags del compilador (C++)}
+        Utilizar los flags indicados en \url{http://wiki.oia.unsam.edu.ar/cpp-avanzado/opciones-gcc}
+    \end{frame}
+
+\subsection{Macro DBG (C++)}
+
+    \begin{frame}{Macro DBG (C++)}
+            \#define DBG(x) cerr <{}< \#x <{}< `` = '' <{}< (x) <{}< endl
+    \end{frame}
+
+
+\section{Estructuras fundamentales}
+    \subsection{Vector, Queue, Deque}
+    
+\begin{frame}{Vector}
+    \begin{itemize}
+        \item vector<int> en C++, con push\_back y pop\_back
+        \item ArrayList<Integer> en Java, con .add y .remove(list.size()-1)
+        \item list en Python (listas usuales como [1,2,3]), con .append y .pop
+        \item acceso con lista[i] o lista.get(i)
+        \item Sirven como \textbf{pila}
+        \item Las operaciones anteriores son $O(1)$ (amortizado)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Queue}
+    \begin{itemize}
+        \item queue<int> en C++, con push, front y pop
+        \item ArrayDeque<Integer> en Java, con .add, .getFirst y .remove
+        \item collections.deque en Python, con .append, deque[0] y .popleft
+        \item Sirven como \textbf{cola}
+        \item Las operaciones anteriores son $O(1)$ (amortizado)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Deque}
+    \begin{itemize}
+        \item deque<int> en C++, con push\_front, push\_back, pop\_front y pop\_back
+        \item ArrayDeque<Integer> en Java, con .addFirst, .addLast, .removeFirst y .removeLast
+        \item collections.deque en Python, con .appendleft, .append, .popleft y .pop
+        \item acceso con lista[i] (\textbf{no se puede en java!!})
+        \item Sirven como \textbf{cola de dos puntas}
+        \item Las operaciones anteriores son $O(1)$ (amortizado)
+    \end{itemize}
+\end{frame}
+
+    
+\subsection{HashSet, HashMap}
+
+\begin{frame}{HashSet}
+    \begin{itemize}
+        \item unordered\_set<int> en C++
+        \item HashSet<Integer> en Java
+        \item set en Python
+        \item Permiten insertar, borrar y consultar pertenencia en $O(1)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{HashMap}
+    \begin{itemize}
+        \item unordered\_map<int,int> en C++
+        \item HashMap<Integer,Integer> en Java
+        \item dict en Python
+        \item Permiten insertar, borrar y consultar pertenencia en $O(1)$
+        \item Son casi iguales a los HashSet, pero guardan un \textbf{valor asociado} a cada elemento
+    \end{itemize}
+\end{frame}
+
+
+\subsection{TreeSet,TreeMap}
+
+\begin{frame}{TreeSet}
+    \begin{itemize}
+        \item set<int> en C++
+        \item TreeSet<Integer> en Java
+        \item no hay (según versión) pero se puede usar collections.OrderedDict
+        \item Permiten insertar, borrar, consultar pertenencia y hacer lower\_bound o upper\_bound en $O(\lg N)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{TreeMap}
+    \begin{itemize}
+        \item map<int,int> en C++
+        \item TreeMap<Integer,Integer> en Java
+        \item collections.OrderedDict en Python
+        \item Permiten insertar, borrar, consultar pertenencia y hacer lower\_bound o upper\_bound en $O(\lg N)$
+        \item Son casi iguales a los TreeSet, pero guardan un \textbf{valor asociado} a cada elemento
+    \end{itemize}
+\end{frame}
+
+
+
+\section{Suma de prefijos (Tabla aditiva 1D)}
+
+\begin{frame}{Suma de prefijos (Tabla aditiva 1D)}
+  %%\pause
+  \begin{itemize}
+      \item Computamos una tabla con las sumas parciales de un arreglo
+      \item Por ejemplo, para 1 3 10 15 computamos 0 1 4 14 29
+      \item Nota: \texttt{partial\_sum} (numeric) y su inversa \texttt{adjacent\_differences} (numeric)
+      \item Ahora restando podemos obtener en cualquier momento, cualquier subrango.
+  \end{itemize}
+  
+\end{frame}
+
+
+\section{Entrada / Salida rápida en C, C++ y Java}
+
+\subsection{Contexto}
+
+\begin{frame}{¿Por qué conviene hacer eficiente la E/S?}
+  %%\pause
+  \begin{itemize}
+  \item En problemas de complejidad lineal o similar, las operaciones de E/S pueden insumir un porcentaje importante del tiempo total de ejecución, que es lo que se mide en la mayoría de las competencias.
+  \pause
+  \invisible<1>{
+      \item Aún si los tiempos elegidos por el jurado son generosos, y es posible con una solución esperada resolver el problema aún con mecanismos de E/S ineficientes, usar formas eficientes de hacer E/S nos permitirá siempre ``zafar'' con programas más lentos que si no lo hiciéramos así.
+      \pause
+      \invisible<1-2>{
+        \item Existen diferencias \textbf{muy simples y pequeñas} en la forma de realizar E/S en los programas, que \textbf{generan grandes diferencias} en el tiempo total insumido por estas operaciones. Conocer estas diferencias es entonces obtener un beneficio relevante con muy poco esfuerzo.
+      }
+  }
+  \end{itemize}
+  
+\end{frame}
+
+\subsection{C}
+
+\begin{frame}{Funciones printf y scanf}
+
+  \begin{itemize}
+      \item En C plano, la forma de E/S más utilizada son las funciones printf y scanf. Estas funciones \textbf{son eficientes}, y es la forma recomendada de realizar entrada salida en este lenguaje.
+      \item Ejemplo:
+      
+\texttt{\#include <stdio.h>}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ scanf("\%d\%d", \&x, \&y);}
+    
+\texttt{    \ \ \ printf("\%d\textbackslash n", x+y);}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\subsection{C++}
+
+\begin{frame}{Funciones printf y scanf}
+
+  \begin{itemize}
+      \item En C++, las mismas funciones scanf y printf siguen disponibles, y siguen siendo una opción eficiente para aquellos que estén acostumbrados o gusten de usarlas.
+      \item Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ scanf("\%d\%d", \&x, \&y);}
+    
+\texttt{    \ \ \ printf("\%d\textbackslash n", x+y);}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Streams cin y cout}
+
+  \begin{itemize}
+      \item La forma elegante de hacer E/S en C++ es mediante los streams cin y cout (Y análogos objetos fstream si hubiera que manipular archivos específicos en alguna competencia).
+      \item Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< endl;}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Por defecto en casos usuales, cin y cout son lentos}
+
+  \begin{itemize}
+      \item La eficiencia relativa de cin y cout vs scanf y printf dependerá del compilador y arquitectura en cuestión.
+      \item Dicho esto, en la mayoría de los compiladores y sistemas usuales utilizados en competencia, cin y cout son por defecto \textbf{mucho} más lentos que scanf y printf.
+      \item Veremos algunos trucos para que cin y cout funcionen más rápido. Con ellos, en algunos sistemas comunes funcionan más rápido que printf y scanf, pero la diferencia es muy pequeña.
+      \item En otras palabras, aplicando los trucos que veremos a continuación, da igual usar cin y cout o printf y scanf, ambas son eficientes.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Primera observación: endl}
+
+  \begin{itemize}
+      \item El valor ``endl'' no es solo un fin de línea, sino que además ordena que se realice un \textbf{flush del buffer}.
+      \item De esta forma, imprimir muchas líneas cortas (un solo entero, un solo valor Y/N, etc) realiza muchas llamadas a escribir directamente al sistema operativo, para escribir unos poquitos bytes en cada una.
+      \item \textbf{Solución:} utilizar \texttt{\textbackslash n} en su lugar. Esto es un sencillo caracter de fin de línea, que no ejecuta un flush del buffer.
+      \item Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< \textbf{"\textbackslash n"};}
+    
+\texttt{\}}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Segunda observación: sincronización con stdio}
+
+  \begin{itemize}
+      \item Por defecto, cin y cout están sincronizados con todas las funciones de stdio (notablemente, scanf y printf). Esto significa que si usamos ambos métodos, las cosas se leen y escriben en el orden correcto.
+      \item En varios de los compiladores usuales esto vuelve a cin/cout \textbf{mucho} más lentos, y si solamente usamos cin y cout pero \textbf{nunca scanf y printf}, no lo necesitamos.
+      \item \textbf{Solución:} utilizar \texttt{ios::sync\_with\_stdio(false)} al iniciar el programa, para desactivar esta sincronización. Notar que si hacemos esto, \textbf{ya no podemos usar printf ni scanf} (ni ninguna función de stdio) sin tener resultados imprevisibles.
+      \item Desactivar la sincronización también puede tener efectos al utilizar más de un thread. Esto no nos importa en ICPC.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Segunda observación: sincronización (ejemplo)}
+
+Esta optimización tiene efectos muy notorios, típicamente reduce el tiempo de ejecución a la mitad en varios jueces online comunes.
+
+Ejemplo:
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\textbf{\texttt{    \ \ \ ios::sync\_with\_stdio(false);}}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< "\textbackslash n";}
+    
+\texttt{\}}
+
+\end{frame}
+
+
+\begin{frame}{Tercera observación: dependencia entre cin y cout}
+
+  \begin{itemize}
+      \item Por defecto, cin está \textit{atado} a cout, lo cual significa que siempre antes de leer de cin, se fuerza un flush de cout. Esto hace que programas interactivos funcionen como se espera.
+      \item Cuando solo se hacen unas pocas escrituras con el resultado al final de toda la ejecución, esto no tiene un efecto tan grande.
+      \item Si por cada línea que leemos escribimos una en la salida, este comportamiento fuerza un flush en cada línea, como hacía endl.
+      \item \textbf{Solución:} utilizar \texttt{cin.tie(NULL)} al iniciar el programa, para desactivar esta dependencia. Notar que si hacemos esto, tendremos que realizar flush de cout manualmente si queremos un programa interactivo.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Tercera observación: dependencia (ejemplo)}
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\texttt{    \ \ \ ios::sync\_with\_stdio(false);}
+
+\textbf{\texttt{    \ \ \ cin.tie(NULL);}}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< "\textbackslash n";}
+    
+\texttt{\}}
+
+\end{frame}
+
+\begin{frame}{Ejemplo final con las 3 técnicas}
+      
+      \begin{itemize}
+           \item Eliminar sincronización con stdio
+           \item Eliminar dependencia entre cin y cout
+           \item No utilizar endl
+      \end{itemize}
+      
+\texttt{\#include <cstdio>}
+
+\texttt{using namespace std;}
+
+\texttt{int main() \{}
+
+\textbf{\texttt{    \ \ \ ios::sync\_with\_stdio(false);}}
+
+\textbf{\texttt{    \ \ \ cin.tie(NULL);}}
+
+\texttt{    \ \ \ int x,y;}
+    
+\texttt{    \ \ \ cin >{}> x >{}> y;}
+    
+\texttt{    \ \ \ cout <{}< x+y <{}< \textbf{"\textbackslash n"};}
+    
+\texttt{\}}
+
+\end{frame}
+
+\subsection{Java}
+
+\begin{frame}{InputStreams, OutputStreams, Readers, Writers}
+
+  \begin{itemize}
+      \item En Java existe la distinción entre los Streams (bytes) y los Readers / Writers (caracteres unicode).
+      \item Aún siendo todo ASCII, para archivos de texto uno termina trabajando siempre con readers y writers porque tienen las funciones más cómodas.
+      \item El ``análogo'' de cin y cout en Java es System.in y System.out. 
+      \item Sin embargo, hay que tener cierto cuidado ya que al operar con ellos directamente, no se bufferean las operaciones, y tenemos un problema de permanente flushing, similar al que ocurría en C++ con endl.
+      \item Particularmente, hacer \texttt{System.out.println(x)} es exactamente como \texttt{cout <{}< x <{}< endl}, y queremos evitarlo.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo típico de I/O con Java}
+
+\scriptsize
+
+\begin{verbatim}
+import java.io.*;
+import java.util.*;
+
+class HelloWorld {
+    public static void main(String [] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        long total = 0;
+        for (int i = 0; i < n; i++) {
+            long x = scanner.nextLong();
+            total += x;
+            System.out.println(total);
+        }
+    }
+}\end{verbatim}
+  
+  Esto es lento, porque no usa buffers, lee y escribe directamente.
+  
+\end{frame}
+
+
+\begin{frame}[fragile]{Introduciendo Buffers}
+
+\tiny
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+import java.io.*;
+import java.util.*;
+
+class HelloWorld \{
+    public static void main(String [] args) throws Exception \{
+        \textbf{BufferedReader br = new BufferedReader(new InputStreamReader(System.in));}
+        \textbf{BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));}
+
+        \textbf{Scanner scanner     = new Scanner(br);}
+        \textbf{PrintWriter printer = new PrintWriter(bw);}
+        int n = scanner.nextInt();
+        long total = 0;
+        for (int i = 0; i < n; i++) \{
+            long x = scanner.nextLong();
+            total += x;
+            \textbf{printer.println(total);}
+        \}
+        \textbf{printer.close();}
+    \}
+\}
+\end{Verbatim}
+  
+  ¡¡Notar el close!! No se puede omitir. Al usar buffers, printer.println no imprime en el momento, y sin flushear al final pueden quedar cosas pendientes de escribir en la salida (se observa una salida ``cortada'').
+  
+\end{frame}
+
+
+\begin{frame}[fragile]{En versiones nuevas de Java...}
+
+\tiny
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+import java.io.*;
+import java.util.*;
+
+class HelloWorld \{
+    public static void main(String [] args) throws Exception \{
+        \textbf{Scanner scanner     = new Scanner(System.in);}
+        \textbf{PrintWriter printer = new PrintWriter(System.out);}
+        int n = scanner.nextInt();
+        long total = 0;
+        for (int i = 0; i < n; i++) \{
+            long x = scanner.nextLong();
+            total += x;
+            \textbf{printer.println(total);}
+        \}
+        \textbf{printer.close();}
+    \}
+\}
+\end{Verbatim}
+  
+  En versiones nuevas, esto ``zafaría'', gracias a que Scanner y PrintWriter usan buffers internos. Notar que usar System.out y System.in directamente sin envolverlos nunca usan buffers.
+  
+  No obstante, la versión anterior es la jugada segura todo terreno. Si el rendimiento de E/S puede importar, \textbf{siempre usar buffers}.
+  
+\end{frame}
+
+\begin{frame}[fragile]{Más eficientes, pero más incómodos}
+
+\tiny
+
+Podemos evitar por completo PrintWriter y Scanner y resolver todo con BufferedWriter y BufferedReader:
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+import java.io.*;
+import java.util.*;
+
+class HelloWorld \{
+    public static void main(String [] args) throws Exception \{
+        \textbf{BufferedReader br = new BufferedReader(new InputStreamReader(System.in));}
+        \textbf{BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));}
+        
+        int n = \textbf{Integer.valueOf(br.readLine());}
+        long total = 0;
+        for (int i = 0; i < n; i++) \{
+            long x = \textbf{Long.valueOf(br.readLine());}
+            total += x;
+            \textbf{bw.write(String.valueOf(total));}
+            \textbf{bw.newLine();}
+        \}
+        \textbf{bw.close();}
+    \}
+\}
+\end{Verbatim}
+  
+  La diferencia entre PrintWriter y BufferedWriter no es muy grande (En casos como el ejemplo, < 10\% ).
+  
+  La diferencia entre Scanner y BufferedReader es potencialmente muy grande (puede ser un 50\%). Otra función a evitar en estos casos es \texttt{String.split}, que es bastante lenta.
+  
+\end{frame}
+
+\subsection{Python}
+
+\begin{frame}{No todos los python son iguales}
+
+Python 2 $\neq$ Python 3 
+
+Tienen algunas diferencias en una de las formas eficientes de E/S.
+
+\end{frame}
+
+\begin{frame}{Instrucciones de entrada}
+
+Python2:
+
+\begin{enumerate}
+    \item input() vs raw\_input()
+    \item raw\_input() devuelve un string con la siguiente línea de \texttt{stdin}.
+    \item input() interpreta la siguiente línea como una expresión y devuelve su resultado.
+    \item ¿Cuál es más eficiente?
+    
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Instrucciones de entrada (cont.)}
+
+Python3: Solo hay input(). No hay más raw\_input().
+
+\begin{enumerate}
+    \item Pero ahora input() es lo que en python2 era el raw\_input()
+    \item Si uno quisiera el ``viejo input()'', en python3 se hace con eval(input())
+    
+\end{enumerate}
+
+
+\end{frame}
+
+
+\section {Algunos ejemplos archiclásicos}
+
+\subsection{Maximum subarray sum}
+    \begin{frame}{Maximum subarray sum}
+        \begin{itemize}
+            \item Se tiene un arreglo de números enteros, positivos y negativos.
+            \item ¿Cuál es el subarreglo de mayor suma?
+        \end{itemize}
+    \end{frame}
+
+\subsection{Movimiento de bloques}
+    \begin{frame}{Movimiento de bloques}
+        \begin{itemize}
+            \item Tenemos bloques indistinguibles, ubicados en ciertas posiciones iniciales de un arreglo.
+            \item Queremos llevarlos a una configuracion final de los bloques.
+            \item Puede haber mas de un bloque en la misma casilla en cualquier momento.
+            \item ¿Cuál es la mínima cantidad de movimientos necesaria?
+        \end{itemize}
+    \end{frame}
+
+\end{document}
