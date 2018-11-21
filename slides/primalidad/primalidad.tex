@@ -285,7 +285,7 @@ Sin embargo, la implementación anterior puede resultar problemática al trabaja
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Aplicación 2: Testeo de residuo cuadrático}
+\begin{frame}{Aplicación 2: Verificación de residuo cuadrático}
   \begin{block}{Definición}
   Un resto $r$ se dice un \textit{residuo cuadrático} módulo $p$ si existe $x$ tal que $x^2 \equiv r \modulo{p}$
   \end{block}
@@ -446,7 +446,7 @@ Este método realiza solamente $O(\lg b)$ multiplicaciones.
       \item Hasta ahora, cada número compuesto es tachado \textbf{varias veces}.
       \item Si logramos tachar cada uno una sola vez, la criba será lineal.
       \item Plan: tacharlo únicamente multiplicando por \textbf{su menor primo}.
-      \item Si vamos guardando los primos encontramos durante la misma criba, es posible hacer esto.
+      \item Si vamos guardando los primos encontrados durante la misma criba, es posible hacer esto.
       \item Cantidad de operaciones: $\Theta(N)$.
   \end{itemize}
 
