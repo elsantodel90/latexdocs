@@ -1,0 +1,614 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \useoutertheme{infolines}
+  \usecolortheme[RGB={125,173,51}]{structure}
+  %\usetheme[height=7mm]{Rochester}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{multicol}
+\usepackage{verbatim} 
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\ttfamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	morekeywords={tint,forn,forsn},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title % (optional, use only with long paper titles)
+{Strings}
+
+\author[Agustín Gutiérrez] % (optional, use only with lots of authors)
+{~Agustín Santiago Gutiérrez}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+\date[TC 2018] % (optional, should be abbreviation of conference name)
+{Training Camp Argentina 2018}
+
+% Acá se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+%\AtBeginSection[]
+{
+  \begin{frame}{Contenidos}
+  \footnotesize
+%  \begin{multicols}{2} 
+    \tableofcontents[currentsection, currentsubsection]
+%  \end{multicols}
+  \end{frame}
+}
+%
+%\DeclareMathOperator*{\mimin}{min}
+%\DeclareMathOperator*{\mimax}{max}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame} 
+\footnotesize
+\frametitle{Contenidos} 
+%\begin{multicols}{2} 
+\tableofcontents
+%\end{multicols}
+\end{frame}
+
+
+\begin{frame}
+    `` If a string has one end, then it has another end.''
+    \vfill
+        {\hfill Miksch's Law}
+\end{frame}
+
+\section{Tries}
+
+\subsection{Idea y definición}
+
+\begin{frame}{Idea}
+
+    \begin{itemize}
+        \footnotesize
+        \item Guardar un \textbf{conjunto de cadenas}, en un \textbf{árbol}.
+        \item Por cada \textbf{hijo} de un nodo, hay una posible \textbf{elección} del \textbf{siguiente carácter}.
+        \item Cada \textbf{camino} desde la raíz hasta un nodo, corresponde a una cadena posible.
+        \item Los strings a priori \textbf{no están explícitamente almacenados} en ningún nodo.
+    \end{itemize}
+
+    {{\includegraphics[scale=0.4]{trie.jpg}} \hfill  \parbox{3cm}{a,at,ate  on,one,out  me,mud,my \linebreak \linebreak \linebreak \linebreak \linebreak \linebreak }}
+
+\end{frame}
+
+\begin{frame}{Qué almacenar en los nodos}
+
+    \begin{itemize}
+        \item Toda la información útil del nodo (string particular)
+        \item Toda la información útil del subárbol (strings con ese prefijo)
+        \item Ejemplos típicos
+            \begin{itemize}
+                \item Booleano (aparece o no la palabra)
+                \item Contador (tamaño del subárbol, o sea cantidad con ese prefijo)
+                \item Máxima cadena con ese prefijo (con algún peso, longitud, etc)
+            \end{itemize}
+        \item Es común usar programación dinámica o técnicas de árboles sobre un trie
+        \item Es común querer tener los \textbf{hijos ordenados} para recorrer lexicográficamente
+    \end{itemize}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Implementación fácil recomendada}
+
+    \begin{verbatim}
+        struct Trie // Ejemplo: solo guarda
+        {           // si esta o no la cadena
+            bool esta;
+            map<char,Trie> hijos;
+            Trie () { esta = false; }
+        };
+    \end{verbatim}
+
+    Para insertar \texttt{hola}:
+
+    \begin{verbatim}
+        Trie t;
+        t.hijos['h'] // Se crean
+         .hijos['o'] // automaticamente
+         .hijos['l'] // nuevos nodos
+         .hijos['a'].esta = true;
+    \end{verbatim}
+    
+
+\end{frame}
+
+\begin{frame}[fragile]{Implementación (con insertar recursivo)}
+
+    \begin{verbatim}
+        struct Trie // Ejemplo: solo guarda
+        {           // si esta o no la cadena
+            bool esta;
+            map<char,Trie> hijos;
+            Trie () { esta = false; }
+            void insertar(const string &s, int pos) {
+                if (pos < int(s.size()))
+                    hijos[s[pos]].insertar(s,pos+1);
+                else
+                    esta = true;
+            }
+            void insertar(const string &s) {
+                insertar(s, 0);
+            }
+        };
+    \end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Implementación (con buscar recursivo)}
+
+    \footnotesize
+    \begin{verbatim}
+        struct Trie // Ejemplo: solo guarda
+        {           // si esta o no la cadena
+            bool esta;
+            map<char,Trie> hijos;
+            Trie () { esta = false; }
+            bool buscar(const string &s, int pos) {
+                if (pos < int(s.size()))
+                    return hijos.find(s[pos]) != hijos.end() && 
+                           hijos[s[pos]].buscar(s,pos+1);
+                else
+                    return esta;
+            }
+            bool buscar(const string &s) {
+                buscar(s, 0);
+            }
+        };
+    \end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Implementación (con insertar iterativo)}
+
+    \begin{verbatim}
+        struct Trie // Ejemplo: solo guarda
+        {           // si esta o no la cadena
+            bool esta;
+            map<char,Trie> hijos;
+            Trie () { esta = false; }
+            void insertar(const string &s) {
+                Trie *t = this;
+                for (char c : s)
+                    t = &t->hijos[c];
+                t->esta = true;
+            }
+        };
+    \end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{Implementación (con buscar iterativo)}
+
+    \footnotesize
+    \begin{verbatim}
+        struct Trie // Ejemplo: solo guarda
+        {           // si esta o no la cadena
+            bool esta;
+            map<char,Trie> hijos;
+            Trie () { esta = false; }
+            bool buscar(const string &s) {
+                Trie *t = this;
+                for (char c : s)
+                    if (t->hijos.find(c) != t->hijos.end())
+                        t = &t->hijos[c];
+                    else
+                        return false;
+                return t->esta;
+            }
+        };
+    \end{verbatim}
+
+\end{frame}
+
+
+\subsection{Ejemplos}
+
+\begin{frame}{Uso como diccionario}
+    Si se opera con una palabra de longitud $L$:
+
+    \begin{itemize}
+        \item Los Trie permiten implementar conjuntos y diccionarios de Strings con tiempo lineal en $L$
+        \item Un \texttt{map<string, int>} en cambio tarda $L \cdot \lg n$ por acceso, que depende de $n$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Problema del estribillo}
+    \begin{itemize}
+        \item Dado el texto de una canción, determinar su estribillo.
+        \item Definición: el estribillo es la máxima subcadena del texto que aparece \textbf{al menos dos veces, sin solaparse}.
+        \item Complejidad de soluciones directas: $O(N^4)$, $O(N^3 \lg N)$, $O(N^3)$
+        \item ¿Con un simple Trie? \pause \invisible<1>{$O(N^2)$: Insertamos los substring en un Trie.
+        \item Cuando hay \textbf{muchos prefijos compartidos}, los Tries permiten ahorrar tiempo
+        }
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Queries por prefijos}
+    \begin{itemize}
+        \item Máximo peso empezando con tal prefijo (autocompletar)
+        \item Sumar longitudes de las palabras que empiezan con tal prefijo
+
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Segment Tree}
+    \begin{itemize}
+        \item Observación: Un Segment Tree es un Trie, donde las cadenas son la representación en binario de los índices.
+            \begin{itemize}
+                \item $0$ genera números más chicos y va a la mitad izquierda 
+                \item $1$ genera números más grandes y va a la mitad derecha 
+            \end{itemize}
+        
+        \item Por eso las técnicas de árboles aplican por igual a Trie y a Segment Tree:
+            \begin{itemize}
+                \item Lazy Creation
+                \item Persistencia
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Problema de los equipos de Rugby}
+    \begin{itemize}
+        \item \url{http://www.dc.uba.ar/events/icpc/download/problems/taip2012-problems.pdf}
+        \item Problema D: Diseño de camisetas
+            \begin{itemize}
+                \item Dos equipos, de $N$ jugadores cada uno
+                \item Cada jugador tiene su propio apellido
+                \item Hay que hacer $N$ camisetas que sirvan para cualquiera de los dos
+                \item Cada camiseta debe tener un \textbf{prefijo} del nombre de quien la usa
+                \item Escribir la máxima cantidad de letras en total en las camisetas
+            \end{itemize}
+        
+        \pause
+        
+        \invisible<1>{
+        
+        \item Idea: Mirando todo en el Trie de los nombres, los hijos inducen problemas separados.
+        }
+        \pause
+        
+        \invisible<1-2>{
+        
+        \item Código: Meter ambos equipos en un Trie, haciendo \texttt{A++} y \texttt{B++} en cada caso, por todos los nodos visitados.
+        \item La respuesta final es sumar $min(A,B)$ sobre todos los nodos (menos la raíz).
+        }
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Problema de los equipos de Rugby (código)}
+\tiny
+    \begin{verbatim}
+int N,ret;
+struct Trie {
+    int v[2];
+    map<char, Trie> h;
+    
+    Trie() : v{0,0} {}
+    void solve() {
+        for(auto &it : h)
+            it.second.solve();
+        ret += min(v[0], v[1]);
+    }
+};
+int main() {
+    while (scanf("%d", &N) && (N != -1)) {
+        Trie root;
+        forn(k,2)
+        forn(i,N) {
+            static char name[128];
+            assert(scanf("%s", name));
+            Trie *t = &root;
+            for(char *p = name; *p; p++) {
+                t = &t->h[*p];
+                t->v[k]++;
+            }
+        }
+        ret = 0;
+        root.solve();
+        printf("%d\n", ret);
+    }
+    return 0;
+}\end{verbatim}
+\end{frame}
+
+\section{Algoritmo Z}
+\subsection{Arreglo Z}
+
+\begin{frame}{Idea}
+
+    \begin{itemize}
+        \item Dadas dos cadenas, compararlas es ``ir buscando coincidencias'' hasta la primera diferencia.
+        \item Vamos a ``ir buscando coincidencias'' \textbf{contra el comienzo del string}, para \textbf{cada posición del string}.
+        \item Vamos a anotar para cada posición del arreglo, cuántas coincidencias contra el comienzo hay \textbf{empezando desde allí}.
+        \item Ejemplo: \texttt{banabanba} genera el arreglo \texttt{9 0 0 0 3 0 0 2 0}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Idea (cont)}
+
+    \begin{itemize}
+        \item Definición: $lcp(i,j)$ es la cantidad de coincidencias, si empezamos a comparar en $i$ y en $j$.
+        \item Es decir: $lcp(i,j)$ es el \textit{longest common prefix} entre los sufijos que empiezan en las posiciones $i$ y $j$ de la cadena.
+        \item Observación: $z[i] = lcp(i,0)$, por la definición del arreglo $z$.
+        \item Tiempo de cómputo trivial: $O(n^2)$
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Algoritmo eficiente}
+
+    \begin{itemize}
+        \item Se puede computar el arreglo $z$ en $O(n)$
+        \item Idea clave: solo se paga caro, si hay muchas coincidencias. Podemos ``usar esa información'' para abaratar futuras preguntas.
+        \item El algoritmo mantiene todo el tiempo un $j$, tal que ``ya se han observado'' los caracteres hasta $j$.
+        \item Además mantiene un $i$ lo más chico posible, de manera tal que la subcadena del rango $[i,j)$ es prefijo de la cadena.
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Ejemplo: bambambab}
+
+    {\hfill \texttt{{\color{red}\only<1>{\color{black}}b}{\only<2->{\color{red}}am}{\only<3->{\color{red}}\only<3-5>{\color{blue}}bamba}{\only<6->{\color{red}}b}} \hfill}
+
+    {\hfill \texttt{9\only<1>{..}\only<2->{00}\only<3->{5}\only<1-2>{.}\only<1-3>{...}\only<4->{00}\only<4>{\textbf{5}}\only<5->{2}\only<1-5>{..}\only<6->{01}} \hfill}
+
+    \footnotesize
+
+    \begin{itemize}
+        \item Inicializamos con la longitud, pues siempre $lcp(0,0) = n$
+        \item Además tenemos $i=1$ y $j=1$.
+        \pause
+        \item A continuación, vamos explorando los nuevos caracteres, pero no hay coincidencias.
+        \item Quedamos en $i=j=3$.
+        \pause
+        \item Exploramos y queda $i=3, j=8$. $[i,j)$ en azul \textbf{ya sabemos que coincide}.
+        \pause
+        \item Para todos los de la zona azul, podemos saber lo que pasa dentro de la zona azul en $O(1)$, copiando valores anteriores ya calculados.
+        \item ¡Pero ojo, el 5 se sale de la zona azul!  Hay que verificar:
+            \pause
+            \begin{itemize}
+                \item En este caso queda en 2.
+                \item Si la última fuera \texttt{m}, seguiríamos expandiendo la frontera azul.
+            \end{itemize}
+        \pause
+        \item Como en cada paso llenamos uno más, o bien avanzamos lo azul, es $O(n)$
+        
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Código}
+
+    \begin{verbatim}
+        int i = 1, j = 1;
+        z[0] = n;
+        for (int pos=1;pos<n;pos++) {
+            if (j < pos)
+                i = j = pos;
+            int k = min(z[pos-i], j-pos);
+            while (pos+k < n && s[pos+k] == s[k])
+                k++;
+            z[pos] = k;
+            if (pos+k > j) {
+                j = pos+k;
+                i = pos;
+            }
+        }
+    \end{verbatim}
+
+\end{frame}
+
+
+\subsection{String matching: aplicaciones}
+
+\begin{frame}{El problema String matching}
+     \begin{itemize}
+        \item Dada una cadena $A$ y otra $B$, dar todas las apariciones de $A$ dentro de $B$.
+        \item Ya vimos cómo ``ir comparando'' \textbf{contra el comienzo} del string.
+        \item Si armo el arreglo $z$  de la cadena $AB$,en aquellos valores de la parte $B$ que sean al menos $|A|$ hay apariciones.
+     \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Problemas de String Matching}
+     \begin{itemize}
+        \item Verificar si una cadena es rotación de otra
+        \item Plagio musical: Buscar un patrón ``trasladado'' (1 10 3 5 = 3 12 5 7)
+        \item Armar notas a partir del diario: $O(N^2)$. \\ \url{https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1521}
+     \end{itemize}
+\end{frame}
+
+\subsection{Bordes de una cadena}
+
+\begin{frame}{El problema de bordes}
+     \begin{itemize}
+        \item Dada una cadena $S$, se le llama un \textbf{borde} de $S$, a un prefijo que es al mismo tiempo sufijo.
+        \item Es fácil identificar bordes con el arreglo $z$: Es borde si y solo si $z[i] = n-i$
+        \item Tabla de KMP: Borde máximo de cada prefijo. Se puede generar fácilmente a partir del arreglo $z$.
+        \item Relación entre bordes y períodos: $P$ es período del string, si y solo si $n-P$ es borde.
+        \item Sirve para detectar potencias: $S$ es una potencia, si y solo si tiene un período que divide a $|S|$
+     \end{itemize}
+\end{frame}
+
+\begin{frame}{Ejemplo}
+     \begin{itemize}
+        \item File recovery: Dado un string $S$ y un tamaño $n$, cuántas veces puede aparecer $S$ como máximo en una cadena de tamaño $n$.
+        \item Mayor sufijo palindrómico \\ \url{https://www.spoj.com/problems/EPALIN/}
+        \item Tarea: \url{https://www.spoj.com/problems/PERIOD/}
+     \end{itemize}
+\end{frame}
+
+\section{Hash de Rabin-Karp}
+\subsection{Definición y cálculo}
+
+\begin{frame}{Idea}
+     \begin{itemize}
+        \item Un número en la vida cotidiana lo escribimos en ``texto''. Así que es un String.
+        \item ¿Cómo es este mapeo de un String a un número?
+         \pause
+        \invisible<1>{
+        \item Hay una base ($X=10$), y ``325'' representa $3X^2 + 2X + 5$, un \textbf{polinomio}.
+        \item Podemos pensar cualquier string como un polinomio
+            \begin{itemize}
+                \item Se pueden pensar las letras como números $0,1,2,\cdots$ en el orden del alfabeto.
+                \item Las letras de la cadena serán los coeficientes.
+                \item Ejemplo: $BAC \rightarrow 2X^2 + 1X + 3$
+            \end{itemize}
+        }
+        \item Si hacemos la cuenta para un $X > |\Sigma|$, cada string tendrá un número único.
+        
+     \end{itemize}
+\end{frame}
+
+\begin{frame}{Hash de Rabin-Karp}
+     \begin{itemize}
+        \item Al número anterior se lo llama el hash del string.
+        \item ¿Qué pasa con el hash al agregar un caracter a derecha?
+        \pause
+        \invisible<1>{
+            \item $H \rightarrow H\cdot X + c$
+            \item ¿Y a la izquierda?
+        }
+        \pause
+        \invisible<1-2>{
+            \item $H \rightarrow H + c \cdot X^L$
+        }
+        
+     \end{itemize}
+        \invisible<1-2>{
+     Similarmente, se puede restar o despejar con cuidado para borrar un caracter de la punta.
+     
+     $S=c_{left} S' \rightarrow S'c_{right}$
+     
+     $H \rightarrow H \cdot X + c_{right} - c_{left} \cdot X^L$
+     
+     Conclusión: Al moverse, se actualiza en $O(1)$
+     }
+\end{frame}
+
+\begin{frame}{Idea de Rabin-Karp}
+     \begin{itemize}
+        \item Para hacer string-matching y similares, trabajar con los numeritos. Como son $O(1)$ cuentas, es todo eficiente.
+        \pause
+        \invisible<1>{
+            \item Problema: números enormes: overflow o complejidad mala, como usar string directo.
+            \item Rabin y Karp lo sabían: Proponen hacer todo módulo $P$, para algún primo $P$.
+            \item Sugerencia: Usar 3 primos distintoss \textbf{al azar}, entre $10^9$ y $2 \cdot 10^9$. La chance de colisión (falso positivo) es despreciable.
+            \item Cuidado con las colisiones: Con un solo primo de ese tamaño, hay colisión seguro en muchos casos. Y con 2 está medio al borde.
+        }
+     \end{itemize}
+\end{frame}
+
+\begin{frame}{Cálculo $O(1)$}
+     \begin{itemize}
+        \item Precomputamos $T[i] = hash(S[0, i))$.
+        \item El hash de $S[i,j)$ es $T[j] - T[i] \cdot X^{j-i}$ (precomputar los $X^k$)
+     \end{itemize}
+\end{frame}
+
+
+
+\subsection{Ejemplos de uso}
+
+\begin{frame}{Ejemplos}
+     \begin{itemize}
+        \item LCP general en $\lg n$ (en particular, arreglo Z en $n \lg n$)
+        \item Comparacion general de dos sufijos
+        \item Sufijo / rotación lexicográficamente mínima (comparando)
+        \item ``Algoritmo de Manacher'' en $n \lg n$
+        \item Máximo substring común entre varios strings, en $n \lg^2 n$ (o $n \lg n$ con tabla hash)
+        \item Problema del estribillo $O(n lg^2 n)$
+        \item Búsqueda rápida de varios $S_1, S_2, \cdots, S_n$ de una misma longitud, dentro de $T$
+        \item Búsqueda rápida de patrón rectangular en una grilla
+     \end{itemize}
+\end{frame}
+
+
+\section{Suffix Array / BWT}
+
+\subsection{Definiciones}
+\begin{frame}{Definiciones}
+     \begin{itemize}
+        \item Definición: arreglo con todos los sufijos (identificados por índice) \textbf{en orden lexicográfico}
+        \item Se computa fácil con hashing (permite comparar dos cualquiera) + sort. Total: $n \lg^2 n$.
+        \item Estructura extremadamente útil: es como tener ``un trie con todos los sufijos'' pero en forma ``camuflada'', con un costo operativo de $\lg n$ por cada paso.
+        \item La Burrows-Wheeler Transform es lo mismo que el suffix array pero con las rotaciones (se puede computar fácilmente cualquiera de los dos teniendo el otro) 
+     \end{itemize}
+\end{frame}
+
+\subsection{Ejemplos}
+\begin{frame}{Ejemplos}
+     \begin{itemize}
+        \item Armar notas a partir del diario: $O(N \lg N)$. \\ \url{https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1521}
+        \item Responder queries de cantidad de apariciones de substring arbitrario en $O(s \lg N)$ por query
+     \end{itemize}
+\end{frame}
+
+
+
+\end{document}
