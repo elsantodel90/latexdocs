@@ -173,7 +173,7 @@
 \begin{frame}{Funciones clave (C++)}
     \begin{itemize}
         \item \texttt{sort} (algorithm) [begin, end]
-        \item \texttt{lower\_bound , upper\_bound, equal\_range} (algorithm) [begin, end, val]
+        \item \texttt{lower\_bound , upper\_bound, equal\_range} (algorithm) [begin, end, val]. \textbf{¡¡NO USAR CON SET Y MAP!!}
         \item \texttt{find} (algorithm) [begin, end, val]
         \item \texttt{max\_element, min\_element} (algorithm) [begin, end]
     \end{itemize}
@@ -189,7 +189,7 @@
         \item Por ejemplo, supongamos que en un problema es útil tener una función $f(i,j)$ que calcula la suma de los elementos de un arreglo entre $i$ y $j$.
         \item La función anterior tiene una consigna bien definida y tiene sentido testearla independientemente con valores de $i,j$ para ganar confianza en que no tiene error.
         \item Una vez que ganamos confianza en la $f$, podemos revisar con cuidado el código en otras partes que usan $f$.
-        \item Si testeando $f$ encontramos un caso donde falla, ya sabemos que el bug es  en la $f$: con un caso que falla para todo el programa, no sabríamos dónde está el bug.
+        \item Si testeando $f$ encontramos un caso donde falla, ya sabemos que hay un bug \textbf{en la $\mathbf{f}$:} con un caso que falla para todo el programa, no sabríamos dónde hay bugs.
     \end{itemize}
 \end{frame}
 
@@ -197,8 +197,8 @@
 \subsection{TDD sobre los fallos}
 \begin{frame}{TDD sobre los fallos}
     \begin{itemize}
-        \item Al encontrar un bug en el código o en la idea, que sabemos como solucionar, es conveniente buscar y escribir un caso de prueba donde el programa falle, \textbf{antes} de solucionar el bug.
-        \item Es increíblemente común hacer esto, ir a solucionar el bug, volver a correr y descubrir que sigue dando mal!!
+        \item Al encontrar un bug en el código o en la idea, que sabemos cómo solucionar, es conveniente buscar y escribir un caso de prueba donde el programa falle, \textbf{antes} de solucionar el bug.
+        \item Es increíblemente común hacer esto, ir a solucionar el bug, volver a correr ¡¡Y descubrir que sigue dando mal!!
         \item Es frecuente que un caso que logra hacer saltar un bug, también haga saltar otros bugs, así que tener el caso ayuda.
         \item Regla muy útil: \textbf{no corregir el código hasta no tener un caso de prueba en el que el programa falle}.
         \item Excepción: si solucionar el código y mandar en ese problema particular es muy fácil (por ejemplo es poner un +1), 
@@ -284,8 +284,8 @@
     \begin{itemize}
         \item set<int> en C++
         \item TreeSet<Integer> en Java
-        \item no hay (según versión) pero se puede usar collections.OrderedDict
-        \item Permiten insertar, borrar, consultar pertenencia y hacer lower\_bound o upper\_bound en $O(\lg N)$
+        \item En Python no hay. ¡Ojo! collections.OrderedDict \textbf{es otra cosa}
+        \item Permiten insertar, borrar, consultar pertenencia y hacer \texttt{s.lower\_bound} o \texttt{s.upper\_bound} en $O(\lg N)$
     \end{itemize}
 \end{frame}
 
@@ -293,7 +293,7 @@
     \begin{itemize}
         \item map<int,int> en C++
         \item TreeMap<Integer,Integer> en Java
-        \item collections.OrderedDict en Python
+        \item ``collections.OrderedDict'' en Python \textbf{(pero no es..)}
         \item Permiten insertar, borrar, consultar pertenencia y hacer lower\_bound o upper\_bound en $O(\lg N)$
         \item Son casi iguales a los TreeSet, pero guardan un \textbf{valor asociado} a cada elemento
     \end{itemize}
@@ -484,7 +484,7 @@ Ejemplo:
       \item Por defecto, cin está \textit{atado} a cout, lo cual significa que siempre antes de leer de cin, se fuerza un flush de cout. Esto hace que programas interactivos funcionen como se espera.
       \item Cuando solo se hacen unas pocas escrituras con el resultado al final de toda la ejecución, esto no tiene un efecto tan grande.
       \item Si por cada línea que leemos escribimos una en la salida, este comportamiento fuerza un flush en cada línea, como hacía endl.
-      \item \textbf{Solución:} utilizar \texttt{cin.tie(NULL)} al iniciar el programa, para desactivar esta dependencia. Notar que si hacemos esto, tendremos que realizar flush de cout manualmente si queremos un programa interactivo.
+      \item \textbf{Solución:} utilizar \texttt{cin.tie(nullptr)} al iniciar el programa, para desactivar esta dependencia. Notar que si hacemos esto, tendremos que realizar flush de cout manualmente si queremos un programa interactivo.
   \end{itemize}
   
 \end{frame}
@@ -601,7 +601,7 @@ class HelloWorld \{
             total += x;
             \textbf{printer.println(total);}
         \}
-        \textbf{printer.close();}
+        \textbf{printer.close();} // En codigo real, usar try-finally o try-with-resources
     \}
 \}
 \end{Verbatim}
@@ -630,7 +630,7 @@ class HelloWorld \{
             total += x;
             \textbf{printer.println(total);}
         \}
-        \textbf{printer.close();}
+        \textbf{printer.close();} // En codigo real, usar try-finally o try-with-resources
     \}
 \}
 \end{Verbatim}
@@ -664,7 +664,7 @@ class HelloWorld \{
             \textbf{bw.write(String.valueOf(total));}
             \textbf{bw.newLine();}
         \}
-        \textbf{bw.close();}
+        \textbf{bw.close();} // En codigo real, usar try-finally o try-with-resources
     \}
 \}
 \end{Verbatim}
@@ -728,7 +728,7 @@ Python3: Solo hay input(). No hay más raw\_input().
         \begin{itemize}
             \item Tenemos bloques indistinguibles, ubicados en ciertas posiciones iniciales de un arreglo.
             \item Queremos llevarlos a una configuracion final de los bloques.
-            \item Puede haber mas de un bloque en la misma casilla en cualquier momento.
+            \item Puede haber más de un bloque en la misma casilla en cualquier momento.
             \item ¿Cuál es la mínima cantidad de movimientos necesaria?
         \end{itemize}
     \end{frame}
