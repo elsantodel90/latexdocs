@@ -63,8 +63,8 @@
   Facultad de Ciencias Exactas y Naturales\\
   Universidad de Buenos Aires
 }
-\date[TC 2018] % (optional, should be abbreviation of conference name)
-{Training Camp Argentina 2018}
+\date[TC 2020] % (optional, should be abbreviation of conference name)
+{Training Camp Argentina 2020}
 
 % Acá se puede insertar el logo de la UBA
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
@@ -109,16 +109,28 @@
 %\end{multicols}
 \end{frame}
 
-\begin{frame}
-    \textbf{Advertencia:} Estas diapos no son autocontenidas. Les faltan todos los dibujos (pizarrón), y explicaciones clave.
-\end{frame}
+%\begin{frame}
+%    \textbf{Advertencia:} Estas diapos no son autocontenidas. Les faltan todos los dibujos (pizarrón), y explicaciones clave.
+%\end{frame}
 
 
 \begin{frame}
     ``[...] geometry, however, is not concerned with the relation of the ideas involved in it to objects of experience, but only with the logical \textbf{connection of these ideas among themselves}.''
-    \vfill
+    
+    \ 
+    
         {\hfill Albert Einstein, \textit{Relativity: The special and general theory}, 1920}
+        
+    \vfill    
+        
+    ``The convex hull trick is a technique [...] used to determine efficiently [...]. \textbf{It has little to do with convex hull algorithms}.''
+    
+    \ 
+    
+        {\hfill Una de las referencias en bibliografía, que no sabe dualidad.}
+
 \end{frame}
+
 
 \section{Repaso de cápsula convexa (convex hull)}
 
@@ -158,8 +170,8 @@
         \item Cantidad de vértices de la cápsula convexa de puntos en el plano
         \item Máxima cantidad de puntos alineados
         \item ``A qué altura pega la lluvia para un cierto $x$''
-        \item Máxima cantidad de ``gráficos de rectas incomparables''
-        \item Mínima cantidad de torres necesarias para apilar mesadas
+%        \item Máxima cantidad de ``gráficos de rectas incomparables''
+%        \item Mínima cantidad de torres necesarias para apilar mesadas
     \end{itemize}
     \pause
         \invisible<1>{\hfill \textbf{¿Cuáles de estos se relacionan?} \hfill}
@@ -173,8 +185,8 @@
         \item Máxima cantidad de puntos alineados
         \item Máxima cantidad de rectas concurrentes\\ \ 
         
-        \item Mínima cantidad de torres necesarias para apilar mesadas
-        \item Máxima cantidad de ``gráficos de rectas incomparables''\\ \ 
+ %       \item Mínima cantidad de torres necesarias para apilar mesadas
+ %       \item Máxima cantidad de ``gráficos de rectas incomparables''\\ \ 
 
         \item Cantidad de vértices de la cápsula convexa de puntos en el plano
         \item Cantidad de rectas ``sobre las que pega la lluvia''\\ \ 
@@ -188,6 +200,20 @@
         \invisible<1>{\hfill \textbf{¿Les parecen igual de fáciles/difíciles los emparejados?} \hfill}
 
 \end{frame}
+
+\begin{frame}{Un ejemplo más (para tomarle sabor a la dualidad)}
+
+    \begin{itemize}
+        \item Dados dos \textbf{puntos} y $N$ \textbf{rectas}, cuántas \textbf{rectas} hay que cruzar como mínimo, al mover \textbf{un punto} hasta la posición del otro. \\NOTA: Es el $K$ del dia 2 del TC 2020.
+        \item Dadas dos \textbf{rectas no verticales} y $N$ \textbf{puntos}, cuántos \textbf{puntos} hay que cruzar como mínimo, al mover \textbf{una recta} hasta la posición de la otra. 
+        
+        La recta se ``mueve'' continuamente, como si fuera una especie de barra rígida infinita,
+                puede girar y trasladarse en su camino. \textbf{Pero está prohibido en cualquier momento posicionarla en vertical.}
+
+    \end{itemize}
+
+\end{frame}
+
 
 \section{Dualidad punto línea}
 
@@ -203,6 +229,7 @@
         \pause
         \invisible<1-2>{\item Si la recta representa naturalmente una cierta \textit{función lineal} que a veces evaluamos, la \textbf{forma explícita} $y = ax + b$ puede ser más útil.
                       \item Notar que de ser así no tienen sentido las rectas verticales (no son funciones).
+                      \item Salvo cuando aclaremos lo contrario, ``recta'' para nosotros será en particular durante toda esta charla ``recta no vertical''.
         }
     \end{itemize}
     
@@ -237,7 +264,9 @@ struct Punto
 \begin{frame}{La transformación}
 
     \begin{itemize}
-        \item Transformar rectas en puntos: $y = ax + b \mapsto (a,b)$ 
+        \item Transformar rectas en puntos: $y = ax + b \mapsto (-a,-b)$ 
+        \item Transformar puntos en rectas: $(a,b) \mapsto y = -ax -b$ 
+        \item En términos de los structs anteriores, siempre es $(f_1, f_2) \mapsto (-f_1, -f_2)$, más allá de los nombres de los \textit{fields} $f_1$, $f_2$ en el struct que corresponda.
         \pause
         \invisible<1>{
                 \item ¿Eso es todo? ¿Eso es dualidad punto recta?
@@ -260,35 +289,104 @@ struct Punto
 \begin{frame}{Relaciones}
 
     \begin{itemize}
-        \item $y = f(x) = ax + b \Leftrightarrow (a,b) = p$ 
+        \item \textbf{No} transforma el plano como una rotación/traslación/reflexión:\\ \textbf{puntos no van a puntos}.
+        \item Transforma puntos y rectas, e \textbf{intercambia sus roles}.
+        \item Por esta razón, una forma de ilustrar la transformación es mediante colores:
+        
+        \includegraphics[scale=0.09]{fig1.png}        $\ $
+        \includegraphics[scale=0.09]{fig2.png}
+        
+        Aproximadamente:
+        
+        \item A) $f(x) = y = -x - 5$ $\leftrightarrow$ $p = (1,5)$
+        
+        \item B) $f(x) = y = 1$ $\leftrightarrow$ $p = (0,-1)$
+        
+        \item C) $f(x) = y = x - 5$ $\leftrightarrow$ $p = (-1,5)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Relaciones}
+
+    \begin{itemize}
+        
+        \item $y = f(x) = ax + b$, y $(a,b) = p$, la dualidad intercambia $p$ y $f$
+        \item Al dualizar dos veces volvemos al mismo punto / recta de partida
         \pause
         \invisible<1>{
                 \item ``rectas no verticales'' = `` funciones lineales'' $\Leftrightarrow$ ``puntos del plano''
             }
         \pause
-        \invisible<1-2>{\item ``pendiente mayor'' $\Leftrightarrow$ ``coordenada $x$ mayor''
+        \invisible<1-2>{\item ``pendiente mayor'' $\Leftrightarrow$ ``coordenada $x$ menor''
         }
         \pause
         \invisible<1-3>{\item ``rectas paralelas'' $\Leftrightarrow$ ``alineados en vertical''
         }
-        \pause
-        \invisible<1-4>{\item ``rectas concurrentes'' $\Leftrightarrow$ ``alineados salvo verticales''
-        }
-        \pause
-        \invisible<1-5>{\item ``$y$'' (o sea $f(x)$ dado $x$) $\Leftrightarrow$ $p \cdot (x,1)$}
-        \pause
-        \invisible<1-6>{\item ``Mayor $f(x)$'' $\Leftrightarrow$ ``$p$ está más avanzado en la dirección apuntada por $\vec v=(x,1)$''.
-        }
-        \pause
-        \invisible<1-7>{\item \textbf{``Rectas sobre las que pega la lluvia'' $\Leftrightarrow$ ``Cápsula superior''.}
-        }
-        \pause
-        \invisible<1-8>{\item Esta última es la que da el nombre a ``convex hull trick''
-                        \item ¡Revisar los problemas anteriores para verificar los emparejamientos!}
     \end{itemize}
     
 \end{frame}
 
+\begin{frame}{Operador está arriba/abajo}
+
+    \begin{itemize}
+        
+        \item Si $p = (x_p,y_p)$, $R$ es $y = ax + b$, decimos $p \uparrow R$ si $y_p \geq ax_p + b$
+        \item Lo leemos `` $p$ está arriba de $R$ ''
+        \item Análogamente $p \downarrow R$
+        \item Observación: $p \in R \Leftrightarrow p \uparrow R \land p \downarrow R$
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Relación esencial de la dualidad punto-línea}
+
+    \begin{itemize}
+        \item $p \uparrow R \Leftrightarrow dual(R) \uparrow dual(p)$
+        \item Corolario: $p \in R \Leftrightarrow dual(R) \in dual(p)$
+        \pause
+        \invisible<1>{
+            \item Demostración:
+                \begin{itemize}
+                    \item $p \uparrow R$ es por definición  $y_p \geq a x_p + b$
+                    \item $dual(R) \uparrow dual(p)$ es por definición $-b \geq (-x_p)(-a) + (-y_p)$
+                    \item Ambas condiciones son equivalentes
+                    \item Nota: esta es la razón para poner los signos negativos en la transformación
+                \end{itemize}
+        }
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Relaciones de incidencia}
+
+    De lo anterior tenemos:
+
+    \begin{itemize}
+        \item ``muchos puntos arriba de una recta'' $\Leftrightarrow$ \\``muchas rectas que pasan por debajo de un punto''
+        \item ``rectas concurrentes'' $\Leftrightarrow$ ``puntos alineados (pero no en vertical)''
+    \end{itemize}
+    
+\end{frame}
+
+
+\begin{frame}{Relaciones de extremos}
+
+    \begin{itemize}
+        \item ``$y$'' (o sea $f(x)$ dado $x$) $\Leftrightarrow$ $p \cdot (-x,-1)$
+        \pause
+        \invisible<1>{\item ``Recta con mayor $f(x)$'' $\Leftrightarrow$ ``Punto que está más avanzado en la dirección apuntada por $\vec v=(-x,-1)$''.
+        }
+        \pause
+        \invisible<1-2>{\item \textbf{``Envolvente superior'' $\Leftrightarrow$ ``Cápsula inferior''.}
+                        \item \textbf{``Envolvente inferior'' $\Leftrightarrow$ ``Cápsula superior''.}
+        }
+        \pause
+        \invisible<1-3>{\item Esta última es la que da el nombre a ``convex hull trick''
+                        \item ¡Revisar los problemas anteriores para verificar los emparejamientos!}
+
+    \end{itemize}
+    
+\end{frame}
 
 \section{Convex Hull Trick}
 
@@ -298,7 +396,9 @@ struct Punto
         \invisible<0-0>{\item Es la técnica que usamos para calcular eficientemente,a partir de un $x$, el valor de  $max_{i=1}^n {f_i(x)}$, si tenemos $n$
                              funciones lineales $f_i$}
         \pause
-        \invisible<1-1>{\item Es como tener las ``Rectas donde pega la lluvia'' rápido, que son las que importan. O por dualidad, es como tener la cápsula superior, que son los únicos puntos candidatos a ser los más alejados en una dirección $\vec v=(x,1)$.}
+        \invisible<1-1>{\item Permite mantener la envolvente superior de rectas eficientemente.}
+        \pause
+        \invisible<1-2>{\item Por dualidad, \textbf{es equivalente tener la cápsula inferior de puntos}, que son los únicos puntos candidatos a ser los extremos en una dirección $\vec v=(-x,-1)$.}
     \end{itemize}
     
 \end{frame}
@@ -306,7 +406,8 @@ struct Punto
 \begin{frame}{Convex Hull Trick offline}
 
     \begin{itemize}
-        \item Si las rectas van apareciendo \textbf{en orden de pendiente}, o si las podemos ordenar libremente, podemos hacer como al construir la cápsula superior: vamos ``descartando hasta que encaje'' del vector de rectas, y siempre tendremos las rectas de lluvia \textbf{ordenadas} (binary search).
+        \item Si las rectas van apareciendo \textbf{en orden de pendiente}, o si las podemos ordenar libremente, hacemos lo mismo que para construir cápsula inferior/superior si los puntos están ordenados por $x$
+        \item Ante cada nueva recta, vamos ``descartando hasta que encaje'' del vector de rectas, y siempre tendremos las rectas de la envolvente \textbf{ordenadas} (binary search).
     \end{itemize}
     
 \end{frame}
@@ -316,48 +417,131 @@ struct Punto
     \begin{itemize}
         \invisible<0-0>{\item Si las rectas aparecen en forma dinámica y en cualquier orden, podemos tenerlas en un \texttt{set} \textbf{ordenadas por pendiente}, y usar \texttt{lower\_bound} para ver dónde insertar la nueva (si es que hay que hacerlo).}
         \pause
-        \invisible<1-1>{\item Podemos usar la dualidad para razonar más fácil en términos de puntos (si así nos resulta más fácil), pues es análogo a mantener la cápsula superior cuando aparecen nuevos puntos: allí los mantendríamos ordenados por coordenada $x$, y luego ``borraríamos adyacentes a cada lado'' hasta que la banda elástica quede ``correctamente tensada''.}
+        \invisible<1-1>{\item Podemos usar la dualidad para razonar más fácil en términos de puntos (si así nos resulta más fácil), pues es análogo a mantener la cápsula inferior cuando aparecen nuevos puntos: allí los mantendríamos ordenados por coordenada $x$, y luego ``borraríamos adyacentes a cada lado'' hasta que la banda elástica quede ``correctamente tensada''.}
         \pause
-        \invisible<1-2>{\item Truco de implementación: suele ser conveniente agregar rectas centinelas en los extremos, con pendientes enormes, para evitar problemas por accesos fuera de rango.}
-        \invisible<1-2>{\item Equivalentemente, para trabajar con la cápsula superior de un conjunto de puntos, agregaríamos dos puntos centinela con valores extremos de la coordenada $x$.}
-
+        \invisible<1-2>{\item O más aún podemos programar directamente el código para mantener la cápsula inferior, y traducir (dualizar) los parámetros de las queries.}
     \end{itemize}
     
 \end{frame}
 
-
-\section{Dualidad intervalo-punto}
-
-\begin{frame}{Otro ejemplo de transformación}
+\begin{frame}{Convex Hull Trick online (implementación)}
     \begin{itemize}
-        \item Consiste en pensar un intervalo $(A,B)$ en la recta numérica, como un punto $(A,B)$ en el plano.
-        \item La recta numérica original puede pensarse como la recta $y=x$, que contiene los intervalos de longitud $0$ (puntos).
-        \item Todos los intervalos válidos viven en la parte superior $y > x$ del plano.
-        \item Los $(A,B)$ con $A > B$ podrían usarse para representar el ``complemento'' de un intervalo: tiene sentido en problemas circulares.
-
+        \item La implementación es muy delicada:
+            \begin{itemize}
+                \item Para las inserciones, queremos hacer lower-bound por (pendiente de recta / $x$ del punto)
+                \item Para las queries, queremos hacer lower-bound por (``derivada'' de $f(x)$ / derivada de $p \cdot (-x, -1)$)
+                \item Si bien el valor que damos es distinto, con ambos criterios el conjunto está bien ordenado
+                \item Hack para set de C++: Se puede tener un comparator que cambia su comportamiento según variables globales
+            \end{itemize}
+        \item Recomendación: sentarse con tiempo y mucho cuidado a entender la idea e implementarla, y guardar la implementación para usar en competencias
+        
     \end{itemize}
     
 \end{frame}
 
-\begin{frame}{Relaciones}
+\section{Dualidad con rectas verticales (Opcional Bonus)}
+
+\begin{frame}{Nos faltan puntos}
     \begin{itemize}
-        \item Un intervalo contiene a otro, si y solo si este último está más ``abajo a la derecha''.
-        \item Si imaginamos que el punto de un intervalo lanza una ``sombra'' haba abajo y hacia la derecha, los puntos de la recta $y=x$ cubiertos son exactamente el intervalo original.
-        \item Así que dos intervalos se tocan si y solo si sus sombras chocan.
-        \item Dado un punto (que representa un intervalo), los puntos de intervalos que se intersecan con él, son los que están en un ``cuadrante'' arriba y a la izquierda de su reflejo por $y=x$.
-        \item Para algunos es más fácil visualizar puntos que visualizar intervalos, y la transformación puede facilitar tener algunas ideas clave.
+        \item Tendríamos que poder dualizar las rectas verticales, pero ya usamos todos los puntos del plano.
+        \item Solución: \textbf{Agregar} puntos al plano.
+        \item ¿Dónde tendría que estar el punto dual de una recta vertical?
     \end{itemize}
     
 \end{frame}
 
-\begin{frame}{Problema de ejemplo}
+\begin{frame}{Nos faltan puntos (cont.)}
     \begin{itemize}
-        \item Updates: Aparecen y desaparecen puntos con peso. Todos en la parte \textbf{superior} $y > x$ del plano.
-        \item Query: Dado un punto del plano en la parte \textbf{inferior} $y < x$, suma de los pesos de los que están arriba y a su izquierda.
-        \pause
-        \invisible<1>{\item Este problema es el equivalente exacto que resulta al aplicar la dualidad intervalo-punto que vimos, al problema F del TAP 2017}
+        \item Por el punto $dual(R)$, pasan todas las rectas $dual(p)$ para los puntos $p \in R$.
+        \item ¡Si $R$ es vertical, esos puntos dualizan a rectas paralelas!
+        \item Necesitamos agregar puntos en el infinito, donde las rectas paralelas se cortan.
+        \item Por cada posible pendiente de rectas paralelas, habrá un punto en el infinito.
+        \item La recta vertical $x = a$ dualiza al punto infinito donde convergen las rectas de pendiente $-a$.
+        \item ¿Dónde se cortan las rectas verticales? 
     \end{itemize}
-    
 \end{frame}
+
+\begin{frame}{Nos faltan puntos (cont.)}
+    \begin{itemize}
+        \item Se cortan en otro punto en el infinito, que no tiene todavía recta dual...
+        \item La recta dual del ``infinito vertical'' es una ``recta en el infinito'', que pasa exactamente por todos los puntos infinitos.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Plano proyectivo}
+    \begin{itemize}
+        \item Lo anterior hace que toda recta y todo punto tenga dual, y mantiene la relación esencial de dualidad punto línea.
+        \item El plano con los puntos y rectas que agregamos se llama plano proyectivo.
+        \item Una forma equivalente de construirlo (pero con un cambio de coordenadas) sin separar como especial la recta ``infinita'' es pensar que tomamos:
+            \begin{itemize}
+                \item Los subespacios de dimensión 1 en $\mathbb{R}^3$, como puntos
+                \item Los subespacios de dimensión 2 en $\mathbb{R}^3$, como rectas
+                \item Dualizar es tomar complemento ortogonal
+            \end{itemize}
+        \item En general, estos conceptos no se usan en programación competitiva :)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Un ejemplo: Problema el $K$ en el plano proyectivo}
+
+    Los siguientes problemas son duales (al considerarlo en el plano proyectivo)
+
+    \begin{itemize}
+        \item Dados dos \textbf{puntos} y $N$ \textbf{rectas}, cuántas \textbf{rectas} hay que cruzar como mínimo, al mover \textbf{un punto} hasta la posición del otro, pero se puede ``dar la vuelta por el infinito''.
+        \item Dadas dos \textbf{rectas} y $N$ \textbf{puntos}, cuántos \textbf{puntos} hay que cruzar como mínimo, al mover \textbf{una recta} hasta la posición de la otra. 
+    \end{itemize}
+
+    En este caso, la ``circularidad'' que complica el problema natural de rectas, se vuelve explícita al dualizar.
+
+\end{frame}
+
+\section{Bibliografía}
+
+\begin{frame}{Bibliografía}
+
+    \begin{itemize}
+        \item \url{http://wcipeg.com/wiki/Convex\_hull\_trick}
+        \item \url{https://en.wikipedia.org/wiki/Duality\_(projective\_geometry)}
+        \item \url{https://en.wikipedia.org/wiki/Projective\_plane\#Plane\_duality}
+        \item \url{http://www.cs.umd.edu/class/spring2020/cmsc754/Lects/lect06-duality.pdf}
+    \end{itemize}
+
+\end{frame}
+
+
+
+%\section{Dualidad intervalo-punto}
+%
+%\begin{frame}{Otro ejemplo de transformación}
+%    \begin{itemize}
+%        \item Consiste en pensar un intervalo $(A,B)$ en la recta numérica, como un punto $(A,B)$ en el plano.
+%        \item La recta numérica original puede pensarse como la recta $y=x$, que contiene los intervalos de longitud $0$ (puntos).
+%        \item Todos los intervalos válidos viven en la parte superior $y > x$ del plano.
+%        \item Los $(A,B)$ con $A > B$ podrían usarse para representar el ``complemento'' de un intervalo: tiene sentido en problemas circulares.
+%
+%    \end{itemize}
+%    
+%\end{frame}
+%
+%\begin{frame}{Relaciones}
+%    \begin{itemize}
+%        \item Un intervalo contiene a otro, si y solo si este último está más ``abajo a la derecha''.
+%        \item Si imaginamos que el punto de un intervalo lanza una ``sombra'' haba abajo y hacia la derecha, los puntos de la recta $y=x$ cubiertos son exactamente el intervalo original.
+%        \item Así que dos intervalos se tocan si y solo si sus sombras chocan.
+%        \item Dado un punto (que representa un intervalo), los puntos de intervalos que se intersecan con él, son los que están en un ``cuadrante'' arriba y a la izquierda de su reflejo por $y=x$.
+%        \item Para algunos es más fácil visualizar puntos que visualizar intervalos, y la transformación puede facilitar tener algunas ideas clave.
+%    \end{itemize}
+%    
+%\end{frame}
+%
+%\begin{frame}{Problema de ejemplo}
+%    \begin{itemize}
+%        \item Updates: Aparecen y desaparecen puntos con peso. Todos en la parte \textbf{superior} $y > x$ del plano.
+%        \item Query: Dado un punto del plano en la parte \textbf{inferior} $y < x$, suma de los pesos de los que están arriba y a su izquierda.
+%        \pause
+%        \invisible<1>{\item Este problema es el equivalente exacto que resulta al aplicar la dualidad intervalo-punto que vimos, al problema F del TAP 2017}
+%    \end{itemize}
+%    
+%\end{frame}
 
 \end{document}

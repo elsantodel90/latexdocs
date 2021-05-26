@@ -64,7 +64,7 @@
   Universidad de Buenos Aires
 }
 \date[TC 2019 - FAMAF] % (optional, should be abbreviation of conference name)
-{Training Camp 2019: UNC - FAMAF}
+{Training Camp 2020}
 
 % Acá se puede insertar el logo de la UBA
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
@@ -133,7 +133,7 @@
         \item Es importante acostumbrarse a \textbf{siempre} revisar las cotas de todas las entradas, y calcular los posibles valores máximos de los números que maneja el programa. Suele ser multiplicar cotas de la entrada.
         \item Ante la duda preferir tipos de 64 bits (long long en C++, long en Java) a tipos de 32 bits (int).
         \item Ojo con \\ \texttt{long long mask = 1 << 33;} \\  que está mal. Debería ser \\ \texttt{long long mask = 1LL << 33;}
-        \item int: hasta $2^{31}-1 = 2.147.483.647$. Algo más de dos mil milllones.
+        \item int: hasta $2^{31}-1 = 2.147.483.647$. Algo más de dos mil millones.
         \item long long: hasta $2^{63}-1$. Más de $10^{18}$, pero menos que $10^{19}$.
     \end{itemize}
 \end{frame}
@@ -155,7 +155,7 @@
         \item Ojo con la resta que puede generar negativos. $((x\%M)+M)\%M$ siempre lo deja positivo.
     \end{itemize}
 \end{frame}
-
+z
 
 \section{Fórmulas matemáticas fundamentales}
 
@@ -283,7 +283,7 @@
 \begin{frame}{TreeSet}
     \begin{itemize}
         \item set<int> en C++
-        \item TreeSet<Integer> en Java
+        \item TreeSet<Integer> en Java (googlear docs de NavigableSet)
         \item En Python no hay. ¡Ojo! collections.OrderedDict \textbf{es otra cosa}
         \item Permiten insertar, borrar, consultar pertenencia y hacer \texttt{s.lower\_bound} o \texttt{s.upper\_bound} en $O(\lg N)$
     \end{itemize}
@@ -292,8 +292,8 @@
 \begin{frame}{TreeMap}
     \begin{itemize}
         \item map<int,int> en C++
-        \item TreeMap<Integer,Integer> en Java
-        \item ``collections.OrderedDict'' en Python \textbf{(pero no es..)}
+        \item TreeMap<Integer,Integer> en Java (googlear docs de NavigableMap)
+        \item Existe ``collections.OrderedDict'' en Python \textbf{(pero no es..)}
         \item Permiten insertar, borrar, consultar pertenencia y hacer \texttt{m.lower\_bound} o \texttt{m.upper\_bound} en $O(\lg N)$
         \item Son casi iguales a los TreeSet, pero guardan un \textbf{valor asociado} a cada elemento
     \end{itemize}
