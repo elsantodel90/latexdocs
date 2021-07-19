@@ -63,8 +63,8 @@
   Facultad de Ciencias Exactas y Naturales\\
   Universidad de Buenos Aires
 }
-\date[TC 2019 - FAMAF] % (optional, should be abbreviation of conference name)
-{Training Camp 2020}
+\date[TC 2021 - Virtual] % (optional, should be abbreviation of conference name)
+{Training Camp 2021}
 
 % Acá se puede insertar el logo de la UBA
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
@@ -213,10 +213,25 @@ z
         Utilizar los flags indicados en \url{http://wiki.oia.unsam.edu.ar/cpp-avanzado/opciones-gcc}
     \end{frame}
 
-\subsection{Macro DBG (C++)}
+\subsection{Macros y debugging (C++)}
 
     \begin{frame}{Macro DBG (C++)}
-            \#define DBG(x) cerr <{}< \#x <{}< `` = '' <{}< (x) <{}< endl
+        \begin{itemize}
+            \item \#define DBG(x) cerr <{}< \#x <{}< `` = '' <{}< (x) <{}< endl
+            
+            \ 
+            
+            \item \#define RAYA cerr <{}< ``========================='' <{}< endl
+            
+            \ 
+            
+            \item \#include <cassert>\\
+            assert(x > 0); // Llenar el programa de asserts!
+            
+            \ 
+            
+            \item Usar \texttt{gdb} para saber la línea de runtime error
+        \end{itemize}
     \end{frame}
 
 
@@ -284,7 +299,7 @@ z
     \begin{itemize}
         \item set<int> en C++
         \item TreeSet<Integer> en Java (googlear docs de NavigableSet)
-        \item En Python no hay. ¡Ojo! collections.OrderedDict \textbf{es otra cosa}
+        \item En Python no hay. ¡Ojo! \\ collections.OrderedDict \textbf{es otra cosa} (LinkedHashMap de Java)
         \item Permiten insertar, borrar, consultar pertenencia y hacer \texttt{s.lower\_bound} o \texttt{s.upper\_bound} en $O(\lg N)$
     \end{itemize}
 \end{frame}
@@ -293,7 +308,7 @@ z
     \begin{itemize}
         \item map<int,int> en C++
         \item TreeMap<Integer,Integer> en Java (googlear docs de NavigableMap)
-        \item Existe ``collections.OrderedDict'' en Python \textbf{(pero no es..)}
+        \item No confundir ``collections.OrderedDict'' \textbf{(que no es..)}
         \item Permiten insertar, borrar, consultar pertenencia y hacer \texttt{m.lower\_bound} o \texttt{m.upper\_bound} en $O(\lg N)$
         \item Son casi iguales a los TreeSet, pero guardan un \textbf{valor asociado} a cada elemento
     \end{itemize}
